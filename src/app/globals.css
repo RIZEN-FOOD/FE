@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   라이즌푸드 디자인 토큰
+   출처: docs/prototype.html 의 :root 블록 (제품 패키지에서 추출한 팔레트)
+
+   Tailwind v4 는 tailwind.config.ts 대신 @theme 으로 토큰을 정의한다.
+   여기 등록한 값은 bg-clay / text-ink-soft / font-en 처럼 바로 쓸 수 있다.
+
+   이 사이트는 라이트 전용이다. 크림색 지면이 브랜드의 일부라
+   prefers-color-scheme 다크 반전을 넣지 않는다.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* 클레이 — 테라코타 계열. 히어로 배경과 포인트 */
+  --color-clay: #DEB191;
+  --color-clay-deep: #B87F5D;
+  --color-clay-soft: #E8C4A6;
+
+  /* 지면 */
+  --color-cream: #F4EFE6;
+  --color-cream-warm: #FAF7F1;
+  --color-paper: #FFFDF9;
+
+  /* 텍스트 */
+  --color-ink: #221E1C;
+  --color-ink-soft: #5A524C;
+  --color-ink-faint: #9A8E85;
+
+  /* 보울 남색 — 수치 강조와 다크 섹션 */
+  --color-slate: #4F5660;
+  --color-slate-deep: #383E47;
+
+  /* 블루베리 */
+  --color-berry: #35406B;
+
+  /* 경계선 */
+  --color-line: rgba(34, 30, 28, 0.10);
+
+  /* 본문 기준 폭 — prototype 의 .wrap (max-width:1180px) */
+  --container-wrap: 1180px;
+}
+
+/* 서체 토큰은 next/font 가 <body> 에 심는 변수를 참조한다.
+   @theme 는 값을 :root 에서 계산하기 때문에 <body> 에만 있는 변수를 읽지 못한다.
+   그래서 폰트만 @theme inline 으로 두어 유틸리티에 값이 그대로 박히게 한다. */
+@theme inline {
+  --font-en: var(--font-archivo), system-ui, sans-serif;
+  --font-kr: var(--font-noto-sans-kr), system-ui, sans-serif;
+  --font-script: var(--font-kaushan), cursive;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* 접근성: 모션 최소화 설정을 켠 사용자에게는 애니메이션을 끈다.
+     기획서 §3.1 제약사항. GSAP 쪽에서도 별도로 분기한다. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-noto-sans-kr), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 숫자·영문은 Archivo 로. 한글 폰트의 숫자보다 조판이 안정적이다. */
+  .font-numeric {
+    font-family: var(--font-archivo), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   히어로 챕터 전환
+
+   JS 가 [data-chapter] 에 is-active 를 붙였다 뗀다.
+   기본 상태를 완전히 투명하게 두지 않는 이유는, JS 가 실패하거나
+   로드되기 전에도 글이 읽혀야 하기 때문이다(SEO·접근성).
+   ───────────────────────────────────────────────────────────── */
+.hero-chapter > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* JS 가 붙는 환경에서만 초기 상태를 숨긴다.
+   html.js 클래스는 layout 의 인라인 스크립트가 즉시 붙인다. */
+.js .hero-chapter > * {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.js .hero-chapter.is-active > * {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .hero-chapter > * {
+    opacity: 1;
+    transform: none;
+  }
+}
