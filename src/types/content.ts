@@ -75,3 +75,29 @@ export const NOTICE_CATEGORIES: { value: string; label: string }[] = [
   { value: "EVENT", label: "이벤트" },
   { value: "INFO", label: "안내" },
 ];
+
+/** 공개 공지 목록 한 줄 */
+export type NoticePublicItem = {
+  id: number;
+  category: string;
+  title: string;
+  pinned: boolean;
+  viewCount: number;
+  publishedAt: string;
+};
+
+export type NoticePublicPage = {
+  items: NoticePublicItem[];
+  page: number;
+  totalPages: number;
+  totalCount: number;
+};
+
+export type NoticePublicDetail = {
+  id: number;
+  category: string;
+  title: string;
+  bodyHtml: string;
+  viewCount: number;
+  publishedAt: string;
+};
