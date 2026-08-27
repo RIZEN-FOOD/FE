@@ -4,6 +4,7 @@ import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { FeaturedProducts } from "@/components/store/FeaturedProducts";
 import { NoticePreview } from "@/components/store/NoticePreview";
+import { QuickMenu } from "@/components/store/QuickMenu";
 import { serverApi } from "@/lib/server/api";
 import type { ProductListItem } from "@/types/product";
 import type { NoticePublicPage } from "@/types/content";
@@ -35,6 +36,7 @@ export default async function Home() {
       </main>
 
       <StoreFooter />
+      <QuickMenu />
 
       {primary && (
         <>

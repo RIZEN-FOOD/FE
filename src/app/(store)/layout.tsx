@@ -1,5 +1,6 @@
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
+import { QuickMenu } from "@/components/store/QuickMenu";
 
 /**
  * 공개 페이지(상품·공지 등) 공용 레이아웃.
@@ -11,6 +12,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <StoreHeader />
       <div className="flex-1">{children}</div>
       <StoreFooter />
+      <QuickMenu />
     </div>
   );
 }
