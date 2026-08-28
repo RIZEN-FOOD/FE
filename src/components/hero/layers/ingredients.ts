@@ -8,7 +8,7 @@
  *   액체(물 붓기, 젓기, 크림이 흐르는 질감)만 영상이 필요하다.
  *   정지컷으로는 흉내가 안 난다.
  */
-export type IngredientKind = "blueberry" | "almond" | "walnut" | "banana" | "powder";
+export type IngredientKind = "blueberry" | "almond" | "walnut" | "banana" | "rice" | "powder";
 
 export type Ingredient = {
   kind: IngredientKind;
@@ -30,6 +30,8 @@ export const ingredients: Ingredient[] = [
   { kind: "almond", count: 5, radius: 13, speed: 0.9, sprite: "/assets/ingredients/almond.png" },
   { kind: "walnut", count: 3, radius: 16, speed: 0.85, sprite: "/assets/ingredients/walnut.png" },
   { kind: "banana", count: 4, radius: 17, speed: 0.8, sprite: "/assets/ingredients/banana.png" },
-  // 가루는 이미지 없이 도형으로 그린다 (작고 많아 이미지가 오히려 무겁다)
+  // 또렷한 쌀알. 누끼 이미지로 떨어진다. 제품의 정체(쌀)를 보여주는 핵심 재료라 개수를 넉넉히 둔다.
+  { kind: "rice", count: 12, radius: 8, speed: 1.05, sprite: "/assets/ingredients/rice.png" },
+  // 미세 가루는 이미지 없이 도형으로 흩날린다 (작고 많아 이미지가 오히려 무겁다)
   { kind: "powder", count: 22, radius: 4, speed: 1.25 },
 ];
