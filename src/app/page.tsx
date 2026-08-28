@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { FeaturedProducts } from "@/components/store/FeaturedProducts";
+import { RecipeGallery } from "@/components/store/RecipeGallery";
 import { NoticePreview } from "@/components/store/NoticePreview";
 import { QuickMenu } from "@/components/store/QuickMenu";
 import { serverApi } from "@/lib/server/api";
@@ -31,6 +32,7 @@ export default async function Home() {
 
       <main>
         <HeroSection />
+        <RecipeGallery />
         <FeaturedProducts products={products} />
         <NoticePreview notices={notices} />
       </main>
