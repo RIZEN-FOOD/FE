@@ -26,9 +26,10 @@ export type Ingredient = {
 };
 
 export const ingredients: Ingredient[] = [
-  { kind: "blueberry", count: 7, radius: 15, speed: 1.0 },
-  { kind: "almond", count: 5, radius: 13, speed: 0.9 },
-  { kind: "walnut", count: 3, radius: 16, speed: 0.85 },
-  { kind: "banana", count: 4, radius: 17, speed: 0.8 },
+  { kind: "blueberry", count: 7, radius: 15, speed: 1.0, sprite: "/assets/ingredients/blueberry.png" },
+  { kind: "almond", count: 5, radius: 13, speed: 0.9, sprite: "/assets/ingredients/almond.png" },
+  { kind: "walnut", count: 3, radius: 16, speed: 0.85, sprite: "/assets/ingredients/walnut.png" },
+  { kind: "banana", count: 4, radius: 17, speed: 0.8, sprite: "/assets/ingredients/banana.png" },
+  // 가루는 이미지 없이 도형으로 그린다 (작고 많아 이미지가 오히려 무겁다)
   { kind: "powder", count: 22, radius: 4, speed: 1.25 },
 ];

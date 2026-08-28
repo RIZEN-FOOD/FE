@@ -73,6 +73,16 @@ export function PourColumn({ className }: { className?: string }) {
     };
     resize();
 
+    // 재료 누끼 이미지를 미리 불러둔다. 종류별로 한 장이면 충분하다.
+    // 로드 전이나 sprite 가 없는 종류는 drawIngredient 의 대체 도형을 쓴다.
+    const sprites = new Map<string, HTMLImageElement>();
+    for (const def of ingredients) {
+      if (!def.sprite) continue;
+      const img = new Image();
+      img.src = def.sprite;
+      sprites.set(def.kind, img);
+    }
+
     // 기둥을 채울 알갱이들. 고체(재료)와 가루를 나눠 담는다.
     const grains: Grain[] = [];
     for (const def of ingredients) {
@@ -201,7 +211,15 @@ export function PourColumn({ className }: { className?: string }) {
           ctx.translate(x, y);
           ctx.rotate(g.angle);
           ctx.globalAlpha = (0.2 + g.z * 0.75) * amount * fade;
-          drawIngredient(ctx, g.kind, g.radius);
+
+          const sprite = sprites.get(g.kind);
+          if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+            // 누끼 이미지를 정사각형에 맞춰 그린다. radius 는 반지름이므로 지름은 2배.
+            const size = g.radius * 2.2;
+            ctx.drawImage(sprite, -size / 2, -size / 2, size, size);
+          } else {
+            drawIngredient(ctx, g.kind, g.radius);
+          }
           ctx.restore();
         }
       }
