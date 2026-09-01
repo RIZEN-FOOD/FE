@@ -37,6 +37,8 @@ type ServingIdea = {
   title: string;
   body: string;
   toppings: string[]; // ingredients.ts 의 sprite 파일명 (확장자 제외)
+  /** 조리 시간 안내. 조리 편의를 보여주는 사실 정보다. */
+  cookTime: string;
   imageSrc?: string; // 실제 사진이 오면 여기에 경로. 있으면 도형 대신 이 사진을 쓴다.
 };
 
@@ -46,6 +48,7 @@ const ideas: ServingIdea[] = [
     eyebrow: "The Classic",
     title: "기본으로,\n깔끔하게",
     body: "물이나 우유에 풀어 그대로 드세요. 가장 빠르고 담백한 방법입니다.",
+    cookTime: "조리 2분",
     toppings: [],
   },
   {
@@ -53,6 +56,7 @@ const ideas: ServingIdea[] = [
     eyebrow: "Add Fruit",
     title: "블루베리를\n더해서",
     body: "새콤한 블루베리 한 줌을 올리면 산뜻한 맛이 더해집니다.",
+    cookTime: "조리 3분",
     toppings: ["blueberry"],
   },
   {
@@ -60,6 +64,7 @@ const ideas: ServingIdea[] = [
     eyebrow: "Add Crunch",
     title: "견과류와\n함께",
     body: "아몬드와 호두를 곁들이면 씹는 식감이 더해집니다.",
+    cookTime: "조리 3분",
     toppings: ["almond", "walnut"],
   },
   {
@@ -67,6 +72,7 @@ const ideas: ServingIdea[] = [
     eyebrow: "Add Fruit",
     title: "바나나를\n슬라이스해서",
     body: "바나나 슬라이스를 올려 부드러운 단맛을 더할 수 있습니다.",
+    cookTime: "조리 4분",
     toppings: ["banana"],
   },
 ];
@@ -132,9 +138,14 @@ export function RecipeGallery() {
           {ideas.map((idea) => (
             <div key={idea.id}>
               <ToppingBowl idea={idea} className="aspect-[4/5] w-full max-w-sm" />
-              <p className="mt-6 font-en text-[11px] font-extrabold uppercase tracking-[0.24em] text-clay-deep">
-                {idea.eyebrow}
-              </p>
+              <div className="mt-6 flex items-center gap-3">
+                <p className="font-en text-[11px] font-extrabold uppercase tracking-[0.24em] text-clay-deep">
+                  {idea.eyebrow}
+                </p>
+                <span className="rounded-full bg-cream px-2.5 py-0.5 font-kr text-[11px] text-ink-soft">
+                  {idea.cookTime}
+                </span>
+              </div>
               <p className="mt-2 whitespace-pre-line font-kr text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-ink">
                 {idea.title}
               </p>
@@ -167,9 +178,14 @@ export function RecipeGallery() {
                 data-recipe-block
                 className="flex min-h-[70svh] flex-col justify-center"
               >
-                <p className="font-en text-[11px] font-extrabold uppercase tracking-[0.24em] text-clay-deep">
-                  {idea.eyebrow}
-                </p>
+                <div className="flex items-center gap-3">
+                  <p className="font-en text-[11px] font-extrabold uppercase tracking-[0.24em] text-clay-deep">
+                    {idea.eyebrow}
+                  </p>
+                  <span className="rounded-full bg-cream px-2.5 py-0.5 font-kr text-[11px] text-ink-soft">
+                    {idea.cookTime}
+                  </span>
+                </div>
                 <p className="mt-3 whitespace-pre-line font-kr text-[clamp(1.8rem,3.2vw,2.6rem)] font-bold leading-[1.15] tracking-[-0.02em] text-ink">
                   {idea.title}
                 </p>
