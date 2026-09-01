@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { storeNav } from "./storeNav";
+import { MemberNavLink } from "./MemberNavLink";
 
 /**
  * 상단 헤더 (메인 히어로용).
@@ -26,6 +27,9 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
+            <li>
+              <MemberNavLink />
+            </li>
           </ul>
         </nav>
 

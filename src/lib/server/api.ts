@@ -11,14 +11,22 @@ import "server-only";
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8080";
 
 type FetchOpts = {
-  /** 재검증 주기(초). 상품·공지는 자주 바뀌지 않으니 짧게 캐시한다. */
+  /**
+   * 재검증 주기(초).
+   *
+   * 기본 10초로 짧게 잡는다. 관리자가 상품을 노출하거나 후기를 승인했는데
+   * 공개 화면에 한참 안 나오면 "저장이 안 됐나" 하고 다시 누르게 된다.
+   * 트래픽이 늘어 캐시 이득이 필요해지면 그때 페이지별로 늘린다.
+   *
+   * 0 을 주면 캐시하지 않는다 (조회수처럼 매번 새로 읽어야 하는 것).
+   */
   revalidate?: number;
 };
 
 async function getJson<T>(path: string, opts: FetchOpts = {}): Promise<T | null> {
   try {
     const res = await fetch(`${API_ORIGIN}${path}`, {
-      next: { revalidate: opts.revalidate ?? 60 },
+      next: { revalidate: opts.revalidate ?? 10 },
     });
     if (!res.ok) {
       return null;

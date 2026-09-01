@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { storeNav } from "@/components/layout/storeNav";
+import { MemberNavLink } from "@/components/layout/MemberNavLink";
 
 /**
  * 공개 페이지(상품·공지 등) 공용 헤더.
@@ -24,6 +25,9 @@ export function StoreHeader() {
                 </Link>
               </li>
             ))}
+            <li>
+              <MemberNavLink />
+            </li>
           </ul>
         </nav>
         <div aria-hidden="true" />
