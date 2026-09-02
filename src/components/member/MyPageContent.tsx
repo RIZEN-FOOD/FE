@@ -8,9 +8,10 @@ import { api, ApiError } from "@/lib/api/client";
 import { useMemberAuth } from "@/store/memberAuth";
 import { formatDateTime } from "@/lib/datetime";
 import { INQUIRY_STATUS_LABEL, type InquiryPage, type ReviewPage } from "@/types/member";
+import { ORDER_STATUS_LABEL, type OrderSummaryPage } from "@/types/order";
 import { cn } from "@/lib/cn";
 
-type Tab = "reviews" | "inquiries" | "account";
+type Tab = "orders" | "reviews" | "inquiries" | "account";
 
 /**
  * 마이페이지. 내 후기 · 문의 내역 · 회원정보.
@@ -21,7 +22,7 @@ type Tab = "reviews" | "inquiries" | "account";
 export function MyPageContent() {
   const router = useRouter();
   const { me, ready, checkAuth, logout } = useMemberAuth();
-  const [tab, setTab] = useState<Tab>("reviews");
+  const [tab, setTab] = useState<Tab>("orders");
 
   useEffect(() => {
     if (!ready) checkAuth();
@@ -40,6 +41,7 @@ export function MyPageContent() {
   }
 
   const tabs: { key: Tab; label: string }[] = [
+    { key: "orders", label: "주문 내역" },
     { key: "reviews", label: "내 후기" },
     { key: "inquiries", label: "문의 내역" },
     { key: "account", label: "회원정보" },
@@ -71,11 +73,72 @@ export function MyPageContent() {
         </div>
 
         <div className="mt-8">
+          {tab === "orders" && <MyOrders />}
           {tab === "reviews" && <MyReviews />}
           {tab === "inquiries" && <MyInquiries />}
           {tab === "account" && <MyAccount onLogout={async () => { await logout(); router.replace("/"); }} />}
         </div>
     </Container>
+  );
+}
+
+/* ── 주문 내역 ── */
+function MyOrders() {
+  const [data, setData] = useState<OrderSummaryPage | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    api
+      .get<OrderSummaryPage>("/api/member/orders")
+      .then(setData)
+      .catch((e) => setError(e instanceof ApiError ? e.message : "주문 내역을 불러오지 못했습니다."));
+  }, []);
+
+  if (error) return <p className="font-kr text-sm text-clay-deep">{error}</p>;
+  if (!data) return <p className="font-kr text-sm text-ink-faint">불러오는 중…</p>;
+
+  if (data.items.length === 0) {
+    return (
+      <EmptyState message="주문 내역이 없습니다." actionLabel="상품 보러 가기" actionHref="/products" />
+    );
+  }
+
+  return (
+    <ul className="flex flex-col gap-4">
+      {data.items.map((o) => (
+        <li key={o.orderNo} className="rounded-[4px] border border-line bg-paper p-5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="rounded-full bg-cream-warm px-2.5 py-0.5 font-kr text-[11px] font-medium text-clay-deep">
+              {ORDER_STATUS_LABEL[o.status] ?? o.status}
+            </span>
+            <span className="font-kr text-xs text-ink-faint">{formatDateTime(o.orderedAt)}</span>
+          </div>
+
+          <div className="mt-3 flex items-center gap-3">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+              {o.thumbnailUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={o.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+              ) : null}
+            </div>
+            <div className="min-w-0 flex-1">
+              <Link
+                href={`/orders/${o.orderNo}`}
+                className="font-kr text-sm font-medium text-ink underline-offset-4 hover:underline"
+              >
+                {o.title}
+              </Link>
+              <p className="mt-0.5 font-numeric text-xs text-ink-faint">
+                {o.orderNo} · {o.itemCount}건
+              </p>
+            </div>
+            <p className="shrink-0 font-numeric text-sm font-bold text-ink">
+              {o.totalAmount.toLocaleString("ko-KR")}원
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 
