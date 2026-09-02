@@ -1,0 +1,133 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+import { storeNav } from "./storeNav";
+import { MemberNavLink } from "./MemberNavLink";
+
+/**
+ * 모바일 사이드 네비게이션.
+ *
+ * 데스크톱에서는 헤더에 항목이 그대로 펼쳐지므로 이 햄버거는 md 미만에서만 보인다.
+ * 열면 오른쪽에서 패널이 밀려 나오고, 배경을 어둡게 덮는다.
+ *
+ * 접근성
+ *   - 햄버거에 aria-expanded / aria-controls
+ *   - 패널은 role="dialog" aria-modal, Escape 로 닫힘
+ *   - 열려 있는 동안 본문 스크롤을 잠근다
+ *   - 패널 안의 링크를 누르면(이동하면) 자동으로 닫힌다 (이벤트 위임)
+ */
+export function MobileNav() {
+  const [open, setOpen] = useState(false);
+
+  // 열려 있는 동안 배경 스크롤 잠금 + Escape 로 닫기
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="메뉴 열기"
+        aria-expanded={open}
+        aria-controls="mobile-nav-panel"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center justify-center text-ink transition hover:text-clay-deep"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+
+      {/* 배경 */}
+      <div
+        aria-hidden="true"
+        onClick={() => setOpen(false)}
+        className={`fixed inset-0 z-50 bg-ink/40 transition-opacity duration-300 ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      {/* 패널 */}
+      <div
+        id="mobile-nav-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="사이트 메뉴"
+        onClick={(e) => {
+          // 링크를 눌렀으면 이동과 함께 닫는다
+          if ((e.target as HTMLElement).closest("a")) setOpen(false);
+        }}
+        className={`fixed inset-y-0 right-0 z-50 flex w-[78%] max-w-[320px] flex-col bg-cream-warm shadow-[-12px_0_40px_rgba(90,60,40,0.18)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-line px-6 py-5">
+          <span className="font-en text-lg font-extrabold tracking-tight text-berry">RiZen</span>
+          <button
+            type="button"
+            aria-label="메뉴 닫기"
+            onClick={() => setOpen(false)}
+            className="inline-flex items-center justify-center text-ink transition hover:text-clay-deep"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <nav aria-label="주요 메뉴" className="flex flex-col px-2 py-4">
+          {storeNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-[3px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className="my-2 border-t border-line" />
+          <div className="px-4 py-3 font-kr text-base font-medium text-ink [&_a]:block">
+            <MemberNavLink />
+          </div>
+          <Link
+            href="/cart"
+            className="rounded-[3px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream"
+          >
+            장바구니
+          </Link>
+        </nav>
+      </div>
+    </>
+  );
+}

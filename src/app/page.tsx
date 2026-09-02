@@ -1,5 +1,4 @@
 import { HeroSplit, type HeroPhoto } from "@/components/hero/HeroSplit";
-import { HeroSection } from "@/components/hero/HeroSection";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -74,7 +73,6 @@ export default async function Home() {
 
       <main>
         <HeroSplit photos={heroPhotos} />
-        <HeroSection />
         <FeaturedProducts products={products} />
         <WhyRizen />
         <NutritionBand
