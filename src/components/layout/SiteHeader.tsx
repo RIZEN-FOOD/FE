@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { storeNav } from "./storeNav";
 import { MemberNavLink } from "./MemberNavLink";
+import { CartBadge } from "@/components/store/CartBadge";
 
 /**
  * 상단 헤더 (메인 히어로용).
@@ -33,8 +34,10 @@ export function SiteHeader() {
           </ul>
         </nav>
 
-        {/* 우측 여백 — 좌측 로고와 대칭을 이뤄 네비를 중앙에 고정한다 */}
-        <div aria-hidden="true" />
+        {/* 우측: 장바구니. 좌측 로고와 대칭을 이뤄 네비를 중앙에 고정한다 */}
+        <div className="flex items-center justify-self-end">
+          <CartBadge />
+        </div>
       </div>
     </header>
   );

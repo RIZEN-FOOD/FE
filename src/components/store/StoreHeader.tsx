@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui";
 import { storeNav } from "@/components/layout/storeNav";
 import { MemberNavLink } from "@/components/layout/MemberNavLink";
+import { CartBadge } from "@/components/store/CartBadge";
 
 /**
  * 공개 페이지(상품·공지 등) 공용 헤더.
@@ -30,7 +31,9 @@ export function StoreHeader() {
             </li>
           </ul>
         </nav>
-        <div aria-hidden="true" />
+        <div className="flex items-center justify-self-end">
+          <CartBadge />
+        </div>
       </Container>
     </header>
   );
