@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { BrandLogo } from "@/components/ui";
 import { useAdminAuth } from "@/store/adminAuth";
 import { adminNav } from "./nav";
 
@@ -87,8 +88,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <span className="mt-1 block h-0.5 w-5 bg-current" />
             <span className="mt-1 block h-0.5 w-5 bg-current" />
           </button>
-          <Link href="/admin" className="font-en text-lg font-extrabold tracking-tight text-berry">
-            RiZen <span className="font-kr text-sm font-medium text-ink-soft">관리자</span>
+          <Link href="/admin" className="flex items-center gap-2" aria-label="라이즌푸드 관리자">
+            <BrandLogo className="h-6" />
+            <span className="font-kr text-sm font-medium text-ink-soft">관리자</span>
           </Link>
         </div>
 

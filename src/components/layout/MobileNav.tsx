@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { BrandLogo } from "@/components/ui";
 import { storeNav } from "./storeNav";
 import { MemberNavLink } from "./MemberNavLink";
 
@@ -101,7 +102,7 @@ export function MobileNav() {
             }`}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">
-              <span className="font-en text-lg font-extrabold tracking-tight text-berry">RiZen</span>
+              <BrandLogo className="h-6" />
               <button
                 type="button"
                 aria-label="메뉴 닫기"

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui";
+import { BrandLogo, Container } from "@/components/ui";
 import { storeNav } from "@/components/layout/storeNav";
 import { MemberNavLink } from "@/components/layout/MemberNavLink";
 import { MobileNav } from "@/components/layout/MobileNav";
@@ -15,8 +15,8 @@ export function StoreHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-cream-warm/95 backdrop-blur">
       <Container className="flex items-center justify-between py-4">
-        <Link href="/" className="font-en text-xl font-extrabold tracking-tight text-berry">
-          RiZen
+        <Link href="/" aria-label="라이즌푸드 홈">
+          <BrandLogo className="h-7" />
         </Link>
 
         {/* 데스크톱: 오른쪽 정렬 */}

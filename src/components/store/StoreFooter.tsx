@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui";
+import { BrandLogo, Container } from "@/components/ui";
 import { serverApi } from "@/lib/server/api";
 
 /**
@@ -42,7 +42,7 @@ export async function StoreFooter() {
     <footer className="mt-24 border-t border-line bg-cream-warm">
       <Container className="py-12">
         <div className="flex flex-wrap items-start justify-between gap-6">
-          <p className="font-en text-lg font-extrabold tracking-tight text-berry">RiZen</p>
+          <BrandLogo className="h-7 opacity-90" />
 
           {activeSns.length > 0 && (
             <nav className="flex gap-4" aria-label="소셜 미디어">

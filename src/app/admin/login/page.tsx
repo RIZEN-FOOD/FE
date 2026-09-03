@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BrandLogo } from "@/components/ui";
 import { useAdminAuth } from "@/store/adminAuth";
 
 /**
@@ -43,9 +44,9 @@ export default function AdminLoginPage() {
   return (
     <main className="flex min-h-svh items-center justify-center bg-cream px-6">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <p className="font-en text-2xl font-extrabold tracking-tight text-berry">RiZen</p>
-          <p className="mt-1 font-kr text-sm text-ink-soft">관리자</p>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <BrandLogo className="h-9" />
+          <p className="mt-2 font-kr text-sm text-ink-soft">관리자</p>
         </div>
 
         <form

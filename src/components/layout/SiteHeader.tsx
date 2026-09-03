@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/ui";
 import { storeNav } from "./storeNav";
 import { MemberNavLink } from "./MemberNavLink";
 import { MobileNav } from "./MobileNav";
@@ -15,9 +16,8 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="mx-auto flex w-full max-w-wrap items-center justify-between px-7 py-5">
-        {/* 로고 SVG 를 받으면 이 텍스트를 교체한다 */}
-        <Link href="/" className="font-en text-xl font-extrabold tracking-tight text-berry">
-          RiZen
+        <Link href="/" aria-label="라이즌푸드 홈">
+          <BrandLogo className="h-7" />
         </Link>
 
         {/* 데스크톱: 오른쪽 정렬 */}
