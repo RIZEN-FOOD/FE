@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
+import { WishlistButton } from "@/components/store/WishlistButton";
 import { ApiError } from "@/lib/api/client";
 import { useCart } from "@/store/cart";
 import type { ProductDetail, ProductOption } from "@/types/product";
@@ -144,9 +145,12 @@ export function AddToCart({ product }: { product: ProductDetail }) {
         <Button onClick={onBuyNow} variant="dark" className="w-full" disabled={busy}>
           바로 구매하기
         </Button>
-        <Button onClick={doAdd} variant="line" className="w-full" disabled={busy}>
-          {busy ? "담는 중…" : "장바구니 담기"}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={doAdd} variant="line" className="flex-1" disabled={busy}>
+            {busy ? "담는 중…" : "장바구니 담기"}
+          </Button>
+          <WishlistButton productId={product.id} variant="inline" />
+        </div>
       </div>
 
       {added && !error && (

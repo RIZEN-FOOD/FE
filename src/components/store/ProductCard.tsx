@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WishlistButton } from "@/components/store/WishlistButton";
 import type { ProductListItem } from "@/types/product";
 
 /**
@@ -30,6 +31,9 @@ export function ProductCard({ product }: { product: ProductListItem }) {
             품절
           </span>
         )}
+        <div className="absolute right-2.5 top-2.5">
+          <WishlistButton productId={product.id} />
+        </div>
       </div>
 
       <div className="px-4 py-4">

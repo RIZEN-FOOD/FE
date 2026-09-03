@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { api, ApiError } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/datetime";
+import { ClaimSection } from "@/components/order/ClaimSection";
 import { ORDER_STATUS_LABEL, type OrderView } from "@/types/order";
 
 /**
@@ -121,6 +122,9 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
           {order.deliveryMemo && <p className="text-ink-faint">메모: {order.deliveryMemo}</p>}
         </div>
       </div>
+
+      {/* 취소·반품·교환 */}
+      <ClaimSection orderNo={order.orderNo} status={order.status} />
 
       <div className="mt-8 flex gap-2">
         <Button href="/products" variant="line" className="flex-1">쇼핑 계속하기</Button>

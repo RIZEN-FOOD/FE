@@ -9,9 +9,10 @@ import { useMemberAuth } from "@/store/memberAuth";
 import { formatDateTime } from "@/lib/datetime";
 import { INQUIRY_STATUS_LABEL, type InquiryPage, type ReviewPage } from "@/types/member";
 import { ORDER_STATUS_LABEL, type OrderSummaryPage } from "@/types/order";
+import type { WishlistItem } from "@/types/wishlist";
 import { cn } from "@/lib/cn";
 
-type Tab = "orders" | "reviews" | "inquiries" | "account";
+type Tab = "orders" | "wishlist" | "reviews" | "inquiries" | "account";
 
 /**
  * 마이페이지. 내 후기 · 문의 내역 · 회원정보.
@@ -42,6 +43,7 @@ export function MyPageContent() {
 
   const tabs: { key: Tab; label: string }[] = [
     { key: "orders", label: "주문 내역" },
+    { key: "wishlist", label: "찜한 상품" },
     { key: "reviews", label: "내 후기" },
     { key: "inquiries", label: "문의 내역" },
     { key: "account", label: "회원정보" },
@@ -74,6 +76,7 @@ export function MyPageContent() {
 
         <div className="mt-8">
           {tab === "orders" && <MyOrders />}
+          {tab === "wishlist" && <MyWishlist />}
           {tab === "reviews" && <MyReviews />}
           {tab === "inquiries" && <MyInquiries />}
           {tab === "account" && <MyAccount onLogout={async () => { await logout(); router.replace("/"); }} />}
@@ -135,6 +138,81 @@ function MyOrders() {
             <p className="shrink-0 font-numeric text-sm font-bold text-ink">
               {o.totalAmount.toLocaleString("ko-KR")}원
             </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ── 찜한 상품 ── */
+function MyWishlist() {
+  const [items, setItems] = useState<WishlistItem[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      setItems(await api.get<WishlistItem[]>("/api/member/wishlist"));
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "찜 목록을 불러오지 못했습니다.");
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function remove(productId: number) {
+    try {
+      await api.delete(`/api/member/wishlist/${productId}`);
+      setItems((list) => (list ? list.filter((i) => i.productId !== productId) : list));
+    } catch (e) {
+      window.alert(e instanceof ApiError ? e.message : "해제에 실패했습니다.");
+    }
+  }
+
+  if (error) return <p className="font-kr text-sm text-clay-deep">{error}</p>;
+  if (!items) return <p className="font-kr text-sm text-ink-faint">불러오는 중…</p>;
+
+  if (items.length === 0) {
+    return <EmptyState message="찜한 상품이 없습니다." actionLabel="상품 보러 가기" actionHref="/products" />;
+  }
+
+  return (
+    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {items.map((w) => (
+        <li key={w.productId} className="rounded-[4px] border border-line bg-paper">
+          <Link href={`/products/${w.slug}`} className="block">
+            <div className="relative aspect-square overflow-hidden rounded-t-[4px] bg-clay-soft/40">
+              {w.thumbnailUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={w.thumbnailUrl} alt={w.name} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center font-en text-xs text-ink-faint">
+                  준비 중
+                </div>
+              )}
+              {w.soldOut && (
+                <span className="absolute left-2 top-2 rounded-full bg-ink/80 px-2 py-0.5 font-kr text-[11px] text-cream-warm">
+                  품절
+                </span>
+              )}
+            </div>
+          </Link>
+          <div className="px-3 py-3">
+            <Link href={`/products/${w.slug}`} className="block truncate font-kr text-sm text-ink hover:underline">
+              {w.name}
+            </Link>
+            <p className="mt-1 font-numeric text-sm font-bold text-ink">
+              {w.price.toLocaleString("ko-KR")}원
+            </p>
+            <button
+              type="button"
+              onClick={() => remove(w.productId)}
+              className="mt-2 font-kr text-xs text-ink-faint underline-offset-2 hover:text-clay-deep hover:underline"
+            >
+              찜 해제
+            </button>
           </div>
         </li>
       ))}

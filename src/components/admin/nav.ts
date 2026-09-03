@@ -13,6 +13,7 @@ export type NavItem = {
 export const adminNav: NavItem[] = [
   { href: "/admin", label: "대시보드", ready: true },
   { href: "/admin/orders", label: "주문 관리", ready: true },
+  { href: "/admin/claims", label: "취소·반품·교환", ready: true },
   { href: "/admin/products", label: "상품 관리", ready: true },
   { href: "/admin/banners", label: "배너 관리", ready: true },
   { href: "/admin/notice", label: "공지사항", ready: true },
