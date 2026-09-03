@@ -49,8 +49,8 @@ export default async function Home() {
   // 하나도 없으면 목록이 비고, 히어로가 제품 도형으로 대체된다.
   if (heroPhotos.length === 0) {
     const defaults: HeroPhoto[] = [
-      { src: "/assets/hero/hero-1-package.jpg", alt: "크림오브라이스 1kg 제품 패키지와 계량 스푼" },
-      { src: "/assets/hero/hero-2-serving.jpg", alt: "물에 풀어 그릇에 담고 견과와 바나나를 곁들인 크림오브라이스" },
+      { src: "/assets/hero/hero-a.jpg", alt: "크림오브라이스로 차린 한 그릇과 바나나·견과, 제품 패키지" },
+      { src: "/assets/hero/hero-b.jpg", alt: "딸기·블루베리를 곁들인 크림오브라이스 한 그릇과 제품 패키지" },
     ];
     heroPhotos.push(
       ...defaults.filter((p) => existsSync(join(process.cwd(), "public", p.src))),
