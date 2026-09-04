@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { BrandLogo } from "@/components/ui";
 import { storeNav } from "./storeNav";
@@ -16,6 +17,12 @@ import { MemberNavLink } from "./MemberNavLink";
  * ★ 패널은 "열려 있을 때만" DOM 에 올린다.
  *   fixed 로 화면 밖(translate-x-full)에 대기시키면 문서 폭이 늘어 모바일에
  *   가로 스크롤이 생긴다. 열 때 마운트하고, 닫는 전환이 끝나면 내린다.
+ *
+ * ★ 오버레이(배경+패널)는 createPortal 로 document.body 에 그린다.
+ *   헤더에 backdrop-blur(=backdrop-filter)가 걸려 있으면 그 헤더가 하위
+ *   position:fixed 요소의 "컨테이닝 블록"이 된다. 그러면 inset-y-0/right-0 이
+ *   뷰포트가 아니라 헤더 박스(높이 ~60px)를 기준으로 잡혀 패널이 헤더 높이만큼
+ *   잘린다. body 로 포탈해 헤더 밖으로 빼내면 항상 뷰포트 전체를 덮는다.
  *
  * 접근성
  *   - 햄버거에 aria-expanded / aria-controls
@@ -74,8 +81,9 @@ export function MobileNav() {
         </svg>
       </button>
 
-      {mounted && (
-        <>
+      {mounted &&
+        createPortal(
+          <>
           {/* 배경 */}
           <div
             aria-hidden="true"
@@ -146,8 +154,9 @@ export function MobileNav() {
               </Link>
             </nav>
           </div>
-        </>
-      )}
+        </>,
+          document.body,
+        )}
     </>
   );
 }
