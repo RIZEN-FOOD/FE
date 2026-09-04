@@ -15,7 +15,7 @@ export function FeaturedProducts({ products }: { products: ProductListItem[] }) 
       <Container>
         <SectionTag>Product</SectionTag>
         <div className="flex items-end justify-between">
-          <h2 id="featured-heading" className="font-kr text-3xl font-bold tracking-tight text-ink">
+          <h2 id="featured-heading" className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">
             상품
           </h2>
           <Link href="/products" className="font-kr text-sm text-ink-soft underline-offset-4 hover:underline">

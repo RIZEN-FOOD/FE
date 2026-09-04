@@ -17,8 +17,8 @@ export function SectionTag({ children, className, tone = "default" }: SectionTag
   return (
     <p
       className={cn(
-        "mb-4 flex items-center font-en text-[10.5px] font-extrabold uppercase tracking-[0.24em]",
-        "before:mr-2.5 before:h-0.5 before:w-5 before:bg-current before:content-['']",
+        "mb-4 flex items-center font-en text-[11px] font-medium uppercase tracking-[0.22em]",
+        "before:mr-2.5 before:h-px before:w-6 before:bg-current before:content-['']",
         tone === "onDark" ? "text-clay-soft" : "text-clay-deep",
         className,
       )}

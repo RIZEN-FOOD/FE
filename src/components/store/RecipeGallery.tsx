@@ -126,7 +126,7 @@ export function RecipeGallery() {
     <section ref={rootRef} className="bg-cream-warm py-24 md:py-32" aria-labelledby="recipe-heading">
       <Container>
         <SectionTag>Ways to Enjoy</SectionTag>
-        <h2 id="recipe-heading" className="font-kr text-3xl font-bold tracking-tight text-ink md:text-4xl">
+        <h2 id="recipe-heading" className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink md:text-4xl">
           이렇게 즐겨보세요
         </h2>
         <p className="mt-2 max-w-md font-kr text-sm text-ink-soft">
@@ -146,7 +146,7 @@ export function RecipeGallery() {
                   {idea.cookTime}
                 </span>
               </div>
-              <p className="mt-2 whitespace-pre-line font-kr text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-ink">
+              <p className="mt-2 whitespace-pre-line font-display text-2xl font-semibold leading-[1.2] tracking-[-0.01em] text-ink">
                 {idea.title}
               </p>
               <p className="mt-3 max-w-sm font-kr text-sm leading-relaxed text-ink-soft">{idea.body}</p>

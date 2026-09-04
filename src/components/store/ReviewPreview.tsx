@@ -20,7 +20,7 @@ export function ReviewPreview({ reviews }: { reviews: ReviewItem[] }) {
         <div className="flex items-end justify-between">
           <h2
             id="review-preview-heading"
-            className="font-kr text-3xl font-bold tracking-tight text-ink md:text-[30px]"
+            className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink md:text-[30px]"
           >
             먼저 경험한 분들의 이야기
           </h2>

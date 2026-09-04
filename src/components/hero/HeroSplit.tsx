@@ -111,7 +111,7 @@ export function HeroSplit({ photos }: { photos: HeroPhoto[] }) {
           </p>
           <h1
             id="hero-heading"
-            className="mt-4 font-kr text-[40px] font-bold leading-[1.1] tracking-[-0.035em] text-ink [word-break:keep-all] lg:text-[50px]"
+            className="mt-4 font-display text-[44px] font-semibold leading-[1.08] tracking-[-0.02em] text-ink [word-break:keep-all] lg:text-[60px]"
           >
             쌀,<br />그대로
           </h1>

@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Archivo, Noto_Sans_KR, Kaushan_Script } from "next/font/google";
+import { Archivo, Noto_Sans_KR, Noto_Serif_KR, Fraunces, Kaushan_Script } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import "./globals.css";
 
 /**
- * 서체 3종 (기획서 부록).
+ * 서체.
  * next/font 가 빌드 시 폰트를 셀프호스팅해서 외부 요청과 레이아웃 시프트를 없앤다.
+ *
+ * 본문은 산세리프(Noto Sans KR / Archivo), 제목은 세리프 디스플레이
+ * (본명조 Noto Serif KR + Fraunces)로 편집·프리미엄 식품 감성을 준다.
  */
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -18,6 +21,23 @@ const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
   subsets: ["latin"],
   weight: ["300", "400", "500", "700", "900"],
+  display: "swap",
+});
+
+/** 한글 제목용 세리프(본명조). */
+const notoSerifKr = Noto_Serif_KR({
+  variable: "--font-noto-serif-kr",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+/** 라틴 제목용 세리프. optical sizing 이 있어 큰 제목에서 표정이 산다. */
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -57,7 +77,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${archivo.variable} ${notoSansKr.variable} ${kaushan.variable} antialiased`}
+        className={`${archivo.variable} ${notoSansKr.variable} ${notoSerifKr.variable} ${fraunces.variable} ${kaushan.variable} antialiased`}
       >
         <SmoothScroll />
         {children}

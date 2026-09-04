@@ -95,7 +95,7 @@ export function InquiryForm() {
   return (
     <Container as="main" className="py-14">
       <SectionTag>Contact</SectionTag>
-      <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">문의하기</h1>
+      <h1 className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">문의하기</h1>
       <p className="mt-2 font-kr text-sm text-ink-soft">
         궁금한 점을 남겨주시면 이메일로 답변드립니다.
       </p>

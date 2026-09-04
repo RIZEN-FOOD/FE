@@ -18,7 +18,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
         <SectionTag>Where to Buy</SectionTag>
         <h2
           id="buy-heading"
-          className="font-kr text-3xl font-bold tracking-tight text-ink md:text-[30px]"
+          className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink md:text-[30px]"
         >
           구매 안내
         </h2>

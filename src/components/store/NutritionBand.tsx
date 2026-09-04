@@ -39,7 +39,7 @@ export function NutritionBand({
         <SectionTag tone="onDark">Nutrition</SectionTag>
         <h2
           id="nutrition-band-heading"
-          className="font-kr text-2xl font-bold tracking-tight text-cream-warm md:text-3xl"
+          className="font-display text-[1.7rem] font-semibold tracking-[-0.01em] text-cream-warm md:text-3xl"
         >
           {productName}의 영양성분
         </h2>
