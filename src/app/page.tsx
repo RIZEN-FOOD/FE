@@ -7,7 +7,6 @@ import { WhyRizen } from "@/components/store/WhyRizen";
 import { NutritionBand } from "@/components/store/NutritionBand";
 import { RecipeGallery } from "@/components/store/RecipeGallery";
 import { ReviewPreview } from "@/components/store/ReviewPreview";
-import { BuyChannels } from "@/components/store/BuyChannels";
 import { NoticePreview } from "@/components/store/NoticePreview";
 import { QuickMenu } from "@/components/store/QuickMenu";
 import { existsSync } from "node:fs";
@@ -23,7 +22,7 @@ import type { ReviewPage } from "@/types/member";
  *
  * 구성
  *   히어로 → 대표 제품 → 왜 다른가 → 영양성분(다크) → 활용법
- *   → 후기 → 구매 안내 → 공지 → 푸터
+ *   → 후기 → 공지 → 푸터
  *
  * 데이터가 없는 섹션은 각 컴포넌트가 알아서 그리지 않는다.
  * 빈 껍데기를 보여주는 대신 섹션 자체를 숨긴다.
@@ -84,7 +83,7 @@ export default async function Home() {
         />
         <RecipeGallery />
         <ReviewPreview reviews={reviews} />
-        <BuyChannels primary={primary} />
+        {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
         <NoticePreview notices={notices} />
       </main>
 
