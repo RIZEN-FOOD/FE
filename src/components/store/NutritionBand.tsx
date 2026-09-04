@@ -34,33 +34,48 @@ export function NutritionBand({
   if (stats.length === 0) return null;
 
   return (
-    <section className="bg-slate-deep py-20 md:py-24" aria-labelledby="nutrition-band-heading">
-      <Container>
+    <section
+      className="relative min-h-[560px] overflow-hidden md:min-h-[640px]"
+      aria-labelledby="nutrition-band-heading"
+    >
+      {/* 배경 사진 */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/sections/nutrition.jpg"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      {/* 하단으로 갈수록 짙어지는 오버레이 — 아래 글씨가 사진 위에서도 읽힌다 */}
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/45 to-ink/10" />
+
+      {/* 내용 · 하단 정렬 */}
+      <Container className="relative flex min-h-[560px] flex-col justify-end py-14 md:min-h-[640px] md:py-16">
         <SectionTag tone="onDark">Nutrition</SectionTag>
         <h2
           id="nutrition-band-heading"
-          className="font-display text-[1.7rem] font-semibold tracking-[-0.01em] text-cream-warm md:text-3xl"
+          className="font-display text-[1.7rem] font-semibold tracking-[-0.01em] text-cream-warm [text-shadow:0_2px_18px_rgba(0,0,0,0.45)] md:text-3xl"
         >
           {productName}의 영양성분
         </h2>
         {serving != null && (
-          <p className="mt-2 font-kr text-sm text-cream-warm/60">1회 제공량 {serving}g 기준</p>
+          <p className="mt-2 font-kr text-sm text-cream-warm/75">1회 제공량 {serving}g 기준</p>
         )}
 
-        <dl className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
+        <dl className="mt-9 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label}>
-              <dd className="font-numeric text-[40px] font-bold leading-none text-cream-warm">
+              <dd className="font-numeric text-[40px] font-bold leading-none text-cream-warm [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
                 {s.value!.toLocaleString("ko-KR")}
-                <span className="ml-0.5 text-xl font-medium text-cream-warm/70">{s.unit}</span>
+                <span className="ml-0.5 text-xl font-medium text-cream-warm/80">{s.unit}</span>
               </dd>
-              <dt className="mt-2 font-kr text-sm text-cream-warm/60">{s.label}</dt>
+              <dt className="mt-2 font-kr text-sm text-cream-warm/75">{s.label}</dt>
             </div>
           ))}
         </dl>
 
         {nutrition.sugarG != null || nutrition.sodiumMg != null ? (
-          <p className="mt-8 font-kr text-xs text-cream-warm/50">
+          <p className="mt-7 font-kr text-xs text-cream-warm/65">
             {nutrition.sugarG != null && `당류 ${nutrition.sugarG}g`}
             {nutrition.sugarG != null && nutrition.sodiumMg != null && " · "}
             {nutrition.sodiumMg != null && `나트륨 ${nutrition.sodiumMg}mg`}
