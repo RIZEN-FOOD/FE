@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container, SectionTag } from "@/components/ui";
+import { ReviewCard } from "@/components/store/ReviewCard";
 import type { ReviewItem } from "@/types/member";
 
 /**
@@ -32,29 +33,10 @@ export function ReviewPreview({ reviews }: { reviews: ReviewItem[] }) {
           </Link>
         </div>
 
-        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+        <ul className="mt-10 grid items-stretch gap-5 md:grid-cols-3">
           {reviews.map((r) => (
-            <li key={r.id} className="flex flex-col rounded-[4px] border border-line bg-paper p-6">
-              <div className="flex items-center gap-2">
-                <span className="font-numeric text-sm text-clay-deep">
-                  {"★".repeat(r.rating)}
-                  <span className="text-line">{"★".repeat(5 - r.rating)}</span>
-                </span>
-                {r.sponsored && (
-                  <span className="rounded-full bg-clay-soft px-2 py-0.5 font-kr text-[10px] text-clay-deep">
-                    광고
-                  </span>
-                )}
-              </div>
-
-              <p className="mt-4 line-clamp-4 flex-1 font-kr text-sm leading-relaxed text-ink">
-                {r.content}
-              </p>
-
-              <div className="mt-5 border-t border-line pt-4">
-                <p className="font-kr text-sm font-medium text-ink">{r.authorName}</p>
-                <p className="mt-0.5 font-kr text-xs text-ink-faint">{r.productName}</p>
-              </div>
+            <li key={r.id}>
+              <ReviewCard review={r} clamp />
             </li>
           ))}
         </ul>

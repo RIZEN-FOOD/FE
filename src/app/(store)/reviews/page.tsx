@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, SectionTag } from "@/components/ui";
+import { ReviewCard } from "@/components/store/ReviewCard";
 import { serverApi } from "@/lib/server/api";
-import { formatDateTime } from "@/lib/datetime";
 import type { ReviewPage } from "@/types/member";
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export default async function ReviewsPage({
   return (
     <Container as="main" className="py-14">
       <SectionTag>Reviews</SectionTag>
-      <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">후기</h1>
+      <h1 className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">후기</h1>
       <p className="mt-2 font-kr text-sm text-ink-soft">
         크림오브라이스를 드셔본 분들의 이야기입니다.
       </p>
@@ -46,51 +46,10 @@ export default async function ReviewsPage({
         </div>
       ) : (
         <>
-          <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((r) => (
-              <li key={r.id} className="flex flex-col rounded-[4px] border border-line bg-paper p-5">
-                <div className="flex items-center gap-2">
-                  <span className="font-numeric text-sm text-clay-deep">
-                    {"★".repeat(r.rating)}
-                    <span className="text-line">{"★".repeat(5 - r.rating)}</span>
-                  </span>
-                  {r.verifiedPurchase && (
-                    <span className="rounded-full bg-cream-warm px-2 py-0.5 font-kr text-[10px] text-ink-soft">
-                      구매 확인
-                    </span>
-                  )}
-                  {/* 협찬 후기는 광고 표시가 법적 의무다 */}
-                  {r.sponsored && (
-                    <span className="rounded-full bg-clay-soft px-2 py-0.5 font-kr text-[10px] text-clay-deep">
-                      광고
-                    </span>
-                  )}
-                </div>
-
-                <p className="mt-3 line-clamp-4 flex-1 whitespace-pre-line font-kr text-sm leading-relaxed text-ink">
-                  {r.content}
-                </p>
-
-                {r.imageUrls.length > 0 && (
-                  <div className="mt-3 flex gap-2">
-                    {r.imageUrls.slice(0, 3).map((url, i) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img key={i} src={url} alt="" className="h-16 w-16 rounded-[3px] object-cover" />
-                    ))}
-                  </div>
-                )}
-
-                <div className="mt-4 border-t border-line pt-3">
-                  <Link
-                    href={`/products/${r.productSlug}`}
-                    className="font-kr text-xs font-medium text-ink-soft underline-offset-4 hover:underline"
-                  >
-                    {r.productName}
-                  </Link>
-                  <p className="mt-1 font-kr text-xs text-ink-faint">
-                    {r.authorName} · {formatDateTime(r.createdAt)}
-                  </p>
-                </div>
+              <li key={r.id}>
+                <ReviewCard review={r} />
               </li>
             ))}
           </ul>

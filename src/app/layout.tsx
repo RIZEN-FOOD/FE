@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Archivo, Noto_Sans_KR, Noto_Serif_KR, Fraunces, Kaushan_Script } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+// 본문 한글: Pretendard(동적 서브셋 — 필요한 글자만 로드). Noto Sans 보다 부드럽다.
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 
 /**

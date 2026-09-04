@@ -45,7 +45,7 @@
    그래서 폰트만 @theme inline 으로 두어 유틸리티에 값이 그대로 박히게 한다. */
 @theme inline {
   --font-en: var(--font-archivo), system-ui, sans-serif;
-  --font-kr: var(--font-noto-sans-kr), system-ui, sans-serif;
+  --font-kr: "Pretendard Variable", var(--font-noto-sans-kr), system-ui, sans-serif;
   --font-script: var(--font-kaushan), cursive;
   /* 제목용 세리프 디스플레이 — 라틴(Fraunces) + 한글(본명조) */
   --font-display: var(--font-fraunces), var(--font-noto-serif-kr), var(--font-noto-sans-kr), serif;
@@ -77,7 +77,7 @@
   body {
     background-color: var(--color-cream);
     color: var(--color-ink);
-    font-family: var(--font-noto-sans-kr), system-ui, sans-serif;
+    font-family: "Pretendard Variable", var(--font-noto-sans-kr), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
