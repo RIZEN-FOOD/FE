@@ -73,3 +73,69 @@ export const INQUIRY_STATUS_LABEL: Record<string, string> = {
   ANSWERED: "답변 완료",
   CLOSED: "종료",
 };
+
+// ── 관리자: 회원 관리 ──────────────────────────────
+
+export type AdminMemberListItem = {
+  id: number;
+  email: string;
+  name: string;
+  provider: string; // LOCAL | kakao | naver
+  status: string; // ACTIVE | SUSPENDED | WITHDRAWN
+  locked: boolean;
+  phoneMasked: string | null;
+  lastLoginAt: string | null;
+  createdAt: string;
+};
+
+export type AdminMemberPage = {
+  items: AdminMemberListItem[];
+  page: number;
+  totalPages: number;
+  totalCount: number;
+};
+
+export type AdminMemberRecentOrder = {
+  orderNo: string;
+  status: string;
+  totalAmount: number;
+  orderedAt: string;
+};
+
+export type AdminMemberOrderSummary = {
+  count: number;
+  recent: AdminMemberRecentOrder | null;
+};
+
+export type AdminMemberDetail = {
+  id: number;
+  email: string;
+  name: string;
+  provider: string;
+  status: string;
+  locked: boolean;
+  lockedUntil: string | null;
+  failedCount: number;
+  phoneMasked: string | null;
+  hasPhone: boolean;
+  termsAgreedAt: string | null;
+  privacyAgreedAt: string | null;
+  marketingAgreedAt: string | null;
+  ageVerifiedAt: string | null;
+  lastLoginAt: string | null;
+  createdAt: string;
+  withdrawnAt: string | null;
+  orders: AdminMemberOrderSummary;
+};
+
+export const MEMBER_STATUS_LABEL: Record<string, string> = {
+  ACTIVE: "활성",
+  SUSPENDED: "정지",
+  WITHDRAWN: "탈퇴",
+};
+
+export const MEMBER_PROVIDER_LABEL: Record<string, string> = {
+  LOCAL: "이메일",
+  kakao: "카카오",
+  naver: "네이버",
+};
