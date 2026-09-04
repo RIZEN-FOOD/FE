@@ -72,7 +72,10 @@ export default async function Home() {
       <SiteHeader />
 
       <main>
-        <HeroSplit photos={heroPhotos} />
+        <HeroSplit
+          photos={heroPhotos}
+          primaryHref={primary ? `/products/${primary.slug}` : undefined}
+        />
         <FeaturedProducts products={products} />
         <WhyRizen />
         <NutritionBand

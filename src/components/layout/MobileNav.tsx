@@ -58,7 +58,7 @@ export function MobileNav() {
         aria-expanded={mounted && shown}
         aria-controls="mobile-nav-panel"
         onClick={open}
-        className="inline-flex items-center justify-center text-ink transition hover:text-clay-deep"
+        className="inline-flex items-center justify-center text-current transition hover:opacity-70"
       >
         <svg
           width="24"
