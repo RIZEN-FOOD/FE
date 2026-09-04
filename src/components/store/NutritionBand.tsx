@@ -44,7 +44,7 @@ export function NutritionBand({
         src="/assets/sections/nutrition.jpg"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full object-cover object-[center_72%]"
       />
       {/* 하단으로 갈수록 짙어지는 오버레이 — 아래 글씨가 사진 위에서도 읽힌다 */}
       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/45 to-ink/10" />

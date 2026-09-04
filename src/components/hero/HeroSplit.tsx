@@ -3,10 +3,11 @@ import Link from "next/link";
 import { ProductPlaceholder } from "./layers/ProductPlaceholder";
 
 /**
- * 히어로 — 풀블리드 이미지 + 좌하단 문구 (시네마틱).
+ * 히어로 — 풀블리드 이미지 + 중앙 대형 타이포 (포스터/에디토리얼).
  *
- * 사진이 화면을 가득 채우고, 문구·CTA 는 좌하단에 얹는다. 어두운 톤 오버레이로
- * 어떤 사진 위에서도 흰 글씨가 읽힌다. 여러 장이면 순수 CSS 크로스페이드로 순환한다.
+ * 사진이 화면을 가득 채우고, 초대형 제목·문구·CTA 를 화면 중앙에 앉힌다.
+ * 어두운 톤 오버레이로 어떤 사진 위에서도 흰 글씨가 읽힌다.
+ * 여러 장이면 순수 CSS 크로스페이드로 순환한다.
  *
  * 서버 컴포넌트라 문구가 처음 HTML 에 실린다 (SEO). JS 없이도 첫 사진이 보인다.
  *
@@ -138,42 +139,41 @@ export function HeroSplit({
         </>
       )}
 
-      {/* ── 톤 오버레이 (좌하단 문구 가독성) ── */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-ink/75 via-ink/30 to-ink/5" />
-      {/* 상단에도 옅게 — 투명 헤더 위 로고·메뉴가 읽히게 */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ink/35 to-transparent" />
+      {/* ── 톤 오버레이 ── */}
+      {/* 중앙 문구가 사진 어디에서도 읽히도록 전체를 고르게 덮는다. */}
+      <div className="pointer-events-none absolute inset-0 bg-ink/55" />
+      {/* 위·아래를 조금 더 짙게 — 헤더와 하단이 자연스럽게 가라앉는다 */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink/40 via-transparent to-ink/45" />
 
-      {/* ── 문구 · 좌하단 ── */}
-      <div className="absolute inset-x-0 bottom-0">
-        <div className="mx-auto w-full max-w-wrap px-7 pb-16 md:pb-20 lg:pb-24">
-          <div className="max-w-xl">
-            <p className="font-en text-[12px] font-semibold uppercase tracking-[0.22em] text-cream-warm/80">
-              Clean Carbohydrate
-            </p>
-            <h1
-              id="hero-heading"
-              className="mt-4 font-display text-[clamp(2.6rem,7vw,4.5rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-cream-warm [word-break:keep-all] [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]"
+      {/* ── 문구 · 화면 중앙 ── */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="mx-auto w-full max-w-3xl px-6 text-center">
+          <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em] text-cream-warm/80">
+            Clean Carbohydrate
+          </p>
+          <h1
+            id="hero-heading"
+            className="mt-4 font-display text-[clamp(3rem,10vw,6rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-cream-warm [word-break:keep-all] [text-shadow:0_2px_30px_rgba(0,0,0,0.4)]"
+          >
+            쌀, <em className="italic font-medium">그대로</em>
+          </h1>
+          <p className="mx-auto mt-6 max-w-md font-kr text-[15px] leading-[1.7] text-cream-warm/85 [word-break:keep-all] [text-shadow:0_1px_12px_rgba(0,0,0,0.45)]">
+            곱게 도정한 쌀 100%. 물이나 우유에 풀어 드세요.
+            운동 후 탄수화물 보충에 좋은 담백한 한 끼입니다.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href={buyHref}
+              className="rounded-[3px] bg-cream-warm px-8 py-3.5 font-kr text-sm font-bold text-ink transition hover:bg-paper"
             >
-              쌀, 그대로
-            </h1>
-            <p className="mt-5 max-w-md font-kr text-[15px] leading-[1.7] text-cream-warm/85 [word-break:keep-all] [text-shadow:0_1px_12px_rgba(0,0,0,0.4)]">
-              곱게 도정한 쌀 100%. 물이나 우유에 풀어 드세요.
-              운동 후 탄수화물 보충에 좋은 담백한 한 끼입니다.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href={buyHref}
-                className="rounded-[3px] bg-cream-warm px-7 py-3.5 font-kr text-sm font-bold text-ink transition hover:bg-paper"
-              >
-                구매하기
-              </Link>
-              <Link
-                href="/products"
-                className="rounded-[3px] border border-cream-warm/50 px-7 py-3.5 font-kr text-sm font-medium text-cream-warm transition hover:bg-cream-warm/10"
-              >
-                전체 상품 보기
-              </Link>
-            </div>
+              구매하기
+            </Link>
+            <Link
+              href="/products"
+              className="rounded-[3px] border border-cream-warm/50 px-8 py-3.5 font-kr text-sm font-medium text-cream-warm transition hover:bg-cream-warm/10"
+            >
+              전체 상품 보기
+            </Link>
           </div>
         </div>
       </div>
