@@ -176,6 +176,20 @@ export function HeroSplit({ photos }: { photos: HeroPhoto[] }) {
                 />
               </div>
             ))}
+
+            {/* 가독성용 좌상단 그라데이션 (코너 로고가 어떤 사진 위에서도 보이게) */}
+            <div className="pointer-events-none absolute left-0 top-0 z-[9] h-40 w-3/5 bg-gradient-to-br from-ink/35 to-transparent" />
+
+            {/* 브랜드 로고 — 사진 위 좌상단 코너에 작게 얹는다 (봉투 로고와 겹치지 않게) */}
+            <div className="pointer-events-none absolute left-5 top-5 z-10 lg:left-7 lg:top-7">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/brand/logo-white.png"
+                alt=""
+                aria-hidden="true"
+                className="h-8 w-auto drop-shadow-[0_4px_14px_rgba(0,0,0,0.45)] lg:h-10"
+              />
+            </div>
           </>
         )}
       </div>
