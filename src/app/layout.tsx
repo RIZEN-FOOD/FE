@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Noto_Sans_KR, Noto_Serif_KR, Fraunces, Kaushan_Script } from "next/font/google";
+import { Archivo, Noto_Sans_KR, Fraunces, Kaushan_Script } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 // 본문 한글: Pretendard(동적 서브셋 — 필요한 글자만 로드). Noto Sans 보다 부드럽다.
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
@@ -26,13 +26,6 @@ const notoSansKr = Noto_Sans_KR({
   display: "swap",
 });
 
-/** 한글 제목용 세리프(본명조). */
-const notoSerifKr = Noto_Serif_KR({
-  variable: "--font-noto-serif-kr",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
 
 /** 라틴 제목용 세리프. optical sizing 이 있어 큰 제목에서 표정이 산다. */
 const fraunces = Fraunces({
@@ -79,7 +72,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${archivo.variable} ${notoSansKr.variable} ${notoSerifKr.variable} ${fraunces.variable} ${kaushan.variable} antialiased`}
+        className={`${archivo.variable} ${notoSansKr.variable} ${fraunces.variable} ${kaushan.variable} antialiased`}
       >
         <SmoothScroll />
         {children}

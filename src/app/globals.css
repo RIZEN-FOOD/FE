@@ -47,9 +47,10 @@
   --font-en: var(--font-archivo), system-ui, sans-serif;
   --font-kr: "Pretendard Variable", var(--font-noto-sans-kr), system-ui, sans-serif;
   --font-script: var(--font-kaushan), cursive;
-  /* 제목용 세리프 디스플레이 — 라틴(Fraunces) + 한글(본명조) */
-  --font-display: var(--font-fraunces), var(--font-noto-serif-kr), var(--font-noto-sans-kr), serif;
-  --font-serif-kr: var(--font-noto-serif-kr), serif;
+  /* 제목: 라틴만 세리프(Fraunces)로 표정을 주고, 한글은 부드러운 Pretendard 로.
+     명조(세리프 한글)는 딱딱해서 제외한다. Fraunces 에 한글 글리프가 없어
+     한글은 자동으로 Pretendard 로 떨어진다. */
+  --font-display: var(--font-fraunces), "Pretendard Variable", var(--font-noto-sans-kr), sans-serif;
 }
 
 @layer base {
