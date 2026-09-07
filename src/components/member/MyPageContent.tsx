@@ -10,9 +10,10 @@ import { formatDateTime } from "@/lib/datetime";
 import { INQUIRY_STATUS_LABEL, type InquiryPage, type ReviewPage } from "@/types/member";
 import { ORDER_STATUS_LABEL, type OrderSummaryPage } from "@/types/order";
 import type { WishlistItem } from "@/types/wishlist";
+import { MyAddresses } from "./MyAddresses";
 import { cn } from "@/lib/cn";
 
-type Tab = "orders" | "wishlist" | "reviews" | "inquiries" | "account";
+type Tab = "orders" | "wishlist" | "addresses" | "reviews" | "inquiries" | "account";
 
 /**
  * 마이페이지. 내 후기 · 문의 내역 · 회원정보.
@@ -44,6 +45,7 @@ export function MyPageContent() {
   const tabs: { key: Tab; label: string }[] = [
     { key: "orders", label: "주문 내역" },
     { key: "wishlist", label: "찜한 상품" },
+    { key: "addresses", label: "배송지" },
     { key: "reviews", label: "내 후기" },
     { key: "inquiries", label: "문의 내역" },
     { key: "account", label: "회원정보" },
@@ -77,6 +79,7 @@ export function MyPageContent() {
         <div className="mt-8">
           {tab === "orders" && <MyOrders />}
           {tab === "wishlist" && <MyWishlist />}
+          {tab === "addresses" && <MyAddresses />}
           {tab === "reviews" && <MyReviews />}
           {tab === "inquiries" && <MyInquiries />}
           {tab === "account" && <MyAccount onLogout={async () => { await logout(); router.replace("/"); }} />}

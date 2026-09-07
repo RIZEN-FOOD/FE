@@ -139,3 +139,26 @@ export const MEMBER_PROVIDER_LABEL: Record<string, string> = {
   kakao: "카카오",
   naver: "네이버",
 };
+
+// ── 회원 배송지 주소록 ──────────────────────────────
+
+export type MemberAddress = {
+  id: number;
+  label: string | null;
+  receiverName: string;
+  receiverPhone: string | null;
+  zipcode: string;
+  addr1: string;
+  addr2: string | null;
+  isDefault: boolean;
+};
+
+export type MemberAddressSaveRequest = {
+  label?: string;
+  receiverName: string;
+  receiverPhone?: string;
+  zipcode: string;
+  addr1: string;
+  addr2?: string;
+  makeDefault: boolean;
+};
