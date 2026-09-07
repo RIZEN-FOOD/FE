@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui";
+import { PostcodeButton } from "@/components/checkout/PostcodeButton";
 import { api, ApiError } from "@/lib/api/client";
 import { useCart } from "@/store/cart";
 import type { CreateOrderRequest, OrderView } from "@/types/order";
@@ -130,14 +131,38 @@ export function CheckoutForm() {
                   placeholder="010-1234-5678" error={fieldErrors.receiverPhone} required />
               </>
             )}
-            <Field label="우편번호" value={form.zipcode} onChange={set("zipcode")}
-              error={fieldErrors.zipcode} required />
+            {/* 우편번호·주소는 검색으로 채운다. 손으로 고치지 않게 읽기전용. */}
             <div className="sm:col-span-2">
-              <Field label="주소" value={form.addr1} onChange={set("addr1")}
-                error={fieldErrors.addr1} required />
+              <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">
+                우편번호 <span className="text-clay-deep">*</span>
+              </span>
+              <div className="flex gap-2">
+                <input
+                  value={form.zipcode}
+                  readOnly
+                  placeholder="주소 검색을 눌러주세요"
+                  className={`h-[50px] w-40 rounded-[3px] border bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint ${
+                    fieldErrors.zipcode ? "border-clay-deep" : "border-line"
+                  }`}
+                />
+                <PostcodeButton
+                  onComplete={({ zonecode, address }) =>
+                    setForm((f) => ({ ...f, zipcode: zonecode, addr1: address }))
+                  }
+                  className="h-[50px] shrink-0 rounded-[3px] bg-ink px-5 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+                />
+              </div>
+              {fieldErrors.zipcode && (
+                <span className="mt-1 block font-kr text-xs text-clay-deep">{fieldErrors.zipcode}</span>
+              )}
             </div>
             <div className="sm:col-span-2">
-              <Field label="상세 주소 (선택)" value={form.addr2 ?? ""} onChange={set("addr2")} />
+              <Field label="주소" value={form.addr1} onChange={set("addr1")}
+                error={fieldErrors.addr1} placeholder="주소 검색으로 자동 입력됩니다" readOnly required />
+            </div>
+            <div className="sm:col-span-2">
+              <Field label="상세 주소 (선택)" value={form.addr2 ?? ""} onChange={set("addr2")}
+                placeholder="동·호수 등 나머지 주소" />
             </div>
             <div className="sm:col-span-2">
               <Field label="배송 메모 (선택)" value={form.deliveryMemo ?? ""}
