@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Noto_Sans_KR, Fraunces, Kaushan_Script } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { SITE_URL } from "@/lib/site";
 // 본문 한글: Pretendard(동적 서브셋 — 필요한 글자만 로드). Noto Sans 보다 부드럽다.
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
@@ -45,11 +46,17 @@ const kaushan = Kaushan_Script({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "라이즌푸드",
     template: "%s | 라이즌푸드",
   },
   description: "크림오브라이스 — 곱게 도정한 쌀로 만든 탄수화물 보충 식품.",
+  openGraph: {
+    type: "website",
+    siteName: "라이즌푸드",
+    locale: "ko_KR",
+  },
 };
 
 export default function RootLayout({
