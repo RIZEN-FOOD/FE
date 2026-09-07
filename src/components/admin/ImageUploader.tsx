@@ -3,6 +3,12 @@
 import { useRef, useState } from "react";
 import { uploadImage, ApiError } from "@/lib/api/client";
 
+// 서버(application.yml · ImageProperties)와 맞춘 값이다.
+// 서버가 최종 검증하지만, 여기서 미리 걸러 비개발자에게 바로 안내한다.
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_MB = 10;
+const FORMAT_HINT = "JPG · PNG · WebP · 최대 10MB";
+
 /**
  * 이미지 한 장 업로드.
  *
@@ -34,6 +40,20 @@ export function ImageUploader({
   async function onPick(file: File | undefined) {
     if (!file) return;
     setError(null);
+
+    // 서버로 보내기 전에 형식·용량을 먼저 확인한다.
+    // 큰 파일을 그냥 올렸다가 일반 오류로 떨어지지 않게 한다.
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      setError("JPG · PNG · WebP 형식만 올릴 수 있습니다.");
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+    if (file.size > MAX_MB * 1024 * 1024) {
+      setError(`파일이 너무 큽니다. ${MAX_MB}MB 이하로 올려 주세요.`);
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+
     setBusy(true);
     try {
       const res = await uploadImage(file, category);
@@ -54,6 +74,7 @@ export function ImageUploader({
         <span className="font-kr text-sm font-medium text-ink">{label}</span>
         <span className="font-kr text-xs text-ink-faint">{hint}</span>
       </div>
+      <p className="mt-0.5 font-kr text-xs text-ink-faint">{FORMAT_HINT}</p>
 
       <div className="mt-1.5 flex items-center gap-3">
         <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[3px] border border-line bg-cream-warm">

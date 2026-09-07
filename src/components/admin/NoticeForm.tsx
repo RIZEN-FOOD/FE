@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, ApiError } from "@/lib/api/client";
 import { RichTextEditor } from "./RichTextEditor";
+import { SafeHtml } from "./SafeHtml";
 import { toDateTimeLocal, fromDateTimeLocal } from "@/lib/datetime";
 import { NOTICE_CATEGORIES, type NoticeAdminItem, type NoticeSaveRequest } from "@/types/content";
 
@@ -36,6 +37,7 @@ export function NoticeForm({
   const [publishMode, setPublishMode] = useState<"now" | "schedule" | "draft">(initialMode);
   const [scheduledAt, setScheduledAt] = useState(toDateTimeLocal(initial?.publishedAt ?? null));
   const [visible, setVisible] = useState(initial?.visible ?? true);
+  const [showPreview, setShowPreview] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [banner, setBanner] = useState<string | null>(null);
@@ -123,10 +125,32 @@ export function NoticeForm({
         </div>
 
         <div>
-          <span className="font-kr text-sm font-medium text-ink">내용 <span className="text-clay-deep">*</span></span>
-          <div className="mt-1.5">
-            <RichTextEditor value={bodyHtml} onChange={setBodyHtml} />
+          <div className="flex items-center justify-between">
+            <span className="font-kr text-sm font-medium text-ink">내용 <span className="text-clay-deep">*</span></span>
+            <button
+              type="button"
+              onClick={() => setShowPreview((v) => !v)}
+              className="rounded-[2px] border border-line px-2.5 py-1 font-kr text-xs text-ink-soft transition hover:bg-clay-soft/40"
+            >
+              {showPreview ? "편집으로" : "미리보기"}
+            </button>
           </div>
+          {showPreview ? (
+            <div className="mt-1.5 rounded-[3px] border border-line bg-cream-warm px-4 py-4">
+              {bodyHtml.trim() ? (
+                <SafeHtml
+                  html={bodyHtml}
+                  className="prose prose-sm max-w-none font-kr text-sm text-ink [&_a]:text-clay-deep [&_a]:underline [&_h2]:mt-4 [&_h2]:font-bold [&_img]:max-w-full [&_li]:ml-4 [&_ul]:list-disc"
+                />
+              ) : (
+                <p className="font-kr text-sm text-ink-faint">내용을 입력하면 여기에 공개 화면처럼 보입니다.</p>
+              )}
+            </div>
+          ) : (
+            <div className="mt-1.5">
+              <RichTextEditor value={bodyHtml} onChange={setBodyHtml} />
+            </div>
+          )}
           {errors.bodyHtml && <p className="mt-1 font-kr text-xs text-clay-deep">{errors.bodyHtml}</p>}
         </div>
 

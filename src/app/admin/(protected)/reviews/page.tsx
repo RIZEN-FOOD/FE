@@ -71,7 +71,9 @@ export default function AdminReviewsPage() {
   }
 
   async function remove(id: number) {
-    if (!window.confirm("이 후기를 삭제합니다. 되돌릴 수 없습니다. 계속할까요?")) return;
+    // 삭제는 이중 확인 (상품·배너·공지와 동일. 기획서 §7).
+    if (!window.confirm("이 후기를 삭제합니다.\n되돌릴 수 없습니다. 계속할까요?")) return;
+    if (!window.confirm("정말 삭제하시겠어요? 이 작업은 취소할 수 없습니다.")) return;
     setBusyId(id);
     try {
       await api.delete(`/api/admin/reviews/${id}`);

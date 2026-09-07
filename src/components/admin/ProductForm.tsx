@@ -6,6 +6,7 @@ import { api, ApiError } from "@/lib/api/client";
 import type { ProductDetail, ProductSaveRequest } from "@/types/product";
 import { ImageUploader } from "./ImageUploader";
 import { RichTextEditor } from "./RichTextEditor";
+import { SafeHtml } from "./SafeHtml";
 import { cn } from "@/lib/cn";
 
 /**
@@ -554,9 +555,9 @@ function PreviewCard({ form }: { form: FormState }) {
       </div>
 
       {form.descriptionHtml && (
-        <div
+        <SafeHtml
+          html={form.descriptionHtml}
           className="mt-6 border-t border-line pt-4 font-kr text-sm leading-relaxed text-ink [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-bold [&_ul]:list-disc [&_ul]:pl-5"
-          dangerouslySetInnerHTML={{ __html: form.descriptionHtml }}
         />
       )}
 

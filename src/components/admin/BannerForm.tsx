@@ -48,6 +48,16 @@ export function BannerForm({
   async function save() {
     setErrors({});
     setBanner(null);
+
+    // 연결 링크는 http(s) 만 허용한다. javascript: 같은 스킴이 앵커 href 로
+    // 그대로 나가면 위험하다. 서버도 검증하지만 여기서 먼저 막는다.
+    const trimmedLink = linkUrl.trim();
+    if (trimmedLink && !/^https?:\/\//i.test(trimmedLink)) {
+      setErrors({ linkUrl: "http:// 또는 https:// 로 시작하는 주소만 넣을 수 있습니다." });
+      setBanner("연결 링크 형식을 확인해 주세요.");
+      return;
+    }
+
     setSaving(true);
     try {
       const body: BannerSaveRequest = {
@@ -55,7 +65,7 @@ export function BannerForm({
         imagePcKey: pcImage?.key ?? "",
         imageMobileKey: mobileImage?.key ?? "",
         altText: altText.trim(),
-        linkUrl: linkUrl.trim(),
+        linkUrl: trimmedLink,
         position,
         openNewTab,
         alwaysOn,
@@ -184,6 +194,51 @@ export function BannerForm({
           <input type="checkbox" checked={visible} onChange={(e) => setVisible(e.target.checked)} className="h-4 w-4 accent-ink" />
           <span className="font-kr text-sm text-ink">사이트에 노출</span>
         </label>
+      </div>
+
+      {/* 저장 전 미리보기 — 실제 배치처럼 PC·모바일 이미지를 확인한다 */}
+      <div className="mt-6 rounded-[4px] border border-line bg-paper px-5 py-5">
+        <p className="font-kr text-sm font-medium text-ink">미리보기</p>
+        {!pcImage && !mobileImage ? (
+          <p className="mt-2 font-kr text-sm text-ink-faint">
+            이미지를 올리면 실제 화면처럼 여기에 보입니다.
+          </p>
+        ) : (
+          <div className="mt-3 flex flex-col gap-5">
+            <div>
+              <p className="font-kr text-xs text-ink-faint">PC (넓은 화면)</p>
+              <div className="mt-1.5 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+                {pcImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={pcImage.url} alt={altText || "배너 미리보기"} className="w-full object-cover" />
+                ) : (
+                  <p className="px-4 py-10 text-center font-kr text-xs text-ink-faint">PC 이미지 없음</p>
+                )}
+              </div>
+            </div>
+            <div>
+              <p className="font-kr text-xs text-ink-faint">모바일 (좁은 화면)</p>
+              <div className="mx-auto mt-1.5 w-[280px] max-w-full overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+                {mobileImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={mobileImage.url} alt={altText || "배너 미리보기"} className="w-full object-cover" />
+                ) : (
+                  <p className="px-4 py-10 text-center font-kr text-xs text-ink-faint">모바일 이미지 없음</p>
+                )}
+              </div>
+            </div>
+            <p className="font-kr text-xs text-ink-faint">
+              {linkUrl.trim() ? (
+                <>
+                  누르면 이동: <span className="text-ink-soft">{linkUrl.trim()}</span>
+                  {openNewTab ? " (새 창)" : ""}
+                </>
+              ) : (
+                "연결 링크 없음 (누를 수 없는 배너)"
+              )}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
