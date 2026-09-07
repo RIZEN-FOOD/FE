@@ -52,6 +52,22 @@ const BOOLEAN_KEYS = new Set([
 // 여러 줄 입력이 필요한 키
 const TEXTAREA_KEYS = new Set(["main.hero_images"]);
 
+// 어떤 형식으로 넣어야 하는지 애매한 칸에 붙이는 안내 문구 (CLAUDE.md 규칙 4).
+const HINTS: Record<string, string> = {
+  "main.hero_images":
+    "메인 상단에 크게 도는 사진들입니다. 이미지 주소를 쉼표(,)로 구분해 여러 장 넣으면 순서대로 번갈아 보입니다. 비우면 기본 사진이 나옵니다.",
+  "order.cutoff_time": "24시간 형식으로 넣어주세요. 예: 14:00 (이 시각 이전 주문까지 당일 발송)",
+  "sns.instagram": "전체 주소로 넣어주세요. 예: https://instagram.com/…",
+  "sns.youtube": "전체 주소로 넣어주세요. 예: https://youtube.com/@…",
+  "sns.blog": "전체 주소로 넣어주세요. 예: https://blog.naver.com/…",
+  "company.biz_no": "숫자와 하이픈만. 예: 123-45-67890",
+  "company.mail_order_no": "예: 2026-서울강남-01234",
+};
+
+const PLACEHOLDERS: Record<string, string> = {
+  "main.hero_images": "/assets/hero/hero-a.jpg, /assets/hero/hero-b.jpg",
+};
+
 export default function AdminSettingsPage() {
   const [items, setItems] = useState<AdminSetting[]>([]);
   const [draft, setDraft] = useState<Record<string, string>>({});
@@ -136,6 +152,8 @@ export default function AdminSettingsPage() {
                 <SettingField
                   key={key}
                   label={descOf(key) || key}
+                  hint={HINTS[key]}
+                  placeholder={PLACEHOLDERS[key]}
                   value={draft[key] ?? ""}
                   onChange={(v) => setDraft((d) => ({ ...d, [key]: v }))}
                   boolean={BOOLEAN_KEYS.has(key)}
@@ -181,12 +199,16 @@ export default function AdminSettingsPage() {
 
 function SettingField({
   label,
+  hint,
+  placeholder,
   value,
   onChange,
   boolean: isBoolean,
   textarea,
 }: {
   label: string;
+  hint?: string;
+  placeholder?: string;
   value: string;
   onChange: (v: string) => void;
   boolean?: boolean;
@@ -214,19 +236,22 @@ function SettingField({
 
   return (
     <label className="block">
-      <span className="mb-1 block font-kr text-sm text-ink">{label}</span>
+      <span className="block font-kr text-sm text-ink">{label}</span>
+      {hint && <span className="mb-1 mt-0.5 block font-kr text-xs leading-relaxed text-ink-faint">{hint}</span>}
       {textarea ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={3}
-          className="w-full rounded-[3px] border border-line bg-cream-warm/40 px-3 py-2.5 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep"
+          placeholder={placeholder}
+          className="mt-1 w-full rounded-[3px] border border-line bg-cream-warm/40 px-3 py-2.5 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep"
         />
       ) : (
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-[46px] w-full rounded-[3px] border border-line bg-cream-warm/40 px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep"
+          placeholder={placeholder}
+          className="mt-1 h-[46px] w-full rounded-[3px] border border-line bg-cream-warm/40 px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep"
         />
       )}
     </label>

@@ -230,6 +230,16 @@ export function ProductForm({
   async function save() {
     setErrors({});
     setBanner(null);
+
+    // 할인가는 정가보다 낮아야 한다. 잘못 입력하면 저장 전에 막는다.
+    const priceNum = Number(form.price || 0);
+    const discountNum = form.discountPrice.trim() === "" ? null : Number(form.discountPrice);
+    if (discountNum != null && !Number.isNaN(discountNum) && discountNum >= priceNum) {
+      setErrors({ discountPrice: "할인가는 정가보다 낮아야 합니다." });
+      setBanner("할인가를 확인해 주세요.");
+      return;
+    }
+
     setSaving(true);
     try {
       const body = toRequest();
@@ -302,7 +312,7 @@ export function ProductForm({
               <Field label="가격 (원)" required error={errors.price}>
                 <Input value={form.price} onChange={(v) => set("price", v)} inputMode="numeric" />
               </Field>
-              <Field label="할인가 (원)" hint="없으면 비워둠">
+              <Field label="할인가 (원)" hint="없으면 비워둠. 정가보다 낮아야 합니다." error={errors.discountPrice}>
                 <Input value={form.discountPrice} onChange={(v) => set("discountPrice", v)} inputMode="numeric" />
               </Field>
             </div>
@@ -328,6 +338,19 @@ export function ProductForm({
               onChange={(key, url) => set("mainImage", { key, url, altText: "" })}
               onClear={() => set("mainImage", null)}
             />
+            {form.mainImage && (
+              <div className="mt-2">
+                <Field
+                  label="대표 이미지 설명 (대체 텍스트)"
+                  hint="화면을 못 보는 분에게 읽어줄 설명. 비우면 상품명으로 대체됩니다."
+                >
+                  <Input
+                    value={form.mainImage.altText}
+                    onChange={(v) => set("mainImage", { ...form.mainImage!, altText: v })}
+                  />
+                </Field>
+              </div>
+            )}
 
             <div className="mt-6">
               <p className="font-kr text-sm font-medium text-ink">추가 이미지</p>
@@ -335,16 +358,28 @@ export function ProductForm({
               <div className="mt-3 flex flex-col gap-3">
                 {form.detailImages.map((im, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="h-16 w-16 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
                       {im.url && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={im.url} alt="" className="h-full w-full object-cover" />
                       )}
                     </div>
+                    <div className="flex-1">
+                      <Input
+                        value={im.altText}
+                        onChange={(v) =>
+                          set(
+                            "detailImages",
+                            form.detailImages.map((x, idx) => (idx === i ? { ...x, altText: v } : x)),
+                          )
+                        }
+                        placeholder="이미지 설명 (대체 텍스트)"
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => set("detailImages", form.detailImages.filter((_, idx) => idx !== i))}
-                      className="font-kr text-xs text-ink-faint hover:text-clay-deep"
+                      className="shrink-0 font-kr text-xs text-ink-faint hover:text-clay-deep"
                     >
                       제거
                     </button>

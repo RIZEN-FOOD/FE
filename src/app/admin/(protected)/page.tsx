@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api/client";
 import type { AdminProductPage } from "@/types/product";
 
@@ -15,8 +15,10 @@ import type { AdminProductPage } from "@/types/product";
  */
 export default function DashboardPage() {
   const [stats, setStats] = useState<{ total: number; featured: number; soldOut: number } | null>(null);
+  const [failed, setFailed] = useState(false);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setFailed(false);
     // 관리자 목록 전체를 한 번 훑어 현황을 센다.
     api.get<AdminProductPage>("/api/admin/products?page=0&size=100").then((res) => {
       setStats({
@@ -24,13 +26,33 @@ export default function DashboardPage() {
         featured: res.items.filter((p) => p.featured).length,
         soldOut: res.items.filter((p) => p.soldOut).length,
       });
-    }).catch(() => setStats(null));
+    }).catch(() => {
+      setStats(null);
+      setFailed(true);
+    });
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <div>
       <h1 className="font-kr text-2xl font-bold text-ink">대시보드</h1>
       <p className="mt-1 font-kr text-sm text-ink-soft">사이트 현황을 한눈에 봅니다.</p>
+
+      {failed && (
+        <div className="mt-4 flex items-center justify-between gap-3 rounded-[3px] border border-clay-deep/30 bg-clay-soft/30 px-4 py-2.5">
+          <p className="font-kr text-sm text-clay-deep">현황을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+          <button
+            type="button"
+            onClick={load}
+            className="shrink-0 rounded-[3px] border border-line bg-paper px-3 py-1.5 font-kr text-xs text-ink transition hover:bg-clay-soft/40"
+          >
+            다시 시도
+          </button>
+        </div>
+      )}
 
       {/* 지금 데이터가 있는 지표 */}
       <section className="mt-8">
