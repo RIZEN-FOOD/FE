@@ -5,7 +5,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { Container, SectionTag } from "@/components/ui";
-import { BowlPlaceholder } from "@/components/hero/layers/BowlPlaceholder";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,9 +15,8 @@ gsap.registerPlugin(ScrollTrigger);
  * 바뀐다. 배경은 전체가 한 가지 톤으로 통일돼 있다 — 카드가 여러 개
  * 따로 떠 있는 느낌이 아니라, 하나의 그릇을 계속 들여다보는 느낌을 준다.
  *
- * ★ 지금은 실제 요리 사진이 없다. 그릇 도형 위에 재료 누끼를 얹어
- *   자리를 채워뒀다. 실제 조리 사진이 오면 idea.imageSrc 에 경로만
- *   넣으면 그 레이어가 통째로 사진으로 바뀐다.
+ * ★ 실제 조리(서빙) 사진 몇 장을 얹어 "이렇게 즐길 수 있다"를 보여준다.
+ *   사진은 public/assets/recipes 에 있고, 관리자가 늘리고 싶어지면 그때 DB 로 옮긴다.
  *
  * ★ 카피는 조리·계량·질감만 말한다. 효능·효과를 암시하지 않는다
  *   (식품표시광고법, CLAUDE.md 규칙 1).
@@ -36,44 +34,35 @@ type ServingIdea = {
   eyebrow: string;
   title: string;
   body: string;
-  toppings: string[]; // ingredients.ts 의 sprite 파일명 (확장자 제외)
   /** 조리 시간 안내. 조리 편의를 보여주는 사실 정보다. */
   cookTime: string;
-  imageSrc?: string; // 실제 사진이 오면 여기에 경로. 있으면 도형 대신 이 사진을 쓴다.
+  imageSrc: string; // 서빙(조리) 사진 경로
 };
 
 const ideas: ServingIdea[] = [
   {
-    id: "classic",
-    eyebrow: "The Classic",
-    title: "기본으로,\n깔끔하게",
-    body: "물이나 우유에 풀어 그대로 드세요. 가장 빠르고 담백한 방법입니다.",
-    cookTime: "조리 2분",
-    toppings: [],
-  },
-  {
-    id: "blueberry",
-    eyebrow: "Add Fruit",
-    title: "블루베리를\n더해서",
-    body: "새콤한 블루베리 한 줌을 올리면 산뜻한 맛이 더해집니다.",
-    cookTime: "조리 3분",
-    toppings: ["blueberry"],
+    id: "fruit",
+    eyebrow: "Fruit Bowl",
+    title: "과일을\n듬뿍 올려",
+    body: "딸기·블루베리·바나나에 땅콩버터 한 스푼. 색도 맛도 다채로운 한 그릇이 됩니다.",
+    cookTime: "조리 4분",
+    imageSrc: "/assets/recipes/recipe-1.jpg",
   },
   {
     id: "nuts",
-    eyebrow: "Add Crunch",
+    eyebrow: "Nutty",
     title: "견과류와\n함께",
-    body: "아몬드와 호두를 곁들이면 씹는 식감이 더해집니다.",
+    body: "아몬드와 호두를 곁들이면 고소하고 씹는 식감이 살아납니다.",
     cookTime: "조리 3분",
-    toppings: ["almond", "walnut"],
+    imageSrc: "/assets/recipes/recipe-2.jpg",
   },
   {
-    id: "banana",
-    eyebrow: "Add Fruit",
-    title: "바나나를\n슬라이스해서",
-    body: "바나나 슬라이스를 올려 부드러운 단맛을 더할 수 있습니다.",
-    cookTime: "조리 4분",
-    toppings: ["banana"],
+    id: "dessert",
+    eyebrow: "Dessert Style",
+    title: "컵에 담아\n디저트처럼",
+    body: "작은 컵에 담고 견과를 올리면 가벼운 디저트처럼 즐길 수 있습니다.",
+    cookTime: "조리 3분",
+    imageSrc: "/assets/recipes/recipe-3.jpg",
   },
 ];
 
@@ -200,43 +189,18 @@ export function RecipeGallery() {
 }
 
 /**
- * 그릇 위에 재료가 담긴 시각 영역.
- * 실사진이 있으면 그 사진을, 없으면 도형 위에 토핑 누끼를 얹어 자리를 채운다.
- * 배경은 항상 같은 톤(clay-soft/30)으로 통일한다 — 어떤 재료로 바뀌어도
- * 카드가 아니라 하나의 그릇을 계속 보는 느낌을 유지하기 위해서다.
+ * 서빙(조리) 사진 한 장. 배경 톤을 통일해(clay-soft/30) 사진이 바뀌어도
+ * 카드가 여러 개 뜬 느낌이 아니라 한 자리를 계속 보는 느낌을 준다.
  */
 function ToppingBowl({ idea, className }: { idea: ServingIdea; className?: string }) {
-  if (idea.imageSrc) {
-    return (
-      <div className={`overflow-hidden rounded-[4px] bg-clay-soft/30 ${className ?? ""}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={idea.imageSrc} alt={idea.title.replace("\n", " ")} className="h-full w-full object-cover" />
-      </div>
-    );
-  }
-
   return (
-    <div className={`relative overflow-hidden rounded-[4px] bg-clay-soft/30 ${className ?? ""}`}>
-      <div className="absolute inset-0 flex items-center justify-center p-10">
-        <BowlPlaceholder className="h-auto w-full max-w-[280px] drop-shadow-[0_20px_34px_rgba(90,60,40,0.22)]" />
-      </div>
-
-      {idea.toppings.map((kind, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={kind}
-          src={`/assets/ingredients/${kind}.png`}
-          alt=""
-          aria-hidden="true"
-          className="absolute drop-shadow-[0_4px_8px_rgba(40,30,20,0.3)]"
-          style={{
-            width: "22%",
-            left: `${42 + i * 16}%`,
-            top: `${46 + (i % 2) * 8}%`,
-            transform: `translate(-50%, -50%) rotate(${i % 2 === 0 ? -10 : 12}deg)`,
-          }}
-        />
-      ))}
+    <div className={`overflow-hidden rounded-[4px] bg-clay-soft/30 ${className ?? ""}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={idea.imageSrc}
+        alt={`크림오브라이스 ${idea.title.replace("\n", " ")}`}
+        className="h-full w-full object-cover"
+      />
     </div>
   );
 }
