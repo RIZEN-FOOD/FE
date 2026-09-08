@@ -44,7 +44,7 @@ export default async function ProductsPage({
   const totalPages = data?.totalPages ?? 0;
 
   return (
-    <Container as="main" className="py-14">
+    <Container className="py-14">
       <SectionTag>Products</SectionTag>
       <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">상품</h1>
 

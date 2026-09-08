@@ -18,9 +18,9 @@ export default function MyPage() {
   return (
     <div className="flex min-h-svh flex-col bg-cream">
       <StoreHeader />
-      <div className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         <MyPageContent />
-      </div>
+      </main>
       <StoreFooter />
     </div>
   );

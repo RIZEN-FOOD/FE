@@ -30,7 +30,7 @@ export default async function ReviewsPage({
   const totalPages = data?.totalPages ?? 0;
 
   return (
-    <Container as="main" className="py-14">
+    <Container className="py-14">
       <SectionTag>Reviews</SectionTag>
       <h1 className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">후기</h1>
       <p className="mt-2 font-kr text-sm text-ink-soft">

@@ -52,7 +52,7 @@ export function MyPageContent() {
   ];
 
   return (
-    <Container as="main" className="py-14">
+    <Container className="py-14">
       <SectionTag>My Page</SectionTag>
         <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">마이페이지</h1>
         <p className="mt-2 font-kr text-sm text-ink-soft">{me.name} 님, 안녕하세요.</p>

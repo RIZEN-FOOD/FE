@@ -65,7 +65,7 @@ export default async function ProductDetailPage({
   };
 
   return (
-    <Container as="main" className="py-10 pb-32 md:pb-16">
+    <Container className="py-10 pb-32 md:pb-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

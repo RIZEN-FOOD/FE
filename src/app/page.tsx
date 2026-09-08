@@ -70,7 +70,7 @@ export default async function Home() {
     <>
       <SiteHeader />
 
-      <main>
+      <main id="main-content" tabIndex={-1} className="outline-none">
         <HeroSplit
           photos={heroPhotos}
           primaryHref={primary ? `/products/${primary.slug}` : undefined}

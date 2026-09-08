@@ -199,6 +199,8 @@ function ToppingBowl({ idea, className }: { idea: ServingIdea; className?: strin
       <img
         src={idea.imageSrc}
         alt={`크림오브라이스 ${idea.title.replace("\n", " ")}`}
+        loading="lazy"
+        decoding="async"
         className="h-full w-full object-cover"
       />
     </div>

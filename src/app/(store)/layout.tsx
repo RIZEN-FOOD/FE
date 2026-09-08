@@ -10,7 +10,9 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-svh flex-col bg-cream">
       <StoreHeader />
-      <div className="flex-1">{children}</div>
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+        {children}
+      </main>
       <StoreFooter />
       <QuickMenu />
     </div>

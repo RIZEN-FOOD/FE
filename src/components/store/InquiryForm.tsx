@@ -65,7 +65,7 @@ export function InquiryForm() {
 
   if (done) {
     return (
-      <Container as="main" className="py-20">
+      <Container className="py-20">
         <div className="mx-auto max-w-md rounded-[4px] border border-line bg-paper px-6 py-14 text-center">
           <p className="font-kr text-lg font-bold text-ink">문의가 접수되었습니다</p>
           <p className="mt-2 font-kr text-sm text-ink-soft">
@@ -93,7 +93,7 @@ export function InquiryForm() {
   }
 
   return (
-    <Container as="main" className="py-14">
+    <Container className="py-14">
       <SectionTag>Contact</SectionTag>
       <h1 className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">문의하기</h1>
       <p className="mt-2 font-kr text-sm text-ink-soft">

@@ -37,7 +37,7 @@ export default async function NoticeDetailPage({
   if (!notice) notFound();
 
   return (
-    <Container as="main" className="py-14">
+    <Container className="py-14">
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center gap-2">
           <span className="rounded-[2px] bg-cream-warm px-2 py-0.5 font-kr text-xs text-ink-soft">

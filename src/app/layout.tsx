@@ -81,6 +81,13 @@ export default function RootLayout({
       <body
         className={`${archivo.variable} ${notoSansKr.variable} ${fraunces.variable} ${kaushan.variable} antialiased`}
       >
+        {/* 키보드 사용자를 위한 본문 바로가기. 평소엔 숨고 포커스되면 나타난다. */}
+        <a
+          href="#main-content"
+          className="sr-only rounded-[3px] bg-ink px-4 py-2 font-kr text-sm font-medium text-cream-warm focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100]"
+        >
+          본문 바로가기
+        </a>
         <SmoothScroll />
         {children}
       </body>
