@@ -13,6 +13,12 @@ import type { NextConfig } from "next";
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8080";
 
 const nextConfig: NextConfig = {
+  images: {
+    // 로컬 정적 이미지(영양·레시피 등)를 AVIF/WebP 반응형으로 자동 최적화한다.
+    // 제품 이미지는 BE 파이프라인이 이미 webp 다중 사이즈로 서빙하므로 next/image
+    // 로 다시 최적화하지 않는다(원격 호스트/CDN 설정 의존을 피한다).
+    formats: ["image/avif", "image/webp"],
+  },
   async rewrites() {
     return [
       { source: "/api/:path*", destination: `${API_ORIGIN}/api/:path*` },

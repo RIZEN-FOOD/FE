@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import Image from "next/image";
+
 import { Container, SectionTag } from "@/components/ui";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -194,14 +196,13 @@ export function RecipeGallery() {
  */
 function ToppingBowl({ idea, className }: { idea: ServingIdea; className?: string }) {
   return (
-    <div className={`overflow-hidden rounded-[4px] bg-clay-soft/30 ${className ?? ""}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+    <div className={`relative overflow-hidden rounded-[4px] bg-clay-soft/30 ${className ?? ""}`}>
+      <Image
         src={idea.imageSrc}
         alt={`크림오브라이스 ${idea.title.replace("\n", " ")}`}
-        loading="lazy"
-        decoding="async"
-        className="h-full w-full object-cover"
+        fill
+        sizes="(min-width: 768px) 40vw, 100vw"
+        className="object-cover"
       />
     </div>
   );

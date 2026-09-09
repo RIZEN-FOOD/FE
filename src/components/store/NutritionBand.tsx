@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Container, SectionTag } from "@/components/ui";
 import type { Nutrition } from "@/types/product";
 
@@ -38,15 +40,14 @@ export function NutritionBand({
       className="relative min-h-[560px] overflow-hidden md:min-h-[640px]"
       aria-labelledby="nutrition-band-heading"
     >
-      {/* 배경 사진 */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      {/* 배경 사진 — next/image 로 AVIF/WebP 반응형 최적화 */}
+      <Image
         src="/assets/sections/nutrition.jpg"
         alt=""
         aria-hidden="true"
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover object-[center_72%]"
+        fill
+        sizes="100vw"
+        className="object-cover object-[center_72%]"
       />
       {/* 하단으로 갈수록 짙어지는 오버레이 — 아래 글씨가 사진 위에서도 읽힌다 */}
       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/45 to-ink/10" />
