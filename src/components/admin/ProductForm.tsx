@@ -40,6 +40,8 @@ type FormState = {
   detailImages: ImageSlot[];
   heroColor: string;
   heroImage: ImageSlot | null;
+  heroAccent1: ImageSlot | null;
+  heroAccent2: ImageSlot | null;
   nutrition: {
     servingSizeG: string;
     kcal: string;
@@ -78,6 +80,8 @@ const EMPTY: FormState = {
   detailImages: [],
   heroColor: "",
   heroImage: null,
+  heroAccent1: null,
+  heroAccent2: null,
   nutrition: { servingSizeG: "", kcal: "", carbG: "", proteinG: "", fatG: "", sugarG: "", sodiumMg: "" },
   ingredients: [],
   label: { foodType: "", shelfLife: "", storageMethod: "", manufacturer: "", seller: "", customerService: "" },
@@ -109,6 +113,8 @@ function fromDetail(d: ProductDetail): FormState {
     detailImages: details.map((i) => ({ key: i.baseKey, url: i.url, altText: i.altText ?? "" })),
     heroColor: d.heroColor ?? "",
     heroImage: d.heroImageKey ? { key: d.heroImageKey, url: d.heroImageUrl ?? "", altText: "" } : null,
+    heroAccent1: d.heroAccent1Key ? { key: d.heroAccent1Key, url: d.heroAccent1Url ?? "", altText: "" } : null,
+    heroAccent2: d.heroAccent2Key ? { key: d.heroAccent2Key, url: d.heroAccent2Url ?? "", altText: "" } : null,
     nutrition: {
       servingSizeG: num(d.nutrition?.servingSizeG ?? null),
       kcal: num(d.nutrition?.kcal ?? null),
@@ -198,6 +204,8 @@ export function ProductForm({
       thumbnailKey: form.mainImage?.key ?? null,
       heroColor: form.heroColor.trim() || null,
       heroImageKey: form.heroImage?.key ?? null,
+      heroAccent1Key: form.heroAccent1?.key ?? null,
+      heroAccent2Key: form.heroAccent2?.key ?? null,
       featured: form.featured,
       visible: form.visible,
       images,
@@ -449,6 +457,29 @@ export function ProductForm({
               <p className="mt-1.5 font-kr text-xs text-ink-faint">
                 비우면 대표 이미지가 대신 쓰입니다. 배경색 위에 자연스럽게 띄우려면 투명배경 이미지를 올려 주세요.
               </p>
+            </div>
+
+            <div className="mt-6 border-t border-line pt-5">
+              <p className="font-kr text-sm font-medium text-ink">떠다니는 장식 (선택, 최대 2개)</p>
+              <p className="font-kr text-xs text-ink-faint">
+                제품 옆에 은은히 떠다니는 재료 이미지입니다(예: 쌀·브라우니·피넛버터). 투명배경 PNG 권장.
+              </p>
+              <div className="mt-3 grid gap-5 sm:grid-cols-2">
+                <ImageUploader
+                  label="장식 1"
+                  hint="투명배경 PNG"
+                  previewUrl={form.heroAccent1?.url ?? null}
+                  onChange={(key, url) => set("heroAccent1", { key, url, altText: "" })}
+                  onClear={() => set("heroAccent1", null)}
+                />
+                <ImageUploader
+                  label="장식 2"
+                  hint="투명배경 PNG"
+                  previewUrl={form.heroAccent2?.url ?? null}
+                  onChange={(key, url) => set("heroAccent2", { key, url, altText: "" })}
+                  onClear={() => set("heroAccent2", null)}
+                />
+              </div>
             </div>
           </Section>
 

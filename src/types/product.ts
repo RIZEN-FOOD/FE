@@ -80,6 +80,10 @@ export type ProductDetail = {
   heroColor: string | null;
   heroImageKey: string | null;
   heroImageUrl: string | null;
+  heroAccent1Key: string | null;
+  heroAccent1Url: string | null;
+  heroAccent2Key: string | null;
+  heroAccent2Url: string | null;
   price: number;
   discountPrice: number | null;
   effectivePrice: number;
@@ -134,6 +138,8 @@ export type ProductSaveRequest = {
   thumbnailKey?: string | null;
   heroColor?: string | null;
   heroImageKey?: string | null;
+  heroAccent1Key?: string | null;
+  heroAccent2Key?: string | null;
   featured: boolean;
   visible: boolean;
   images?: { imageKey: string; altText?: string | null; type: string; sortOrder: number }[];
@@ -153,4 +159,5 @@ export type HeroSlide = {
   soldOut: boolean;
   heroColor: string | null;   // #RRGGBB, 없으면 프론트 기본색
   heroImageUrl: string | null; // 누끼 이미지(없으면 대표 이미지 폴백)
+  accentImageUrls: string[];   // 떠다니는 장식(재료) 이미지들
 };

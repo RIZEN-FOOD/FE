@@ -89,6 +89,18 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       aria-label="대표 상품"
       style={{ backgroundColor: bg, transition: "background-color 600ms ease" }}
     >
+      {/* 장식이 은은하게 떠다니는 애니메이션 (모션 최소화 설정이면 정지) */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+@keyframes rz-float-a { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-14px) rotate(-4deg)} }
+@keyframes rz-float-b { 0%,100%{transform:translateY(0) rotate(6deg)} 50%{transform:translateY(16px) rotate(6deg)} }
+@media (prefers-reduced-motion: no-preference){
+  .rz-accent-a{animation:rz-float-a 6s ease-in-out infinite}
+  .rz-accent-b{animation:rz-float-b 7s ease-in-out infinite}
+}`,
+        }}
+      />
       {/* 위·아래 살짝 어둡게 — 투명 헤더와 하단 도트가 배경색과 무관하게 읽힌다 */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-28"
@@ -112,8 +124,24 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         onPointerLeave={endDrag}
       >
         {slides.map((s) => (
-          <div key={s.id} className="flex min-h-svh w-full shrink-0 items-center">
-            <div className="mx-auto grid w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,44%)_1fr] md:px-12 md:py-0">
+          <div key={s.id} className="relative flex min-h-svh w-full shrink-0 items-center">
+            {/* 떠다니는 재료 장식 (데스크톱). 제품 뒤 레이어라 문구를 가리지 않는다. */}
+            {(s.accentImageUrls ?? []).slice(0, 2).map((url, ai) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={ai}
+                src={url}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className={`pointer-events-none absolute z-0 hidden select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] md:block ${
+                  ai === 0
+                    ? "right-[13%] top-[15%] w-[13%] rz-accent-a"
+                    : "bottom-[16%] left-[14%] w-[15%] rz-accent-b"
+                }`}
+              />
+            ))}
+            <div className="relative z-10 mx-auto grid w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,44%)_1fr] md:px-12 md:py-0">
               {/* 문구 (좌) */}
               <div className="order-2 text-center md:order-1 md:text-left">
                 <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em]" style={{ color: subInk }}>
