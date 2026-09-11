@@ -177,8 +177,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           draggable={false}
           className={`pointer-events-none absolute z-[8] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${
             ai === 0
-              ? "right-[4%] top-[9%] w-[26%] md:right-[12%] md:top-[15%] md:w-[12%] rz-accent-a"
-              : "left-[4%] top-[26%] w-[28%] md:bottom-[16%] md:left-[13%] md:top-auto md:w-[14%] rz-accent-b"
+              ? // 오른쪽 상단: 메인 봉투 우상단 테두리에 겹치되, 높게 둬서 양옆 미리보기(가운데 높이)와 안 겹침
+                "right-[6%] top-[3%] w-[30%] md:right-[28%] md:top-[6%] md:w-[17%] rz-accent-a"
+              : // 왼쪽 하단: 메인 봉투 좌하단 테두리에 겹치되, 낮게 둬서 미리보기와 안 겹침
+                "bottom-[2%] left-[6%] w-[32%] md:bottom-[6%] md:left-[28%] md:top-auto md:w-[18%] rz-accent-b"
           }`}
         />
       ))}
