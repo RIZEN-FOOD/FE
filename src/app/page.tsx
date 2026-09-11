@@ -1,5 +1,6 @@
 import { HeroSplit, type HeroPhoto } from "@/components/hero/HeroSplit";
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
+import { HERO_BANNER } from "@/components/hero/heroBannerData";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -29,13 +30,37 @@ import type { ReviewPage } from "@/types/member";
  * 빈 껍데기를 보여주는 대신 섹션 자체를 숨긴다.
  */
 export default async function Home() {
-  const [featured, heroSlides, noticeData, reviewData, settings] = await Promise.all([
+  const [featured, heroPrices, noticeData, reviewData, settings] = await Promise.all([
     serverApi.getJson<ProductListItem[]>("/api/products/featured"),
+    // 히어로 배너 사진·색·문구는 하드코딩(heroBannerData)이고, 여기서는 가격·품절만 쓴다.
     serverApi.getJson<HeroSlide[]>("/api/products/hero"),
     serverApi.getJson<NoticePublicPage>("/api/notices?page=0&size=3"),
     serverApi.getJson<ReviewPage>("/api/reviews?page=0&size=3"),
     serverApi.getJson<Record<string, string>>("/api/settings"),
   ]);
+
+  // slug 별 실시간 가격·품절 (없으면 가격 숨김)
+  const priceBySlug = new Map((heroPrices ?? []).map((s) => [s.slug, s]));
+
+  // 하드코딩 배너에서, 관리자 토글(hero.show_*)로 켜진 슬라이드만 노출.
+  // 가격·품절만 서버 값으로 얹는다. 이미지·색·문구는 코드에 고정.
+  const heroSlides: HeroSlide[] = HERO_BANNER
+    .filter((b) => (settings?.[b.visibilityKey] ?? String(b.defaultVisible)) === "true")
+    .map((b, i) => {
+      const live = priceBySlug.get(b.slug);
+      return {
+        id: i,
+        slug: b.slug,
+        nameKo: b.nameKo,
+        subtitle: b.subtitle,
+        effectivePrice: live?.effectivePrice ?? 0,
+        soldOut: live?.soldOut ?? false,
+        heroColor: b.heroColor,
+        heroImageUrl: b.heroImageUrl,
+        heroBackdropUrl: b.heroBackdropUrl,
+        accentImageUrls: b.accentImageUrls,
+      };
+    });
 
   // 히어로 사진. 관리자가 site_setting 의 main.hero_images 로 바꾼다.
   // 쉼표로 나눈 목록이고, 비어 있으면 저장소에 넣어둔 기본 사진을 쓴다.

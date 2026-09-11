@@ -415,87 +415,8 @@ export function ProductForm({
             </div>
           </Section>
 
-          {/* ── 메인 히어로 ── */}
-          <Section
-            title="메인 히어로"
-            note="메인 상단 배너에 이 상품이 뜰 때의 배경색과 이미지입니다. 메인 노출(featured)일 때 사용됩니다."
-          >
-            <div>
-              <span className="font-kr text-sm font-medium text-ink">배경색</span>
-              <p className="font-kr text-xs text-ink-faint">
-                메인에서 이 상품 뒤에 깔리는 색입니다. 비우면 기본 색으로 보입니다.
-              </p>
-              <div className="mt-1.5 flex items-center gap-3">
-                <input
-                  type="color"
-                  value={/^#[0-9a-fA-F]{6}$/.test(form.heroColor) ? form.heroColor : "#c98a63"}
-                  onChange={(e) => set("heroColor", e.target.value)}
-                  className="h-10 w-14 cursor-pointer rounded-[3px] border border-line bg-paper"
-                  aria-label="배경색 선택"
-                />
-                <Input
-                  value={form.heroColor}
-                  onChange={(v) => set("heroColor", v)}
-                  placeholder="#C98A63"
-                />
-                {form.heroColor && (
-                  <button
-                    type="button"
-                    onClick={() => set("heroColor", "")}
-                    className="shrink-0 font-kr text-xs text-ink-faint hover:text-clay-deep"
-                  >
-                    지움
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-5">
-              <ImageUploader
-                label="히어로 이미지 (누끼 권장)"
-                hint="권장: 배경이 투명한 PNG (제품만 오려낸 이미지)"
-                previewUrl={form.heroImage?.url ?? null}
-                onChange={(key, url) => set("heroImage", { key, url, altText: "" })}
-                onClear={() => set("heroImage", null)}
-              />
-              <p className="mt-1.5 font-kr text-xs text-ink-faint">
-                비우면 대표 이미지가 대신 쓰입니다. 배경색 위에 자연스럽게 띄우려면 투명배경 이미지를 올려 주세요.
-              </p>
-            </div>
-
-            <div className="mt-6 border-t border-line pt-5">
-              <ImageUploader
-                label="배경 스플래시 (제품 뒤, 선택)"
-                hint="투명 PNG. 제품 뒤에 세로로 겹쳐집니다(예: 브라우니·피넛 스플래시)."
-                previewUrl={form.heroBackdrop?.url ?? null}
-                onChange={(key, url) => set("heroBackdrop", { key, url, altText: "" })}
-                onClear={() => set("heroBackdrop", null)}
-              />
-            </div>
-
-            <div className="mt-6 border-t border-line pt-5">
-              <p className="font-kr text-sm font-medium text-ink">떠다니는 장식 (선택, 최대 2개)</p>
-              <p className="font-kr text-xs text-ink-faint">
-                제품 옆에 은은히 떠다니는 재료 이미지입니다(예: 쌀·브라우니·피넛버터). 투명배경 PNG 권장.
-              </p>
-              <div className="mt-3 grid gap-5 sm:grid-cols-2">
-                <ImageUploader
-                  label="장식 1"
-                  hint="투명배경 PNG"
-                  previewUrl={form.heroAccent1?.url ?? null}
-                  onChange={(key, url) => set("heroAccent1", { key, url, altText: "" })}
-                  onClear={() => set("heroAccent1", null)}
-                />
-                <ImageUploader
-                  label="장식 2"
-                  hint="투명배경 PNG"
-                  previewUrl={form.heroAccent2?.url ?? null}
-                  onChange={(key, url) => set("heroAccent2", { key, url, altText: "" })}
-                  onClear={() => set("heroAccent2", null)}
-                />
-              </div>
-            </div>
-          </Section>
+          {/* 메인 히어로 배너는 디자인 고정(코드에 내장)이라 여기서 편집하지 않는다.
+              노출 여부만 [사이트 설정 > 메인 배너 노출]에서 켜고 끈다. */}
 
           {/* ── 영양성분 ── */}
           <Section title="영양성분" note="법정 표시사항입니다. 확인된 값만 입력하세요.">

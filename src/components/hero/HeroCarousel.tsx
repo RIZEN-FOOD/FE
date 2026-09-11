@@ -175,12 +175,12 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           alt=""
           aria-hidden="true"
           draggable={false}
-          className={`pointer-events-none absolute z-[8] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${
+          className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${
             ai === 0
-              ? // 오른쪽 상단: 메인 봉투 우상단 테두리에 겹치되, 높게 둬서 양옆 미리보기(가운데 높이)와 안 겹침
-                "right-[6%] top-[3%] w-[30%] md:right-[28%] md:top-[6%] md:w-[17%] rz-accent-a"
-              : // 왼쪽 하단: 메인 봉투 좌하단 테두리에 겹치되, 낮게 둬서 미리보기와 안 겹침
-                "bottom-[2%] left-[6%] w-[32%] md:bottom-[6%] md:left-[28%] md:top-auto md:w-[18%] rz-accent-b"
+              ? // 오른쪽 상단: 메인 봉투 우상단 어깨에 겹치되, 미리보기(가운데 높이) 위쪽에 둔다
+                "right-[3%] top-[4%] w-[34%] md:right-[15%] md:top-[20%] md:w-[19%] rz-accent-a"
+              : // 왼쪽 하단: 메인 봉투 좌하단에 겹치되, 미리보기 아래쪽에 둔다
+                "bottom-[3%] left-[5%] w-[36%] md:bottom-[14%] md:left-[22%] md:top-auto md:w-[21%] rz-accent-b"
           }`}
         />
       ))}
@@ -255,11 +255,18 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         {/* 가격 + CTA (내용만 크로스페이드) */}
         <div key={`p-${active}`} className="relative z-10 order-3 flex flex-col items-center gap-4 md:items-end" style={{ animation: "rz-textin 600ms ease both" }}>
           <div className="text-center md:text-right">
-            <p className="font-numeric text-[clamp(1.8rem,4vw,2.4rem)] font-bold" style={{ color: ink }}>
-              {current.effectivePrice.toLocaleString("ko-KR")}
-              <span className="ml-1 font-kr text-base font-medium">원</span>
-            </p>
-            {current.soldOut && (
+            {current.effectivePrice > 0 ? (
+              <p className="font-numeric text-[clamp(1.8rem,4vw,2.4rem)] font-bold" style={{ color: ink }}>
+                {current.effectivePrice.toLocaleString("ko-KR")}
+                <span className="ml-1 font-kr text-base font-medium">원</span>
+              </p>
+            ) : (
+              // 가격을 아직 못 읽었거나(백엔드 미연결) 예정 제품이면 가격 대신 안내
+              <p className="font-kr text-lg font-semibold" style={{ color: ink }}>
+                {current.soldOut ? "곧 만나요" : "출시 예정"}
+              </p>
+            )}
+            {current.effectivePrice > 0 && current.soldOut && (
               <p className="mt-1 font-kr text-sm font-medium" style={{ color: subInk }}>
                 곧 만나요
               </p>

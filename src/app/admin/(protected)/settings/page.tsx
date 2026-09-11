@@ -48,11 +48,17 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     note: "로그인·회원가입 화면 왼쪽(모바일에선 전체 배경)에 깔리는 사진입니다. 비우면 기본 사진이 나옵니다.",
     keys: ["auth.login_image", "auth.signup_image"],
   },
+  {
+    title: "메인 배너 노출",
+    note: "메인 상단 배너에 어떤 제품을 보여줄지 켜고 끕니다. 사진·문구·색은 고정되어 있어 여기서 바꿀 수 없고, 노출 여부만 조절합니다. 곧 출시할 제품은 오픈 시점에 켜세요.",
+    keys: ["hero.show_rice", "hero.show_brownie", "hero.show_peanut"],
+  },
 ];
 
 // 참/거짓으로 다루는 키 (토글로 보여준다)
 const BOOLEAN_KEYS = new Set([
   "order.guest_enabled", "main.section.review", "main.section.notice",
+  "hero.show_rice", "hero.show_brownie", "hero.show_peanut",
 ]);
 // 여러 줄 입력이 필요한 키
 const TEXTAREA_KEYS = new Set(["main.hero_images"]);
