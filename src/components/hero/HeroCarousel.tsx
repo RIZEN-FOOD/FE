@@ -177,11 +177,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           draggable={false}
           className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${
             ai === 0
-              ? // 오른쪽 상단: 봉투 우상단 어깨에 겹침 (모바일=제품 영역 상단, 데스크톱=어깨)
-                "right-[3%] top-[2%] w-[30%] md:right-[15%] md:top-[20%] md:w-[19%] rz-accent-a"
-              : // 왼쪽 하단: 봉투 좌하단에 겹침. 모바일은 제품 영역(상단 스테이지) 안에 둬서
-                // 아래쪽 문구·구매 버튼을 가리지 않게 한다.
-                "left-[3%] top-[30%] w-[32%] md:left-[22%] md:top-auto md:bottom-[14%] md:w-[21%] rz-accent-b"
+              ? // 오른쪽 상단: 봉투 우상단 어깨에 겹침
+                "right-[5%] top-[5%] w-[29%] md:right-[15%] md:top-[20%] md:w-[19%] rz-accent-a"
+              : // 왼쪽 하단: 봉투 좌하단에 겹침. 모바일은 제품 하단쯤(문구·구매 버튼 위)까지 내린다.
+                "left-[4%] top-[47%] w-[30%] md:left-[22%] md:top-auto md:bottom-[14%] md:w-[21%] rz-accent-b"
           }`}
         />
       ))}
