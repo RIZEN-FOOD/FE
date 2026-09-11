@@ -255,20 +255,30 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         {/* 가격 + CTA (내용만 크로스페이드) */}
         <div key={`p-${active}`} className="relative z-10 order-3 flex flex-col items-center gap-4 md:items-end" style={{ animation: "rz-textin 600ms ease both" }}>
           <div className="text-center md:text-right">
-            {current.effectivePrice > 0 ? (
+            {current.soldOut ? (
+              // 품절: 재고 0 또는 관리자가 품절 처리한 경우
+              <>
+                <span
+                  className="inline-block rounded-full px-4 py-1.5 font-kr text-lg font-bold"
+                  style={{ backgroundColor: ink, color: bg }}
+                >
+                  품절
+                </span>
+                {current.effectivePrice > 0 && (
+                  <p className="mt-2 font-numeric text-lg font-semibold line-through" style={{ color: subInk }}>
+                    {current.effectivePrice.toLocaleString("ko-KR")}원
+                  </p>
+                )}
+              </>
+            ) : current.effectivePrice > 0 ? (
               <p className="font-numeric text-[clamp(1.8rem,4vw,2.4rem)] font-bold" style={{ color: ink }}>
                 {current.effectivePrice.toLocaleString("ko-KR")}
                 <span className="ml-1 font-kr text-base font-medium">원</span>
               </p>
             ) : (
-              // 가격을 아직 못 읽었거나(백엔드 미연결) 예정 제품이면 가격 대신 안내
+              // 가격을 아직 못 읽었거나(백엔드 미연결) 예정 제품
               <p className="font-kr text-lg font-semibold" style={{ color: ink }}>
-                {current.soldOut ? "곧 만나요" : "출시 예정"}
-              </p>
-            )}
-            {current.effectivePrice > 0 && current.soldOut && (
-              <p className="mt-1 font-kr text-sm font-medium" style={{ color: subInk }}>
-                곧 만나요
+                출시 예정
               </p>
             )}
           </div>

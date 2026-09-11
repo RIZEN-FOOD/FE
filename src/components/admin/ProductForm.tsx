@@ -34,6 +34,7 @@ type FormState = {
   weightG: string;
   servings: string;
   stock: string;
+  soldOut: boolean;
   featured: boolean;
   visible: boolean;
   mainImage: ImageSlot | null;
@@ -75,6 +76,7 @@ const EMPTY: FormState = {
   weightG: "",
   servings: "",
   stock: "0",
+  soldOut: false,
   featured: false,
   visible: false,
   mainImage: null,
@@ -105,6 +107,7 @@ function fromDetail(d: ProductDetail): FormState {
     weightG: num(d.weightG),
     servings: num(d.servings),
     stock: String(d.stock),
+    soldOut: d.soldOutManual,
     featured: d.featured,
     visible: d.visible,
     mainImage: main
@@ -210,6 +213,7 @@ export function ProductForm({
       heroBackdropKey: form.heroBackdrop?.key ?? null,
       heroAccent1Key: form.heroAccent1?.key ?? null,
       heroAccent2Key: form.heroAccent2?.key ?? null,
+      soldOut: form.soldOut,
       featured: form.featured,
       visible: form.visible,
       images,
@@ -486,8 +490,8 @@ export function ProductForm({
             </div>
           </Section>
 
-          {/* ── 노출 설정 ── */}
-          <Section title="노출 설정">
+          {/* ── 노출 · 판매 상태 ── */}
+          <Section title="노출 · 판매 상태">
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={form.visible} onChange={(e) => set("visible", e.target.checked)} className="h-4 w-4 accent-ink" />
               <span className="font-kr text-sm text-ink">사이트에 노출</span>
@@ -496,6 +500,13 @@ export function ProductForm({
               <input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} className="h-4 w-4 accent-ink" />
               <span className="font-kr text-sm text-ink">메인 페이지에 노출 (★)</span>
             </label>
+            <label className="mt-2 flex items-center gap-2">
+              <input type="checkbox" checked={form.soldOut} onChange={(e) => set("soldOut", e.target.checked)} className="h-4 w-4 accent-ink" />
+              <span className="font-kr text-sm text-ink">품절로 표시</span>
+            </label>
+            <p className="mt-1 font-kr text-xs text-ink-faint">
+              켜면 재고와 상관없이 화면에 &lsquo;품절&rsquo;로 나오고 구매가 막힙니다. 재고가 0이어도 자동으로 품절 처리됩니다.
+            </p>
           </Section>
         </div>
       )}

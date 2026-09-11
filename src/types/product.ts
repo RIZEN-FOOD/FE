@@ -93,6 +93,8 @@ export type ProductDetail = {
   servings: number | null;
   stock: number;
   soldOut: boolean;
+  /** 관리자 수동 품절 플래그(재고와 무관). 폼 토글용. */
+  soldOutManual: boolean;
   featured: boolean;
   visible: boolean;
   images: ProductImage[];
@@ -143,6 +145,7 @@ export type ProductSaveRequest = {
   heroAccent1Key?: string | null;
   heroAccent2Key?: string | null;
   heroBackdropKey?: string | null;
+  soldOut: boolean;
   featured: boolean;
   visible: boolean;
   images?: { imageKey: string; altText?: string | null; type: string; sortOrder: number }[];
