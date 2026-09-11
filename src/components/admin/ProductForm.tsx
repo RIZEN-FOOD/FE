@@ -40,6 +40,7 @@ type FormState = {
   detailImages: ImageSlot[];
   heroColor: string;
   heroImage: ImageSlot | null;
+  heroBackdrop: ImageSlot | null;
   heroAccent1: ImageSlot | null;
   heroAccent2: ImageSlot | null;
   nutrition: {
@@ -80,6 +81,7 @@ const EMPTY: FormState = {
   detailImages: [],
   heroColor: "",
   heroImage: null,
+  heroBackdrop: null,
   heroAccent1: null,
   heroAccent2: null,
   nutrition: { servingSizeG: "", kcal: "", carbG: "", proteinG: "", fatG: "", sugarG: "", sodiumMg: "" },
@@ -113,6 +115,7 @@ function fromDetail(d: ProductDetail): FormState {
     detailImages: details.map((i) => ({ key: i.baseKey, url: i.url, altText: i.altText ?? "" })),
     heroColor: d.heroColor ?? "",
     heroImage: d.heroImageKey ? { key: d.heroImageKey, url: d.heroImageUrl ?? "", altText: "" } : null,
+    heroBackdrop: d.heroBackdropKey ? { key: d.heroBackdropKey, url: d.heroBackdropUrl ?? "", altText: "" } : null,
     heroAccent1: d.heroAccent1Key ? { key: d.heroAccent1Key, url: d.heroAccent1Url ?? "", altText: "" } : null,
     heroAccent2: d.heroAccent2Key ? { key: d.heroAccent2Key, url: d.heroAccent2Url ?? "", altText: "" } : null,
     nutrition: {
@@ -204,6 +207,7 @@ export function ProductForm({
       thumbnailKey: form.mainImage?.key ?? null,
       heroColor: form.heroColor.trim() || null,
       heroImageKey: form.heroImage?.key ?? null,
+      heroBackdropKey: form.heroBackdrop?.key ?? null,
       heroAccent1Key: form.heroAccent1?.key ?? null,
       heroAccent2Key: form.heroAccent2?.key ?? null,
       featured: form.featured,
@@ -457,6 +461,16 @@ export function ProductForm({
               <p className="mt-1.5 font-kr text-xs text-ink-faint">
                 비우면 대표 이미지가 대신 쓰입니다. 배경색 위에 자연스럽게 띄우려면 투명배경 이미지를 올려 주세요.
               </p>
+            </div>
+
+            <div className="mt-6 border-t border-line pt-5">
+              <ImageUploader
+                label="배경 스플래시 (제품 뒤, 선택)"
+                hint="투명 PNG. 제품 뒤에 세로로 겹쳐집니다(예: 초코·피넛 스플래시)."
+                previewUrl={form.heroBackdrop?.url ?? null}
+                onChange={(key, url) => set("heroBackdrop", { key, url, altText: "" })}
+                onClear={() => set("heroBackdrop", null)}
+              />
             </div>
 
             <div className="mt-6 border-t border-line pt-5">

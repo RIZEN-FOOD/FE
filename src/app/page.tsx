@@ -94,7 +94,7 @@ export default async function Home() {
       </main>
 
       <StoreFooter />
-      <QuickMenu />
+      <QuickMenu revealAfterHero />
 
       {primary && (
         <>

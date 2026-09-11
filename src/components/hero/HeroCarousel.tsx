@@ -95,17 +95,22 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const ink = light ? "#221E1C" : "#FAF7F1";
   const subInk = light ? "rgba(34,30,28,0.72)" : "rgba(250,247,241,0.82)";
 
-  // 각 제품 이미지의 상태(중앙/코너/숨김)를 active 기준으로 정한다.
+  // active 기준 상대 위치(-…0…+, 순환)를 구한다.
+  function offsetOf(i: number): number {
+    let d = ((i - active) % count + count) % count;
+    if (d > count / 2) d -= count;
+    return d;
+  }
+
+  // 제품을 가로로 나열한다. 중앙이 활성, 다음/이전은 양옆에 살짝 걸친다.
+  // 넘어가면 좌우로 슬라이드된다.
   function stageStyle(i: number): React.CSSProperties {
-    if (i === active) {
-      return { transform: "translate(0,0) scale(1)", opacity: 1, zIndex: 20 };
-    }
-    if (i === nextIdx(active)) {
-      // 다음 제품 — 우하단 코너에 미리보기로 대기
-      return { transform: "translate(34%, 32%) scale(0.34)", opacity: 0.72, zIndex: 10 };
-    }
-    // 그 외(방금 빠진 것 포함) — 코너에서 사라진다
-    return { transform: "translate(34%, 32%) scale(0.34)", opacity: 0, zIndex: 5 };
+    const d = offsetOf(i);
+    if (d === 0) return { transform: "translate(0,0) scale(1)", opacity: 1, zIndex: 20 };
+    if (d === 1) return { transform: "translate(42%, 4%) scale(0.4)", opacity: 0.4, zIndex: 6 };
+    if (d === -1) return { transform: "translate(-42%, 4%) scale(0.4)", opacity: 0.4, zIndex: 6 };
+    // 더 먼 것들은 바깥에서 대기(숨김)
+    return { transform: `translate(${d > 0 ? 70 : -70}%, 4%) scale(0.34)`, opacity: 0, zIndex: 4 };
   }
 
   return (
@@ -169,7 +174,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       {/* 콘텐츠: 문구(좌) · 제품 스테이지(중앙) · 가격(우) — 레이아웃 고정 */}
       <div className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_1fr] md:px-12 md:py-0">
         {/* 문구 (내용만 크로스페이드) */}
-        <div key={`t-${active}`} className="order-2 text-center md:order-1 md:text-left" style={{ animation: "rz-textin 600ms ease both" }}>
+        <div key={`t-${active}`} className="relative z-10 order-2 mt-8 text-center md:order-1 md:mt-0 md:text-left" style={{ animation: "rz-textin 600ms ease both" }}>
           <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em]" style={{ color: subInk }}>
             Cream of Rice
           </p>
@@ -183,25 +188,39 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           )}
         </div>
 
-        {/* 제품 스테이지 — 모든 제품을 겹쳐두고 중앙/코너로 이동 */}
-        <div className="relative order-1 h-[42svh] md:order-2 md:h-[64svh]">
+        {/* 제품 스테이지 — 제품들을 대각선으로 나열하고, 넘어가면 대각선을 따라 이동 */}
+        <div className="relative z-0 order-1 h-[46svh] md:order-2 md:h-[70svh]">
+          {/* 중앙 제품 뒤 세로 배경(스플래시) */}
+          {current.heroBackdropUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={`bd-${active}`}
+              src={current.heroBackdropUrl}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="pointer-events-none absolute left-1/2 top-1/2 z-[2] h-[120%] w-auto -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-80"
+              style={{ animation: "rz-textin 800ms ease both" }}
+            />
+          )}
           {slides.map((s, i) => {
-            const isPeek = i === nextIdx(active) && count > 1;
+            const d = offsetOf(i);
+            const isPreview = d !== 0 && count > 1;
             const img = s.heroImageUrl;
             return (
               <button
                 key={s.id}
                 type="button"
-                aria-label={isPeek ? `다음 상품: ${s.nameKo}` : s.nameKo}
-                tabIndex={isPeek ? 0 : -1}
-                onClick={() => isPeek && setActive(i)}
-                className="absolute inset-0 flex items-end justify-center focus:outline-none"
+                aria-label={isPreview ? `${s.nameKo} 보기` : s.nameKo}
+                tabIndex={isPreview ? 0 : -1}
+                onClick={() => isPreview && setActive(i)}
+                className="absolute inset-0 flex items-center justify-center focus:outline-none"
                 style={{
                   ...stageStyle(i),
-                  transformOrigin: "bottom right",
+                  transformOrigin: "center center",
                   transition: "transform 850ms cubic-bezier(0.22,1,0.36,1), opacity 800ms ease",
-                  cursor: isPeek ? "pointer" : "default",
-                  pointerEvents: i === active || isPeek ? "auto" : "none",
+                  cursor: isPreview ? "pointer" : "default",
+                  pointerEvents: d === 0 || isPreview ? "auto" : "none",
                 }}
               >
                 {img ? (
@@ -220,7 +239,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         </div>
 
         {/* 가격 + CTA (내용만 크로스페이드) */}
-        <div key={`p-${active}`} className="order-3 flex flex-col items-center gap-4 md:items-end" style={{ animation: "rz-textin 600ms ease both" }}>
+        <div key={`p-${active}`} className="relative z-10 order-3 flex flex-col items-center gap-4 md:items-end" style={{ animation: "rz-textin 600ms ease both" }}>
           <div className="text-center md:text-right">
             <p className="font-numeric text-[clamp(1.8rem,4vw,2.4rem)] font-bold" style={{ color: ink }}>
               {current.effectivePrice.toLocaleString("ko-KR")}

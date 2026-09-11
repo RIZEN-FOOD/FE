@@ -1,18 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
- * 문의 퀵메뉴. 화면 우하단에 항상 떠 있는 플로팅 버튼.
+ * 문의 퀵메뉴. 화면 우하단에 떠 있는 플로팅 버튼.
  *
  * 누르면 위로 메뉴가 펼쳐진다 — 문의하기, 자주 묻는 질문, 맨 위로.
- * 어느 페이지에서든 바로 문의로 갈 수 있게 한다.
  *
- * ⚠️ 문의 폼(Phase 5)이 생기기 전까지 "문의하기"는 자리만 잡아둔다.
+ * ★ revealAfterHero: 메인처럼 첫 화면이 히어로일 때, 히어로를 지나야 나타난다.
+ *   (히어로 위에 버튼이 겹치지 않게)
  */
-export function QuickMenu() {
+export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [shown, setShown] = useState(!revealAfterHero);
+
+  useEffect(() => {
+    if (!revealAfterHero) return;
+    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.85);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [revealAfterHero]);
 
   const items: { label: string; href?: string; onClick?: () => void }[] = [
     { label: "문의하기", href: "/inquiry" },
@@ -22,6 +31,8 @@ export function QuickMenu() {
       onClick: () => window.scrollTo({ top: 0, behavior: "smooth" }),
     },
   ];
+
+  if (!shown) return null;
 
   return (
     <div className="fixed bottom-24 right-5 z-50 flex flex-col items-end gap-2 md:bottom-8">
