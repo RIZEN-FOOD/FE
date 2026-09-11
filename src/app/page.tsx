@@ -43,7 +43,8 @@ export default async function Home() {
   const priceBySlug = new Map((heroPrices ?? []).map((s) => [s.slug, s]));
 
   // 하드코딩 배너에서, 관리자 토글(hero.show_*)로 켜진 슬라이드만 노출.
-  // 가격·품절만 서버 값으로 얹는다. 이미지·색·문구는 코드에 고정.
+  // ★ 이미지·색만 코드에 고정한다. 이름·문구·가격·품절은 관리자가 상품에서
+  //   수정한 값(서버)을 얹는다. 서버 값이 없으면(백엔드 미연결 등) 코드 기본값으로 폴백.
   const heroSlides: HeroSlide[] = HERO_BANNER
     .filter((b) => (settings?.[b.visibilityKey] ?? String(b.defaultVisible)) === "true")
     .map((b, i) => {
@@ -51,10 +52,11 @@ export default async function Home() {
       return {
         id: i,
         slug: b.slug,
-        nameKo: b.nameKo,
-        subtitle: b.subtitle,
+        nameKo: live?.nameKo ?? b.nameKo,
+        subtitle: live?.subtitle ?? b.subtitle,
         effectivePrice: live?.effectivePrice ?? 0,
         soldOut: live?.soldOut ?? false,
+        // 이미지·색은 하드코딩 고정(관리자에서 건드리지 않음)
         heroColor: b.heroColor,
         heroImageUrl: b.heroImageUrl,
         heroBackdropUrl: b.heroBackdropUrl,
