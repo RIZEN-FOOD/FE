@@ -31,6 +31,27 @@ function isLight(hex: string): boolean {
   return lum > 0.62;
 }
 
+/** hex 를 amt(-1~1)만큼 밝게(+)/어둡게(-) 섞는다. */
+function shade(hex: string, amt: number): string {
+  const m = /^#?([0-9a-f]{6})/i.exec(hex);
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  const mix = (c: number) => {
+    const t = amt < 0 ? 0 : 255;
+    const p = Math.abs(amt);
+    return Math.round(c + (t - c) * p);
+  };
+  const r = mix((n >> 16) & 255);
+  const g = mix((n >> 8) & 255);
+  const b = mix(n & 255);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/** 제품 색으로 만든 부드러운 배경 그라데이션. */
+function heroGradient(hex: string): string {
+  return `radial-gradient(120% 90% at 50% 25%, ${shade(hex, 0.16)} 0%, ${hex} 45%, ${shade(hex, -0.22)} 100%)`;
+}
+
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [active, setActive] = useState(0);
   const [dragPx, setDragPx] = useState(0);
@@ -87,8 +108,23 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       className="relative min-h-svh w-full overflow-hidden"
       aria-roledescription="carousel"
       aria-label="대표 상품"
-      style={{ backgroundColor: bg, transition: "background-color 600ms ease" }}
+      style={{ backgroundColor: shade(bg, -0.1) }}
     >
+      {/* 배경 색 그라데이션 — 슬라이드마다 한 겹씩 깔고, 활성 슬라이드만 서서히 나타난다.
+          단순히 색을 바꾸는 게 아니라 다음 색이 천천히 배어 나오듯 크로스페이드된다. */}
+      {slides.map((s, i) => (
+        <div
+          key={s.id}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: heroGradient(s.heroColor || DEFAULT_COLOR),
+            opacity: i === active ? 1 : 0,
+            transition: "opacity 1100ms ease",
+          }}
+        />
+      ))}
+
       {/* 장식이 은은하게 떠다니는 애니메이션 (모션 최소화 설정이면 정지) */}
       <style
         dangerouslySetInnerHTML={{
@@ -113,7 +149,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         className="flex h-full min-h-svh"
         style={{
           transform: `translateX(calc(${-active * 100}% + ${dragPx}px))`,
-          transition: dragging.current ? "none" : "transform 500ms cubic-bezier(0.22,1,0.36,1)",
+          transition: dragging.current ? "none" : "transform 700ms cubic-bezier(0.22,1,0.36,1)",
           touchAction: "pan-y",
           userSelect: dragging.current ? "none" : "auto",
         }}
