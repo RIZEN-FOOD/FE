@@ -49,6 +49,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [paused, setPaused] = useState(false);
   const dragging = useRef(false);
   const startX = useRef(0);
+  const startY = useRef(0);
 
   const nextIdx = (i: number) => (i + 1) % count;
   const prevIdx = (i: number) => (i - 1 + count) % count;
@@ -77,14 +78,20 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
     if (count <= 1) return;
     dragging.current = true;
     startX.current = e.clientX;
+    startY.current = e.clientY;
     setPaused(true);
   }
   function onPointerUp(e: React.PointerEvent) {
     if (!dragging.current) return;
     dragging.current = false;
     const dx = e.clientX - startX.current;
+    const dy = e.clientY - startY.current;
+    // 세로 우세 제스처(스크롤 의도)는 무시하고, 가로 스와이프만 전환으로 본다.
+    if (Math.abs(dx) < Math.abs(dy)) { setPaused(false); return; }
     if (dx <= -SWIPE_THRESHOLD) setActive(nextIdx);
     else if (dx >= SWIPE_THRESHOLD) setActive(prevIdx);
+    // 터치엔 mouseleave 가 없으니 스와이프 후 자동 전환을 다시 켠다.
+    setPaused(false);
   }
 
   if (count === 0) return null;
@@ -118,12 +125,15 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       className="relative min-h-svh w-full overflow-hidden"
       aria-roledescription="carousel"
       aria-label="대표 상품"
-      style={{ backgroundColor: shade(bg, -0.1) }}
+      style={{ backgroundColor: shade(bg, -0.1), touchAction: "pan-y" }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
-      onPointerCancel={() => (dragging.current = false)}
+      onPointerCancel={() => {
+        dragging.current = false;
+        setPaused(false);
+      }}
     >
       {/* 배경 색 그라데이션 — 활성 제품 색이 천천히 배어 나오듯 크로스페이드 */}
       {slides.map((s, i) => (
