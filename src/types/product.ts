@@ -77,6 +77,9 @@ export type ProductDetail = {
   subtitle: string | null;
   descriptionHtml: string | null;
   thumbnailKey: string | null;
+  heroColor: string | null;
+  heroImageKey: string | null;
+  heroImageUrl: string | null;
   price: number;
   discountPrice: number | null;
   effectivePrice: number;
@@ -129,6 +132,8 @@ export type ProductSaveRequest = {
   servings?: number | null;
   stock?: number | null;
   thumbnailKey?: string | null;
+  heroColor?: string | null;
+  heroImageKey?: string | null;
   featured: boolean;
   visible: boolean;
   images?: { imageKey: string; altText?: string | null; type: string; sortOrder: number }[];
@@ -136,4 +141,16 @@ export type ProductSaveRequest = {
   nutrition?: Nutrition & { servingSizeG: number } | null;
   label?: ProductLabel | null;
   purchaseLinks?: { channel: string; url: string; label?: string | null; sortOrder: number; visible: boolean }[];
+};
+
+// ── 메인 히어로 캐러셀 슬라이드 ──────────────────────
+export type HeroSlide = {
+  id: number;
+  slug: string;
+  nameKo: string;
+  subtitle: string | null;
+  effectivePrice: number;
+  soldOut: boolean;
+  heroColor: string | null;   // #RRGGBB, 없으면 프론트 기본색
+  heroImageUrl: string | null; // 누끼 이미지(없으면 대표 이미지 폴백)
 };

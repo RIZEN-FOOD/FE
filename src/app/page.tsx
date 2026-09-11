@@ -1,4 +1,5 @@
 import { HeroSplit, type HeroPhoto } from "@/components/hero/HeroSplit";
+import { HeroCarousel } from "@/components/hero/HeroCarousel";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -13,7 +14,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 import { serverApi } from "@/lib/server/api";
-import type { ProductDetail, ProductListItem } from "@/types/product";
+import type { ProductDetail, ProductListItem, HeroSlide } from "@/types/product";
 import type { NoticePublicPage } from "@/types/content";
 import type { ReviewPage } from "@/types/member";
 
@@ -28,8 +29,9 @@ import type { ReviewPage } from "@/types/member";
  * 빈 껍데기를 보여주는 대신 섹션 자체를 숨긴다.
  */
 export default async function Home() {
-  const [featured, noticeData, reviewData, settings] = await Promise.all([
+  const [featured, heroSlides, noticeData, reviewData, settings] = await Promise.all([
     serverApi.getJson<ProductListItem[]>("/api/products/featured"),
+    serverApi.getJson<HeroSlide[]>("/api/products/hero"),
     serverApi.getJson<NoticePublicPage>("/api/notices?page=0&size=3"),
     serverApi.getJson<ReviewPage>("/api/reviews?page=0&size=3"),
     serverApi.getJson<Record<string, string>>("/api/settings"),
@@ -71,10 +73,14 @@ export default async function Home() {
       <SiteHeader />
 
       <main id="main-content" tabIndex={-1} className="outline-none">
-        <HeroSplit
-          photos={heroPhotos}
-          primaryHref={primary ? `/products/${primary.slug}` : undefined}
-        />
+        {heroSlides && heroSlides.length > 0 ? (
+          <HeroCarousel slides={heroSlides} />
+        ) : (
+          <HeroSplit
+            photos={heroPhotos}
+            primaryHref={primary ? `/products/${primary.slug}` : undefined}
+          />
+        )}
         <FeaturedProducts products={products} />
         <WhyRizen />
         <NutritionBand

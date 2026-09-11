@@ -38,6 +38,8 @@ type FormState = {
   visible: boolean;
   mainImage: ImageSlot | null;
   detailImages: ImageSlot[];
+  heroColor: string;
+  heroImage: ImageSlot | null;
   nutrition: {
     servingSizeG: string;
     kcal: string;
@@ -74,6 +76,8 @@ const EMPTY: FormState = {
   visible: false,
   mainImage: null,
   detailImages: [],
+  heroColor: "",
+  heroImage: null,
   nutrition: { servingSizeG: "", kcal: "", carbG: "", proteinG: "", fatG: "", sugarG: "", sodiumMg: "" },
   ingredients: [],
   label: { foodType: "", shelfLife: "", storageMethod: "", manufacturer: "", seller: "", customerService: "" },
@@ -103,6 +107,8 @@ function fromDetail(d: ProductDetail): FormState {
         ? { key: d.thumbnailKey, url: "", altText: "" }
         : null,
     detailImages: details.map((i) => ({ key: i.baseKey, url: i.url, altText: i.altText ?? "" })),
+    heroColor: d.heroColor ?? "",
+    heroImage: d.heroImageKey ? { key: d.heroImageKey, url: d.heroImageUrl ?? "", altText: "" } : null,
     nutrition: {
       servingSizeG: num(d.nutrition?.servingSizeG ?? null),
       kcal: num(d.nutrition?.kcal ?? null),
@@ -190,6 +196,8 @@ export function ProductForm({
       servings: n(form.servings),
       stock: n(form.stock) ?? 0,
       thumbnailKey: form.mainImage?.key ?? null,
+      heroColor: form.heroColor.trim() || null,
+      heroImageKey: form.heroImage?.key ?? null,
       featured: form.featured,
       visible: form.visible,
       images,
@@ -392,6 +400,55 @@ export function ProductForm({
                   onChange={(key, url) => set("detailImages", [...form.detailImages, { key, url, altText: "" }])}
                 />
               </div>
+            </div>
+          </Section>
+
+          {/* ── 메인 히어로 ── */}
+          <Section
+            title="메인 히어로"
+            note="메인 상단 배너에 이 상품이 뜰 때의 배경색과 이미지입니다. 메인 노출(featured)일 때 사용됩니다."
+          >
+            <div>
+              <span className="font-kr text-sm font-medium text-ink">배경색</span>
+              <p className="font-kr text-xs text-ink-faint">
+                메인에서 이 상품 뒤에 깔리는 색입니다. 비우면 기본 색으로 보입니다.
+              </p>
+              <div className="mt-1.5 flex items-center gap-3">
+                <input
+                  type="color"
+                  value={/^#[0-9a-fA-F]{6}$/.test(form.heroColor) ? form.heroColor : "#c98a63"}
+                  onChange={(e) => set("heroColor", e.target.value)}
+                  className="h-10 w-14 cursor-pointer rounded-[3px] border border-line bg-paper"
+                  aria-label="배경색 선택"
+                />
+                <Input
+                  value={form.heroColor}
+                  onChange={(v) => set("heroColor", v)}
+                  placeholder="#C98A63"
+                />
+                {form.heroColor && (
+                  <button
+                    type="button"
+                    onClick={() => set("heroColor", "")}
+                    className="shrink-0 font-kr text-xs text-ink-faint hover:text-clay-deep"
+                  >
+                    지움
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <ImageUploader
+                label="히어로 이미지 (누끼 권장)"
+                hint="권장: 배경이 투명한 PNG (제품만 오려낸 이미지)"
+                previewUrl={form.heroImage?.url ?? null}
+                onChange={(key, url) => set("heroImage", { key, url, altText: "" })}
+                onClear={() => set("heroImage", null)}
+              />
+              <p className="mt-1.5 font-kr text-xs text-ink-faint">
+                비우면 대표 이미지가 대신 쓰입니다. 배경색 위에 자연스럽게 띄우려면 투명배경 이미지를 올려 주세요.
+              </p>
             </div>
           </Section>
 
