@@ -4,10 +4,16 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthVisual } from "./AuthVisual";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { useMemberAuth } from "@/store/memberAuth";
 import { api, ApiError } from "@/lib/api/client";
 
 type Mode = "login" | "signup";
+
+/** 관리자가 사진을 안 넣었을 때 쓰는 기본 배경 (저장소 번들). */
+const DEFAULT_LOGIN_IMAGE = "/assets/auth/login.webp";
+const DEFAULT_SIGNUP_IMAGE = "/assets/auth/signup.webp";
 
 /**
  * 회원 로그인·회원가입 화면.
@@ -18,7 +24,15 @@ type Mode = "login" | "signup";
  * 인증은 HttpOnly 쿠키로 오간다 — 이 컴포넌트는 토큰을 만지지 않는다.
  * 성공하면 스토어가 /me 로 확인한 회원 정보만 들고 있는다.
  */
-export function AuthScreen({ initialMode = "login" }: { initialMode?: Mode }) {
+export function AuthScreen({
+  initialMode = "login",
+  loginImage = DEFAULT_LOGIN_IMAGE,
+  signupImage = DEFAULT_SIGNUP_IMAGE,
+}: {
+  initialMode?: Mode;
+  loginImage?: string;
+  signupImage?: string;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { me, ready, checkAuth, login, signup } = useMemberAuth();
@@ -93,17 +107,26 @@ export function AuthScreen({ initialMode = "login" }: { initialMode?: Mode }) {
   }
 
   return (
-    <main className="relative min-h-svh w-full overflow-hidden bg-cream md:grid md:grid-cols-2">
+    <>
+      {/* 현행 로고 + 네비게이션(모바일 사이드바 포함) — 다른 화면과 동일하게 */}
+      <SiteHeader forceSolid />
+
+      <main className="relative min-h-svh w-full overflow-hidden bg-cream md:grid md:grid-cols-2">
       {/* ── 좌측 이미지 패널 (모바일에선 전체 배경) ── */}
       <div className="absolute inset-0 md:relative md:inset-auto md:h-svh">
-        <AuthVisual mode={mode} />
+        <AuthVisual mode={mode} loginImage={loginImage} signupImage={signupImage} />
         {/* 모바일에서 폼 카드가 읽히도록 어둡게 덮는다 */}
         <div className="absolute inset-0 bg-ink/35 md:hidden" />
       </div>
 
       {/* ── 우측 폼 패널 ── */}
-      <div className="relative z-10 flex min-h-svh items-center justify-center px-6 py-16">
+      <div className="relative z-10 flex min-h-svh items-center justify-center px-6 pb-16 pt-28 md:pt-24">
         <div className="w-full max-w-[382px] rounded-2xl bg-paper/95 p-8 shadow-[0_24px_70px_rgba(34,30,28,0.2)] backdrop-blur md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+          {/* 컴포넌트 상단 브랜드 로고 */}
+          <div className="mb-7 flex justify-center md:justify-start">
+            <BrandLogo className="h-8" />
+          </div>
+
           {/* 토글 */}
           <div className="mb-8 flex gap-1 rounded-2xl bg-cream-warm p-1 md:bg-clay-soft/25">
             {(["login", "signup"] as Mode[]).map((m) => (
@@ -237,7 +260,7 @@ export function AuthScreen({ initialMode = "login" }: { initialMode?: Mode }) {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-1 h-[50px] w-full rounded-2xl bg-ink font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+              className="mt-1 h-[50px] w-full rounded-full bg-ink font-kr text-sm font-bold text-cream-warm shadow-[0_8px_20px_rgba(34,30,28,0.22)] transition hover:-translate-y-0.5 hover:bg-slate-deep disabled:opacity-50 disabled:hover:translate-y-0"
             >
               {submitting ? "처리 중…" : isLogin ? "로그인" : "가입하기"}
             </button>
@@ -269,15 +292,8 @@ export function AuthScreen({ initialMode = "login" }: { initialMode?: Mode }) {
           </p>
         </div>
       </div>
-
-      {/* 홈으로 */}
-      <Link
-        href="/"
-        className="absolute left-7 top-6 z-20 font-en text-lg font-extrabold tracking-tight text-cream-warm md:text-ink"
-      >
-        RiZen
-      </Link>
-    </main>
+      </main>
+    </>
   );
 }
 
@@ -319,7 +335,7 @@ function SocialButton({ provider }: { provider: "kakao" | "naver" }) {
     <button
       type="button"
       onClick={() => window.alert("간편 로그인은 준비 중입니다.")}
-      className={`h-[50px] w-full rounded-2xl font-kr text-sm font-semibold transition hover:opacity-90 ${meta.bg} ${meta.text}`}
+      className={`h-[50px] w-full rounded-full font-kr text-sm font-semibold shadow-[0_6px_16px_rgba(34,30,28,0.14)] transition hover:-translate-y-0.5 hover:opacity-90 ${meta.bg} ${meta.text}`}
     >
       {meta.label}
     </button>

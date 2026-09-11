@@ -43,6 +43,11 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     title: "메인 화면",
     keys: ["main.hero_images", "main.section.review", "main.section.notice"],
   },
+  {
+    title: "로그인 화면",
+    note: "로그인·회원가입 화면 왼쪽(모바일에선 전체 배경)에 깔리는 사진입니다. 비우면 기본 사진이 나옵니다.",
+    keys: ["auth.login_image", "auth.signup_image"],
+  },
 ];
 
 // 참/거짓으로 다루는 키 (토글로 보여준다)
@@ -62,6 +67,10 @@ const HINTS: Record<string, string> = {
   "sns.blog": "전체 주소로 넣어주세요. 예: https://blog.naver.com/…",
   "company.biz_no": "숫자와 하이픈만. 예: 123-45-67890",
   "company.mail_order_no": "예: 2026-서울강남-01234",
+  "auth.login_image":
+    "로그인 화면 배경 사진의 주소입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
+  "auth.signup_image":
+    "회원가입 화면 배경 사진의 주소입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
 };
 
 const PLACEHOLDERS: Record<string, string> = {

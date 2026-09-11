@@ -5,13 +5,13 @@ type Variant = "dark" | "line";
 type Size = "md" | "sm";
 
 const base =
-  "inline-block cursor-pointer rounded-[2px] border-none text-center font-kr font-bold transition duration-[250ms] " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-deep " +
-  "disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-block cursor-pointer rounded-full border-none text-center font-kr font-bold transition duration-[250ms] " +
+  "hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-deep " +
+  "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0";
 
 const variants: Record<Variant, string> = {
-  dark: "bg-ink text-cream-warm hover:bg-slate-deep hover:-translate-y-px",
-  line: "border-[1.4px] border-ink bg-transparent text-ink hover:bg-ink hover:text-cream-warm",
+  dark: "bg-ink text-cream-warm shadow-[0_8px_20px_rgba(34,30,28,0.22)] hover:bg-slate-deep",
+  line: "border-[1.4px] border-ink bg-transparent text-ink shadow-[0_6px_16px_rgba(34,30,28,0.12)] hover:bg-ink hover:text-cream-warm",
 };
 
 const sizes: Record<Size, string> = {

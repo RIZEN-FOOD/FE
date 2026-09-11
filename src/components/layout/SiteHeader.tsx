@@ -15,10 +15,15 @@ import { CartBadge } from "@/components/store/CartBadge";
  * 스크롤해 히어로를 지나면 크림 배경 + 어두운 로고/메뉴로 바뀐다.
  * 그래야 어느 구간에서도 헤더가 읽힌다.
  */
-export function SiteHeader() {
-  const [solid, setSolid] = useState(false);
+export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
+  const [solid, setSolid] = useState(forceSolid);
 
   useEffect(() => {
+    // 히어로가 없는 화면(예: 로그인)에서는 항상 크림 배경으로 고정한다.
+    if (forceSolid) {
+      setSolid(true);
+      return;
+    }
     const onScroll = () => {
       // 히어로(대략 한 화면)를 거의 지났을 때 크림 배경으로 전환한다.
       setSolid(window.scrollY > window.innerHeight * 0.8);
@@ -26,7 +31,7 @@ export function SiteHeader() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [forceSolid]);
 
   const light = !solid; // 히어로 위 = 밝은 텍스트
 
