@@ -165,8 +165,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           alt=""
           aria-hidden="true"
           draggable={false}
-          className={`pointer-events-none absolute z-[8] hidden select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] md:block ${
-            ai === 0 ? "right-[12%] top-[15%] w-[12%] rz-accent-a" : "bottom-[16%] left-[13%] w-[14%] rz-accent-b"
+          className={`pointer-events-none absolute z-[8] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${
+            ai === 0
+              ? "right-[4%] top-[9%] w-[26%] md:right-[12%] md:top-[15%] md:w-[12%] rz-accent-a"
+              : "left-[4%] top-[26%] w-[28%] md:bottom-[16%] md:left-[13%] md:top-auto md:w-[14%] rz-accent-b"
           }`}
         />
       ))}
@@ -254,14 +256,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={`/products/${current.slug}`}
-              className="rounded-[3px] px-7 py-3.5 font-kr text-sm font-bold transition hover:opacity-90"
+              className="rounded-full px-7 py-3.5 font-kr text-sm font-bold shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:opacity-95"
               style={{ backgroundColor: ink, color: bg }}
             >
               {current.soldOut ? "제품 보기" : "구매하기"}
             </Link>
             <Link
               href="/products"
-              className="rounded-[3px] border px-7 py-3.5 font-kr text-sm font-medium transition hover:opacity-80"
+              className="rounded-full border px-7 py-3.5 font-kr text-sm font-medium shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:opacity-90"
               style={{ borderColor: light ? "rgba(34,30,28,0.4)" : "rgba(250,247,241,0.5)", color: ink }}
             >
               전체 상품
