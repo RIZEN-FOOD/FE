@@ -466,7 +466,7 @@ export function ProductForm({
             <div className="mt-6 border-t border-line pt-5">
               <ImageUploader
                 label="배경 스플래시 (제품 뒤, 선택)"
-                hint="투명 PNG. 제품 뒤에 세로로 겹쳐집니다(예: 초코·피넛 스플래시)."
+                hint="투명 PNG. 제품 뒤에 세로로 겹쳐집니다(예: 브라우니·피넛 스플래시)."
                 previewUrl={form.heroBackdrop?.url ?? null}
                 onChange={(key, url) => set("heroBackdrop", { key, url, altText: "" })}
                 onClear={() => set("heroBackdrop", null)}
