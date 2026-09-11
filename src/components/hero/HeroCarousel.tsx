@@ -200,6 +200,18 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               {current.subtitle}
             </p>
           )}
+
+          {/* 모바일: 부제 아래 가운데에 맛별 문양 내비 (데스크톱은 CTA 아래에 따로 렌더) */}
+          <FlavorNav
+            slides={slides}
+            active={active}
+            onSelect={setActive}
+            ink={ink}
+            bg={bg}
+            subInk={subInk}
+            light={light}
+            className="mt-6 flex justify-center md:hidden"
+          />
         </div>
 
         {/* 제품 스테이지 — 제품들을 대각선으로 나열하고, 넘어가면 대각선을 따라 이동 */}
@@ -298,6 +310,18 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               전체 상품
             </Link>
           </div>
+
+          {/* 데스크톱: CTA 아래 우측에 맛별 문양 내비 */}
+          <FlavorNav
+            slides={slides}
+            active={active}
+            onSelect={setActive}
+            ink={ink}
+            bg={bg}
+            subInk={subInk}
+            light={light}
+            className="mt-3 hidden md:flex"
+          />
         </div>
       </div>
 
@@ -315,16 +339,6 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         </>
       )}
 
-      {/* 도트 */}
-      {count > 1 && (
-        <div className="absolute inset-x-0 bottom-8 z-30 flex justify-center gap-2.5">
-          {slides.map((s, i) => (
-            <button key={s.id} type="button" aria-label={`${i + 1}번째 상품으로`} aria-current={i === active}
-              onClick={() => setActive(i)} className="h-2 rounded-full transition-all"
-              style={{ width: i === active ? 24 : 8, backgroundColor: i === active ? ink : light ? "rgba(34,30,28,0.35)" : "rgba(250,247,241,0.45)" }} />
-          ))}
-        </div>
-      )}
     </section>
   );
 }
@@ -333,6 +347,101 @@ function Arrow({ dir }: { dir: "left" | "right" }) {
   return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {dir === "left" ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
+    </svg>
+  );
+}
+
+/** 맛별 문양 내비 — 클릭하면 해당 제품 슬라이드로 넘어간다. */
+function FlavorNav({
+  slides,
+  active,
+  onSelect,
+  ink,
+  bg,
+  subInk,
+  light,
+  className,
+}: {
+  slides: HeroSlide[];
+  active: number;
+  onSelect: (i: number) => void;
+  ink: string;
+  bg: string;
+  subInk: string;
+  light: boolean;
+  className?: string;
+}) {
+  if (slides.length <= 1) return null;
+  return (
+    <div className={`items-end gap-3 md:gap-4 ${className ?? "flex"}`}>
+      {slides.map((s, i) => {
+        const on = i === active;
+        return (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => onSelect(i)}
+            aria-label={`${s.nameKo} 보기`}
+            aria-current={on}
+            className="group flex flex-col items-center gap-1.5"
+          >
+            <span
+              className="flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 group-hover:-translate-y-0.5"
+              style={{
+                borderColor: on ? "transparent" : light ? "rgba(34,30,28,0.28)" : "rgba(250,247,241,0.4)",
+                backgroundColor: on ? ink : "transparent",
+                color: on ? bg : ink,
+                boxShadow: on ? "0 8px 18px rgba(0,0,0,0.22)" : "none",
+              }}
+            >
+              <FlavorIcon slug={s.slug} />
+            </span>
+            <span
+              className="font-kr text-[11px] font-medium transition"
+              style={{ color: on ? ink : subInk, opacity: on ? 1 : 0.75 }}
+            >
+              {shortFlavorName(s.nameKo)}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** 슬러그로 맛 종류를 가려 짧은 이름을 만든다. "크림오브라이스" 접두는 뗀다. */
+function shortFlavorName(nameKo: string): string {
+  const s = nameKo.replace("크림오브라이스", "").trim();
+  return s.length > 0 ? s : "플레인";
+}
+
+/** 맛별 문양 아이콘 — 쌀 / 초콜릿 / 땅콩. 슬러그로 고른다. */
+function FlavorIcon({ slug }: { slug: string }) {
+  if (slug.includes("choco")) {
+    // 초콜릿 바
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
+        <rect x="5" y="4.5" width="14" height="15" rx="1.8" />
+        <line x1="12" y1="4.5" x2="12" y2="19.5" />
+        <line x1="5" y1="9.5" x2="19" y2="9.5" />
+        <line x1="5" y1="14.5" x2="19" y2="14.5" />
+      </svg>
+    );
+  }
+  if (slug.includes("peanut")) {
+    // 땅콩(껍질) 실루엣
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M7.6 4.6C5.2 4.6 3.3 6.6 3.3 9c0 1.6.8 2.7 1.6 3.5-.8.8-1.6 2-1.6 3.6 0 2.4 1.9 4.4 4.3 4.4 1.9 0 3.5-1.2 4.1-3 .6 1.8 2.2 3 4.1 3 2.4 0 4.3-2 4.3-4.4 0-1.6-.8-2.8-1.6-3.6.8-.8 1.6-1.9 1.6-3.5 0-2.4-1.9-4.4-4.3-4.4-1.9 0-3.5 1.2-4.1 3-.6-1.8-2.2-3-4.1-3Z" />
+      </svg>
+    );
+  }
+  // 쌀 알갱이 3개
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <ellipse cx="8.5" cy="9" rx="1.9" ry="3.3" transform="rotate(-25 8.5 9)" />
+      <ellipse cx="15" cy="8.6" rx="1.9" ry="3.3" transform="rotate(22 15 8.6)" />
+      <ellipse cx="11.7" cy="15" rx="1.9" ry="3.3" transform="rotate(-6 11.7 15)" />
     </svg>
   );
 }
