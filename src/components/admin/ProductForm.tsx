@@ -61,6 +61,11 @@ type FormState = {
     manufacturer: string;
     seller: string;
     customerService: string;
+    // 상품정보 고시
+    brand: string;
+    origin: string;
+    grainType: string;
+    calorieInfo: string;
   };
   purchaseLinks: { channel: string; url: string; label: string }[];
 };
@@ -88,7 +93,10 @@ const EMPTY: FormState = {
   heroAccent2: null,
   nutrition: { servingSizeG: "", kcal: "", carbG: "", proteinG: "", fatG: "", sugarG: "", sodiumMg: "" },
   ingredients: [],
-  label: { foodType: "", shelfLife: "", storageMethod: "", manufacturer: "", seller: "", customerService: "" },
+  label: {
+    foodType: "", shelfLife: "", storageMethod: "", manufacturer: "", seller: "", customerService: "",
+    brand: "", origin: "", grainType: "", calorieInfo: "",
+  },
   purchaseLinks: [],
 };
 
@@ -143,6 +151,10 @@ function fromDetail(d: ProductDetail): FormState {
       manufacturer: d.label?.manufacturer ?? "",
       seller: d.label?.seller ?? "",
       customerService: d.label?.customerService ?? "",
+      brand: d.label?.brand ?? "",
+      origin: d.label?.origin ?? "",
+      grainType: d.label?.grainType ?? "",
+      calorieInfo: d.label?.calorieInfo ?? "",
     },
     purchaseLinks: d.purchaseLinks.map((l) => ({ channel: l.channel, url: l.url, label: l.label ?? "" })),
   };
@@ -238,6 +250,10 @@ export function ProductForm({
         customerService: form.label.customerService.trim() || null,
         packageMaterial: null,
         extraNotice: null,
+        brand: form.label.brand.trim() || null,
+        origin: form.label.origin.trim() || null,
+        grainType: form.label.grainType.trim() || null,
+        calorieInfo: form.label.calorieInfo.trim() || null,
       },
       purchaseLinks: form.purchaseLinks
         .filter((l) => l.url.trim())
@@ -459,6 +475,17 @@ export function ProductForm({
               <Field label="제조원"><Input value={form.label.manufacturer} onChange={(v) => set("label", { ...form.label, manufacturer: v })} /></Field>
               <Field label="판매원"><Input value={form.label.seller} onChange={(v) => set("label", { ...form.label, seller: v })} /></Field>
               <Field label="소비자상담실"><Input value={form.label.customerService} onChange={(v) => set("label", { ...form.label, customerService: v })} /></Field>
+            </div>
+
+            <p className="mt-6 font-kr text-sm font-medium text-ink">상품정보</p>
+            <p className="font-kr text-xs text-ink-faint">
+              상품 상세 하단 표에 나옵니다. 비워 두면 그 줄은 표시되지 않습니다. 중량은 위 &lsquo;중량(g)&rsquo; 값을 씁니다.
+            </p>
+            <div className="mt-2 grid grid-cols-2 gap-4">
+              <Field label="브랜드"><Input value={form.label.brand} onChange={(v) => set("label", { ...form.label, brand: v })} placeholder="라이즌푸드" /></Field>
+              <Field label="원산지"><Input value={form.label.origin} onChange={(v) => set("label", { ...form.label, origin: v })} placeholder="국산" /></Field>
+              <Field label="곡물유형"><Input value={form.label.grainType} onChange={(v) => set("label", { ...form.label, grainType: v })} placeholder="쌀(라이스)" /></Field>
+              <Field label="열량 표시"><Input value={form.label.calorieInfo} onChange={(v) => set("label", { ...form.label, calorieInfo: v })} placeholder="352kcal" /></Field>
             </div>
           </Section>
 

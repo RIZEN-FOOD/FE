@@ -93,7 +93,7 @@ export default async function ProductDetailPage({
       <div className="mt-14 grid gap-10 border-t border-line pt-10 md:grid-cols-2">
         {product.nutrition && <NutritionFacts nutrition={product.nutrition} />}
         {(product.ingredients.length > 0 || product.label) && (
-          <IngredientList ingredients={product.ingredients} label={product.label} />
+          <IngredientList ingredients={product.ingredients} label={product.label} weightG={product.weightG} />
         )}
       </div>
     </Container>

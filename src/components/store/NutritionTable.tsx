@@ -42,11 +42,30 @@ export function NutritionFacts({ nutrition }: { nutrition: Nutrition }) {
   );
 }
 
-export function IngredientList({ ingredients, label }: { ingredients: Ingredient[]; label: ProductLabel | null }) {
+/** 중량 표기: 1000g 단위면 kg 로. */
+function formatWeight(g: number | null | undefined): string | null {
+  if (!g) return null;
+  return g >= 1000 && g % 1000 === 0 ? `${g / 1000}kg` : `${g}g`;
+}
+
+export function IngredientList({
+  ingredients,
+  label,
+  weightG,
+}: {
+  ingredients: Ingredient[];
+  label: ProductLabel | null;
+  weightG?: number | null;
+}) {
+  // 상품정보 고시 + 법정 표시사항. 값이 있는 항목만 보인다(지어내지 않는다).
   const labelRows: { k: string; v: string | null }[] = label
     ? [
+        { k: "브랜드", v: label.brand ?? null },
         { k: "식품유형", v: label.foodType },
-        { k: "내용량", v: null },
+        { k: "곡물유형", v: label.grainType ?? null },
+        { k: "원산지", v: label.origin ?? null },
+        { k: "내용량", v: formatWeight(weightG) },
+        { k: "열량", v: label.calorieInfo ?? null },
         { k: "소비기한", v: label.shelfLife },
         { k: "보관방법", v: label.storageMethod },
         { k: "제조원", v: label.manufacturer },

@@ -61,6 +61,11 @@ export type ProductLabel = {
   customerService: string | null;
   packageMaterial: string | null;
   extraNotice: string | null;
+  // 상품정보 고시 (V21)
+  brand?: string | null;
+  origin?: string | null;
+  grainType?: string | null;
+  calorieInfo?: string | null;
 };
 
 export type PurchaseLink = {
