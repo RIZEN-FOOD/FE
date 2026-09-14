@@ -52,9 +52,14 @@ export function CheckoutForm() {
   ] as const;
   type PayMethodKey = (typeof PAY_METHODS)[number]["key"];
 
-  /** 결제 방식 설정(서버가 알려준다). portone 이면 포트원 결제창을 연다. */
-  const [payConfig, setPayConfig] = useState<{ provider: string; storeId?: string; channelKey?: string } | null>(null);
+  /**
+   * 결제 방식 설정(서버가 알려준다). portone 이면 포트원 결제창을 연다.
+   * 포트원은 결제사마다 채널이 따로라 결제수단별 채널 키를 받는다. 키가 없는 결제수단은 보이지 않는다.
+   */
+  type PayConfig = { provider: string; storeId?: string; channels?: Partial<Record<PayMethodKey, string>> };
+  const [payConfig, setPayConfig] = useState<PayConfig | null>(null);
   const [payMethod, setPayMethod] = useState<PayMethodKey>("CARD");
+  const availableMethods = PAY_METHODS.filter((m) => Boolean(payConfig?.channels?.[m.key]));
 
   useEffect(() => {
     void refresh();
@@ -62,8 +67,15 @@ export function CheckoutForm() {
 
   useEffect(() => {
     api
-      .get<{ provider: string; storeId?: string; channelKey?: string }>("/api/payment/config")
-      .then(setPayConfig)
+      .get<PayConfig>("/api/payment/config")
+      .then((cfg) => {
+        setPayConfig(cfg);
+        // 쓸 수 있는 첫 결제수단을 기본 선택으로.
+        const first = (["CARD", "KAKAOPAY", "NAVERPAY", "TOSSPAY", "TRANSFER"] as const).find(
+          (k) => cfg.channels?.[k],
+        );
+        if (first) setPayMethod(first);
+      })
       .catch(() => setPayConfig({ provider: "mock" }));
   }, []);
 
@@ -93,8 +105,9 @@ export function CheckoutForm() {
 
       // 2) 결제창 — 포트원이면 결제창을 연다. 금액은 서버가 확정한 값을 쓴다.
       if (payConfig?.provider === "portone") {
-        if (!payConfig.storeId || !payConfig.channelKey) {
-          throw new Error("결제 설정이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+        const channelKey = payConfig.channels?.[payMethod];
+        if (!payConfig.storeId || !channelKey) {
+          throw new Error("선택한 결제수단을 지금은 쓸 수 없습니다. 다른 결제수단을 골라 주세요.");
         }
         const easyProvider =
           payMethod === "KAKAOPAY" || payMethod === "NAVERPAY" || payMethod === "TOSSPAY"
@@ -103,7 +116,7 @@ export function CheckoutForm() {
         const PortOne = await import("@portone/browser-sdk/v2");
         const res = await PortOne.requestPayment({
           storeId: payConfig.storeId,
-          channelKey: payConfig.channelKey,
+          channelKey, // 결제수단별 채널 (카드·카카오페이·네이버페이·토스페이·계좌이체)
           paymentId: order.orderNo, // 우리 주문번호 = 포트원 결제 ID (서버가 이 값으로 조회·검증)
           orderName: orderNameOf(order),
           totalAmount: order.totalAmount,
@@ -298,8 +311,13 @@ export function CheckoutForm() {
         {payConfig?.provider === "portone" ? (
           <fieldset className="mt-5">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
+            {availableMethods.length === 0 && (
+              <p className="mt-2 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
+                지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
+              </p>
+            )}
             <div className="mt-2 grid grid-cols-2 gap-2">
-              {PAY_METHODS.map((m) => (
+              {availableMethods.map((m) => (
                 <label
                   key={m.key}
                   className={`flex cursor-pointer items-center justify-center rounded-full border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
@@ -333,7 +351,7 @@ export function CheckoutForm() {
           </p>
         )}
 
-        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={busy || !payConfig}>
+        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={busy || !payConfig || (payConfig.provider === "portone" && availableMethods.length === 0)}>
           {busy ? "처리 중…" : `${won(cart.totalAmount)}원 결제하기`}
         </Button>
         <Link
