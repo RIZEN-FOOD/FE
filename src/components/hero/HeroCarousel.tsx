@@ -300,13 +300,24 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             )}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href={`/products/${current.slug}`}
-              className="rounded-full px-7 py-3.5 font-kr text-sm font-bold shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:opacity-95"
-              style={{ backgroundColor: ink, color: bg }}
-            >
-              {current.soldOut ? "제품 보기" : "구매하기"}
-            </Link>
+            {current.linkable ? (
+              <Link
+                href={`/products/${current.slug}`}
+                className="rounded-full px-7 py-3.5 font-kr text-sm font-bold shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:opacity-95"
+                style={{ backgroundColor: ink, color: bg }}
+              >
+                {current.soldOut ? "제품 보기" : "구매하기"}
+              </Link>
+            ) : (
+              // 출시 예정(비공개) 상품 — 상세가 없으므로 링크하지 않는다.
+              <span
+                aria-disabled="true"
+                className="cursor-default rounded-full px-7 py-3.5 font-kr text-sm font-bold opacity-80"
+                style={{ backgroundColor: ink, color: bg }}
+              >
+                출시 예정
+              </span>
+            )}
             <Link
               href="/products"
               className="rounded-full border px-7 py-3.5 font-kr text-sm font-medium shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:opacity-90"

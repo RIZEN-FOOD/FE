@@ -25,7 +25,6 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
 
   const items: { label: string; href?: string; onClick?: () => void }[] = [
     { label: "문의하기", href: "/inquiry" },
-    { label: "자주 묻는 질문", href: "/faq" },
     {
       label: "맨 위로",
       onClick: () => window.scrollTo({ top: 0, behavior: "smooth" }),

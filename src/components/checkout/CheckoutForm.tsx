@@ -11,12 +11,14 @@ import { useCart } from "@/store/cart";
 import type { CreateOrderRequest, OrderView } from "@/types/order";
 
 /**
- * 주문서. 배송 정보를 입력하고 결제(모의)까지 진행한다.
+ * 주문서. 배송 정보를 입력하고 결제까지 진행한다.
  *
  * ★ 금액·상품은 서버가 장바구니에서 다시 읽어 계산한다. 이 폼은 배송 정보만 보낸다.
  *   화면에 보이는 금액은 참고용(서버가 준 장바구니 값)이며, 확정 금액은 주문 응답이 진실이다.
  *
- * 결제 PG 는 미확정이라 지금은 서버의 모의 결제로 흐름만 끝까지 잇는다.
+ * 결제 흐름: 주문 생성(재고 확보) → 포트원 결제창 → 서버가 포트원에 직접 조회해 검증·확정.
+ *   결제 방식은 서버 설정(/api/payment/config)을 따른다 — mock 이면 테스트 결제로 바로 확정.
+ *   결제창을 닫거나 실패하면 cancel-pending 으로 재고를 풀고 장바구니는 그대로 둔다.
  */
 export function CheckoutForm() {
   const router = useRouter();
@@ -40,13 +42,38 @@ export function CheckoutForm() {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  /** 결제 수단. 간편결제는 공급자까지 골라 포트원에 넘긴다. */
+  const PAY_METHODS = [
+    { key: "CARD", label: "신용·체크카드" },
+    { key: "KAKAOPAY", label: "카카오페이" },
+    { key: "NAVERPAY", label: "네이버페이" },
+    { key: "TOSSPAY", label: "토스페이" },
+    { key: "TRANSFER", label: "계좌이체" },
+  ] as const;
+  type PayMethodKey = (typeof PAY_METHODS)[number]["key"];
+
+  /** 결제 방식 설정(서버가 알려준다). portone 이면 포트원 결제창을 연다. */
+  const [payConfig, setPayConfig] = useState<{ provider: string; storeId?: string; channelKey?: string } | null>(null);
+  const [payMethod, setPayMethod] = useState<PayMethodKey>("CARD");
+
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    api
+      .get<{ provider: string; storeId?: string; channelKey?: string }>("/api/payment/config")
+      .then(setPayConfig)
+      .catch(() => setPayConfig({ provider: "mock" }));
+  }, []);
+
   const set = (k: keyof CreateOrderRequest) => (v: string) =>
     setForm((f) => ({ ...f, [k]: v }));
   const won = (n: number) => n.toLocaleString("ko-KR");
+  const orderNameOf = (o: OrderView) =>
+    o.items.length > 1
+      ? `${o.items[0].name} 외 ${o.items.length - 1}건`
+      : (o.items[0]?.name ?? "라이즌푸드 주문");
 
   async function submit() {
     setError(null);
@@ -58,20 +85,71 @@ export function CheckoutForm() {
       : form;
 
     setBusy(true);
+    let orderNo: string | null = null;
     try {
-      // 1) 주문 생성 — 서버가 장바구니를 읽어 금액·재고를 확정한다.
+      // 1) 주문 생성 — 서버가 장바구니를 읽어 금액을 확정하고 재고를 잡아둔다.
       const order = await api.post<OrderView>("/api/orders", payload);
-      // 2) 결제(모의) — 실제 PG 확정 시 이 단계만 교체된다.
-      await api.post<OrderView>(`/api/orders/${order.orderNo}/pay`, { method: "card" });
-      // 3) 주문 완료 페이지로. 장바구니는 서버에서 이미 비워졌으니 동기화.
+      orderNo = order.orderNo;
+
+      // 2) 결제창 — 포트원이면 결제창을 연다. 금액은 서버가 확정한 값을 쓴다.
+      if (payConfig?.provider === "portone") {
+        if (!payConfig.storeId || !payConfig.channelKey) {
+          throw new Error("결제 설정이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+        }
+        const easyProvider =
+          payMethod === "KAKAOPAY" || payMethod === "NAVERPAY" || payMethod === "TOSSPAY"
+            ? payMethod
+            : null;
+        const PortOne = await import("@portone/browser-sdk/v2");
+        const res = await PortOne.requestPayment({
+          storeId: payConfig.storeId,
+          channelKey: payConfig.channelKey,
+          paymentId: order.orderNo, // 우리 주문번호 = 포트원 결제 ID (서버가 이 값으로 조회·검증)
+          orderName: orderNameOf(order),
+          totalAmount: order.totalAmount,
+          currency: "KRW",
+          payMethod: easyProvider ? "EASY_PAY" : payMethod === "TRANSFER" ? "TRANSFER" : "CARD",
+          easyPay: easyProvider ? { easyPayProvider: easyProvider } : undefined,
+          customer: {
+            fullName: payload.ordererName,
+            phoneNumber: payload.ordererPhone.replace(/\D/g, ""),
+            email: payload.ordererEmail || undefined,
+          },
+          // 모바일은 결제창이 페이지 이동으로 열리고, 끝나면 여기로 돌아온다.
+          redirectUrl: `${window.location.origin}/checkout/complete?orderNo=${encodeURIComponent(order.orderNo)}`,
+        });
+        if (!res) return; // 리다이렉트 방식 — 결제 확인 페이지가 이어서 처리한다.
+        if (res.code != null) {
+          // 결제창을 닫았거나 결제 실패 — 잡아둔 재고를 풀고 장바구니는 그대로 둔다.
+          await api.post(`/api/orders/${order.orderNo}/cancel-pending`).catch(() => undefined);
+          setError(res.message || "결제가 취소되었습니다.");
+          setBusy(false);
+          return;
+        }
+      }
+
+      // 3) 결제 확정 — 서버가 PG 에 직접 조회해 상태·금액을 검증한 뒤 확정하고 장바구니를 비운다.
+      await api.post<OrderView>(`/api/orders/${order.orderNo}/pay`, { method: payMethod });
       await refresh();
       router.push(`/orders/${order.orderNo}?done=1`);
     } catch (e) {
+      // 주문은 만들어졌는데 결제 단계에서 실패 — 재고를 풀어준다.
+      // (실제로 결제가 끝난 상태라면 서버가 PG 를 확인해 확정한다)
+      if (orderNo) {
+        const view = await api
+          .post<OrderView>(`/api/orders/${orderNo}/cancel-pending`)
+          .catch(() => null);
+        if (view?.status === "PAID") {
+          await refresh();
+          router.push(`/orders/${orderNo}?done=1`);
+          return;
+        }
+      }
       if (e instanceof ApiError) {
         setError(e.message);
         if (e.fields) setFieldErrors(e.fields);
       } else {
-        setError("주문을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+        setError(e instanceof Error ? e.message : "주문을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
       }
       setBusy(false);
     }
@@ -217,9 +295,37 @@ export function CheckoutForm() {
           </span>
         </div>
 
-        <p className="mt-4 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
-          결제 수단은 실제 PG 연동 후 제공됩니다. 지금은 테스트 결제로 주문 흐름을 확인합니다.
-        </p>
+        {payConfig?.provider === "portone" ? (
+          <fieldset className="mt-5">
+            <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {PAY_METHODS.map((m) => (
+                <label
+                  key={m.key}
+                  className={`flex cursor-pointer items-center justify-center rounded-full border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
+                    payMethod === m.key
+                      ? "border-ink bg-ink text-cream-warm"
+                      : "border-line text-ink hover:border-ink/40"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="payMethod"
+                    value={m.key}
+                    checked={payMethod === m.key}
+                    onChange={() => setPayMethod(m.key)}
+                    className="sr-only"
+                  />
+                  {m.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : (
+          <p className="mt-4 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
+            지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 포트원 키 설정 후 열립니다.
+          </p>
+        )}
 
         {error && (
           <p role="alert" className="mt-4 rounded-[2px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
@@ -227,7 +333,7 @@ export function CheckoutForm() {
           </p>
         )}
 
-        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={busy}>
+        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={busy || !payConfig}>
           {busy ? "처리 중…" : `${won(cart.totalAmount)}원 결제하기`}
         </Button>
         <Link

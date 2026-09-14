@@ -212,4 +212,6 @@ export type HeroSlide = {
   heroBackdropUrl: string | null; // 구성1 — 기둥(제품 뒤 스플래시)
   // 구성 장식. 고정 순서 [우상단, 우하단, 좌하단]. 없는 자리는 null.
   accentImageUrls: (string | null)[];
+  /** 상세 페이지로 보낼 수 있는지(상품 공개 여부). 출시 예정처럼 비공개면 false. */
+  linkable: boolean;
 };
