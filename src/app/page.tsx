@@ -1,6 +1,5 @@
 import { HeroSplit, type HeroPhoto } from "@/components/hero/HeroSplit";
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
-import { HERO_BANNER } from "@/components/hero/heroBannerData";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -30,39 +29,17 @@ import type { ReviewPage } from "@/types/member";
  * 빈 껍데기를 보여주는 대신 섹션 자체를 숨긴다.
  */
 export default async function Home() {
-  const [featured, heroPrices, noticeData, reviewData, settings] = await Promise.all([
+  const [featured, heroData, noticeData, reviewData, settings] = await Promise.all([
     serverApi.getJson<ProductListItem[]>("/api/products/featured"),
-    // 히어로 배너 사진·색·문구는 하드코딩(heroBannerData)이고, 여기서는 가격·품절만 쓴다.
+    // 메인 히어로 배너 — 사진·색·문구·가격·순서·노출 모두 관리자(상품 히어로 필드)에서 온다.
     serverApi.getJson<HeroSlide[]>("/api/products/hero"),
     serverApi.getJson<NoticePublicPage>("/api/notices?page=0&size=3"),
     serverApi.getJson<ReviewPage>("/api/reviews?page=0&size=3"),
     serverApi.getJson<Record<string, string>>("/api/settings"),
   ]);
 
-  // slug 별 실시간 가격·품절 (없으면 가격 숨김)
-  const priceBySlug = new Map((heroPrices ?? []).map((s) => [s.slug, s]));
-
-  // 하드코딩 배너에서, 관리자 토글(hero.show_*)로 켜진 슬라이드만 노출.
-  // ★ 이미지·색만 코드에 고정한다. 이름·문구·가격·품절은 관리자가 상품에서
-  //   수정한 값(서버)을 얹는다. 서버 값이 없으면(백엔드 미연결 등) 코드 기본값으로 폴백.
-  const heroSlides: HeroSlide[] = HERO_BANNER
-    .filter((b) => (settings?.[b.visibilityKey] ?? String(b.defaultVisible)) === "true")
-    .map((b, i) => {
-      const live = priceBySlug.get(b.slug);
-      return {
-        id: i,
-        slug: b.slug,
-        nameKo: live?.nameKo ?? b.nameKo,
-        subtitle: live?.subtitle ?? b.subtitle,
-        effectivePrice: live?.effectivePrice ?? 0,
-        soldOut: live?.soldOut ?? false,
-        // 이미지·색은 하드코딩 고정(관리자에서 건드리지 않음)
-        heroColor: b.heroColor,
-        heroImageUrl: b.heroImageUrl,
-        heroBackdropUrl: b.heroBackdropUrl,
-        accentImageUrls: b.accentImageUrls,
-      };
-    });
+  // 노출(hero_enabled) 슬라이드가 표시 순서대로 이미 정렬돼 온다.
+  const heroSlides: HeroSlide[] = heroData ?? [];
 
   // 히어로 사진. 관리자가 site_setting 의 main.hero_images 로 바꾼다.
   // 쉼표로 나눈 목록이고, 비어 있으면 저장소에 넣어둔 기본 사진을 쓴다.

@@ -20,6 +20,14 @@ const DEFAULT_COLOR = "#C98A63";
 const AUTO_MS = 5000; // 자동 전환 간격
 const SWIPE_THRESHOLD = 60;
 
+// 구성 장식 위치 — accentImageUrls 순서 [0:우상단, 1:우하단, 2:좌하단]
+// 우상단은 높게, 하단 둘은 낮게 둬서 양옆 미리보기·구매 버튼과 겹치지 않게 한다.
+const ACCENT_POS = [
+  "right-[5%] top-[4%] w-[29%] md:right-[15%] md:top-[19%] md:w-[19%] rz-accent-a",
+  "right-[4%] top-[46%] w-[27%] md:right-[15%] md:top-auto md:bottom-[13%] md:w-[17%] rz-accent-b",
+  "left-[4%] top-[46%] w-[29%] md:left-[16%] md:top-auto md:bottom-[13%] md:w-[20%] rz-accent-a",
+];
+
 function isLight(hex: string): boolean {
   const m = /^#?([0-9a-f]{6})/i.exec(hex);
   if (!m) return false;
@@ -167,23 +175,20 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 }`,
         }}
       />
-      {(current.accentImageUrls ?? []).slice(0, 2).map((url, ai) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={`${active}-${ai}`}
-          src={url}
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-          className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${
-            ai === 0
-              ? // 오른쪽 상단: 봉투 우상단 어깨에 겹침
-                "right-[5%] top-[5%] w-[29%] md:right-[15%] md:top-[20%] md:w-[19%] rz-accent-a"
-              : // 왼쪽 하단: 봉투 좌하단에 겹침. 모바일은 제품 하단쯤(문구·구매 버튼 위)까지 내린다.
-                "left-[4%] top-[47%] w-[30%] md:left-[22%] md:top-auto md:bottom-[14%] md:w-[21%] rz-accent-b"
-          }`}
-        />
-      ))}
+      {/* 구성 장식 — 고정 순서 [우상단, 우하단, 좌하단]. 없는 자리는 건너뛴다. */}
+      {(current.accentImageUrls ?? []).map((url, ai) =>
+        url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={`${active}-${ai}`}
+            src={url}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${ACCENT_POS[ai] ?? ""}`}
+          />
+        ) : null,
+      )}
 
       {/* 콘텐츠: 문구(좌) · 제품 스테이지(중앙) · 가격(우) — 레이아웃 고정 */}
       <div className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_1fr] md:px-12 md:py-0">

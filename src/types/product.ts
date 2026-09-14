@@ -155,6 +155,50 @@ export type ProductSaveRequest = {
   purchaseLinks?: { channel: string; url: string; label?: string | null; sortOrder: number; visible: boolean }[];
 };
 
+// ── 관리자: 메인 히어로 배너 관리 ──────────────────────
+export type HeroBannerRow = {
+  id: number;
+  slug: string;
+  productName: string;
+  headline: string;
+  heroImageUrl: string | null;
+  heroColor: string | null;
+  heroSort: number;
+  heroEnabled: boolean;
+  soldOut: boolean;
+};
+
+export type HeroBannerDetail = {
+  id: number;
+  slug: string;
+  productName: string;
+  heroHeadline: string | null;
+  heroSubcopy: string | null;
+  defaultHeadline: string;
+  defaultSubcopy: string | null;
+  heroColor: string | null;
+  heroImageKey: string | null;    heroImageUrl: string | null;    // 메인 이미지
+  heroBackdropKey: string | null; heroBackdropUrl: string | null; // 구성1 — 기둥
+  heroAccent1Key: string | null;  heroAccent1Url: string | null;  // 구성2 — 우상단
+  heroAccent3Key: string | null;  heroAccent3Url: string | null;  // 구성3 — 우하단
+  heroAccent2Key: string | null;  heroAccent2Url: string | null;  // 구성4 — 좌하단
+  heroSort: number;
+  heroEnabled: boolean;
+};
+
+export type HeroBannerSaveRequest = {
+  heroHeadline?: string | null;
+  heroSubcopy?: string | null;
+  heroColor?: string | null;
+  heroImageKey?: string | null;
+  heroBackdropKey?: string | null;
+  heroAccent1Key?: string | null;
+  heroAccent3Key?: string | null;
+  heroAccent2Key?: string | null;
+  heroSort: number;
+  heroEnabled: boolean;
+};
+
 // ── 메인 히어로 캐러셀 슬라이드 ──────────────────────
 export type HeroSlide = {
   id: number;
@@ -164,7 +208,8 @@ export type HeroSlide = {
   effectivePrice: number;
   soldOut: boolean;
   heroColor: string | null;   // #RRGGBB, 없으면 프론트 기본색
-  heroImageUrl: string | null; // 누끼 이미지(없으면 대표 이미지 폴백)
-  heroBackdropUrl: string | null; // 제품 뒤 배경 스플래시
-  accentImageUrls: string[];   // 떠다니는 장식(재료) 이미지들
+  heroImageUrl: string | null; // 메인 이미지(제품 봉투). 없으면 대표 이미지 폴백
+  heroBackdropUrl: string | null; // 구성1 — 기둥(제품 뒤 스플래시)
+  // 구성 장식. 고정 순서 [우상단, 우하단, 좌하단]. 없는 자리는 null.
+  accentImageUrls: (string | null)[];
 };
