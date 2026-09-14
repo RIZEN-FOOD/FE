@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
           </label>
 
           {error && (
-            <p role="alert" className="mt-4 rounded-[3px] bg-clay-soft/40 px-3 py-2 font-kr text-sm text-clay-deep">
+            <p role="alert" className="mt-4 rounded-[3px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
               {error}
             </p>
           )}

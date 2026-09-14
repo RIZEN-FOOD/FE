@@ -1,15 +1,12 @@
 import { HeroSplit, type HeroPhoto } from "@/components/hero/HeroSplit";
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
-import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
-import { StoreFooter } from "@/components/store/StoreFooter";
 import { FeaturedProducts } from "@/components/store/FeaturedProducts";
 import { WhyRizen } from "@/components/store/WhyRizen";
 import { NutritionBand } from "@/components/store/NutritionBand";
 import { RecipeGallery } from "@/components/store/RecipeGallery";
 import { ReviewPreview } from "@/components/store/ReviewPreview";
 import { NoticePreview } from "@/components/store/NoticePreview";
-import { QuickMenu } from "@/components/store/QuickMenu";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -21,12 +18,12 @@ import type { ReviewPage } from "@/types/member";
 /**
  * 메인 페이지. 서버에서 실데이터를 가져와 SSR 한다.
  *
+ * 헤더·푸터·퀵메뉴는 (main) 템플릿(layout.tsx)이 그린다. 이 페이지는 내용만 그린다.
+ *
  * 구성
- *   히어로 → 대표 제품 → 왜 다른가 → 영양성분(다크) → 활용법
- *   → 후기 → 공지 → 푸터
+ *   히어로 → 대표 제품 → 왜 다른가 → 영양성분(다크) → 활용법 → 후기 → 공지
  *
  * 데이터가 없는 섹션은 각 컴포넌트가 알아서 그리지 않는다.
- * 빈 껍데기를 보여주는 대신 섹션 자체를 숨긴다.
  */
 export default async function Home() {
   const [featured, heroData, noticeData, reviewData, settings] = await Promise.all([
@@ -41,17 +38,13 @@ export default async function Home() {
   // 노출(hero_enabled) 슬라이드가 표시 순서대로 이미 정렬돼 온다.
   const heroSlides: HeroSlide[] = heroData ?? [];
 
-  // 히어로 사진. 관리자가 site_setting 의 main.hero_images 로 바꾼다.
-  // 쉼표로 나눈 목록이고, 비어 있으면 저장소에 넣어둔 기본 사진을 쓴다.
+  // 히어로 사진(폴백용). 관리자가 site_setting 의 main.hero_images 로 바꾼다.
   const heroPhotos: HeroPhoto[] = (settings?.["main.hero_images"] ?? "")
     .split(",")
     .map((src) => src.trim())
     .filter(Boolean)
     .map((src) => ({ src, alt: "크림오브라이스 제품 사진" }));
 
-  // 관리자가 아직 사진을 넣지 않았으면 저장소의 기본 사진을 쓴다.
-  // 파일이 실제로 있는 것만 넣는다 — 깨진 이미지 아이콘을 보여주지 않기 위해서다.
-  // 하나도 없으면 목록이 비고, 히어로가 제품 도형으로 대체된다.
   if (heroPhotos.length === 0) {
     const defaults: HeroPhoto[] = [
       { src: "/assets/hero/hero-a.jpg", alt: "크림오브라이스로 차린 한 그릇과 바나나·견과, 제품 패키지" },
@@ -74,31 +67,24 @@ export default async function Home() {
 
   return (
     <>
-      <SiteHeader />
-
-      <main id="main-content" tabIndex={-1} className="outline-none">
-        {heroSlides && heroSlides.length > 0 ? (
-          <HeroCarousel slides={heroSlides} />
-        ) : (
-          <HeroSplit
-            photos={heroPhotos}
-            primaryHref={primary ? `/products/${primary.slug}` : undefined}
-          />
-        )}
-        <FeaturedProducts products={products} />
-        <WhyRizen />
-        <NutritionBand
-          nutrition={primaryDetail?.nutrition ?? null}
-          productName={primaryDetail?.nameKo ?? "크림오브라이스"}
+      {heroSlides && heroSlides.length > 0 ? (
+        <HeroCarousel slides={heroSlides} />
+      ) : (
+        <HeroSplit
+          photos={heroPhotos}
+          primaryHref={primary ? `/products/${primary.slug}` : undefined}
         />
-        <RecipeGallery />
-        <ReviewPreview reviews={reviews} />
-        {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
-        <NoticePreview notices={notices} />
-      </main>
-
-      <StoreFooter />
-      <QuickMenu revealAfterHero />
+      )}
+      <FeaturedProducts products={products} />
+      <WhyRizen />
+      <NutritionBand
+        nutrition={primaryDetail?.nutrition ?? null}
+        productName={primaryDetail?.nameKo ?? "크림오브라이스"}
+      />
+      <RecipeGallery />
+      <ReviewPreview reviews={reviews} />
+      {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
+      <NoticePreview notices={notices} />
 
       {primary && (
         <>
