@@ -36,7 +36,8 @@ export const useAdminAuth = create<AdminAuthState>((set) => ({
   async login(username, password) {
     try {
       const me = await api.post<AdminMe>("/api/admin/auth/login", { username, password });
-      set({ me });
+      // ready 도 함께 true 로 — 로그인 직후 /admin 가드가 me 를 못 보고 되튕기는 경합 방지.
+      set({ me, ready: true });
     } catch (e) {
       // 메시지는 서버가 준 그대로 쓴다 (잠금 안내 등).
       if (e instanceof ApiError) {
