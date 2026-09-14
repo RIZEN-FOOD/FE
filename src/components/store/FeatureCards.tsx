@@ -1,6 +1,4 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-
+import { hasPublicAsset } from "@/lib/publicAssets";
 import { FeatureScroller, type FeatureItem } from "@/components/store/FeatureScroller";
 import type { Nutrition } from "@/types/product";
 
@@ -32,7 +30,7 @@ function carbBody(n: Nutrition | null): string {
 
 /** 후보 경로 중 실제로 있는 첫 파일. 하나도 없으면 null (빈 칸으로 그린다). */
 function firstExisting(candidates: string[]): string | null {
-  return candidates.find((src) => existsSync(join(process.cwd(), "public", src))) ?? null;
+  return candidates.find((src) => hasPublicAsset(src)) ?? null;
 }
 
 export function FeatureCards({ nutrition }: { nutrition: Nutrition | null }) {

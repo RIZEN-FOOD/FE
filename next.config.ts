@@ -9,6 +9,10 @@ import type { NextConfig } from "next";
  * 브라우저 입장에서는 same-origin 이라 쿠키가 그대로 오간다.
  *
  * 운영에서도 같은 패턴을 쓴다. 프록시 대상만 환경변수로 바뀐다.
+ *
+ * ★ Cloudflare(OpenNext) 배포에서는 API_ORIGIN 에 포트 번호를 쓰지 않는다 (https://api.도메인).
+ *   OpenNext 가 "http://host:8080" 의 ":8080" 을 경로 변수로 해석해 /api 중계가 500 이 난다.
+ *   이 값은 빌드 때 박히므로 빌드 환경(CI)에서 넣는다.
  */
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8080";
 

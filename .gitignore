@@ -36,6 +36,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare (OpenNext 빌드 산출물 · 로컬 wrangler 상태 · 로컬 비밀값)
+/.open-next/
+/.wrangler/
+.dev.vars*
+
+# 개발 서버 로그
+*.log
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

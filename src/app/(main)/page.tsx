@@ -9,8 +9,7 @@ import { FeatureCards } from "@/components/store/FeatureCards";
 import { BrandFaq } from "@/components/store/BrandFaq";
 import { ReviewPreview } from "@/components/store/ReviewPreview";
 import { NoticePreview } from "@/components/store/NoticePreview";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { hasPublicAsset } from "@/lib/publicAssets";
 
 import { serverApi } from "@/lib/server/api";
 import type { ProductDetail, ProductListItem, HeroSlide } from "@/types/product";
@@ -53,7 +52,7 @@ export default async function Home() {
       { src: "/assets/hero/hero-b.jpg", alt: "딸기·블루베리를 곁들인 크림오브라이스 한 그릇과 제품 패키지" },
     ];
     heroPhotos.push(
-      ...defaults.filter((p) => existsSync(join(process.cwd(), "public", p.src))),
+      ...defaults.filter((p) => hasPublicAsset(p.src)),
     );
   }
 

@@ -1,0 +1,40 @@
+# 프론트를 Cloudflare Workers 에 배포한다 (OpenNext).
+#
+# 지금은 수동 실행만 연다(Actions 탭 → Run workflow). 계정·도메인이 준비되고
+# 테스트 배포가 확인되면 main 푸시 자동 배포로 바꾼다.
+#
+# 저장소 Settings → Secrets and variables → Actions 에 넣을 값
+#   secrets.CLOUDFLARE_API_TOKEN   Workers·R2 편집 권한 토큰
+#   secrets.CLOUDFLARE_ACCOUNT_ID  Cloudflare 계정 ID
+#   vars.API_ORIGIN                API 서버 주소 (예: https://api.도메인) — /api 중계 주소가 빌드 때 박힌다
+#
+# 윈도우에서는 OpenNext 빌드가 권장되지 않으므로 여기(리눅스)에서 빌드한다.
+name: Deploy to Cloudflare
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build and deploy
+        run: npm run cf:deploy
+        env:
+          API_ORIGIN: ${{ vars.API_ORIGIN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -1,0 +1,53 @@
+// Cloudflare Workers 배포 설정 (OpenNext).
+// 기본 템플릿(@opennextjs/cloudflare/templates/wrangler.jsonc) + 10초 캐시 재검증용 큐.
+//
+// 배포 전 한 번:
+//   npx wrangler r2 bucket create rizenfood-web-opennext-cache
+//
+// API_ORIGIN(API 서버 주소)은 여기 적지 않는다. 두 군데서 넣는다.
+//   1) 빌드 때 — next.config 의 /api 중계 주소가 빌드 시점에 박힌다 (CI 환경변수)
+//   2) 실행 때 — 서버 컴포넌트가 API 를 부를 때 쓴다 (Cloudflare 대시보드 → Variables)
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"main": ".open-next/worker.js",
+	"name": "rizenfood-web",
+	"compatibility_date": "2026-09-01",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			// 자기 참조 바인딩. 서비스 이름은 위 name 과 같아야 한다.
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "rizenfood-web"
+		}
+	],
+	"r2_buckets": [
+		{
+			// ISR·fetch 캐시 저장소 (https://opennext.js.org/cloudflare/caching)
+			"binding": "NEXT_INC_CACHE_R2_BUCKET",
+			"bucket_name": "rizenfood-web-opennext-cache"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				// 시간 기반 재검증(revalidate: 10)을 한 번만 돌게 묶어 주는 큐
+				"name": "NEXT_CACHE_DO_QUEUE",
+				"class_name": "DOQueueHandler"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["DOQueueHandler"]
+		}
+	],
+	"images": {
+		// next/image 최적화 (https://opennext.js.org/cloudflare/howtos/image)
+		"binding": "IMAGES"
+	}
+}
