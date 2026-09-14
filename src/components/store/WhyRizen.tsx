@@ -1,30 +1,37 @@
 import { Container } from "@/components/ui";
 
 /**
- * "크림오브라이스가 다른 이유" — 제품 특징 3가지.
+ * "왜 RiZen 인가" — 브랜드 이야기 + 제품 특징 4가지.
  *
- * ★ 카피 규제 검토 완료 (식품표시광고법 §9, CLAUDE.md 규칙 1).
- *   여기 문구는 전부 가공 방식·원재료 구성·조리 편의만 말한다.
- *   소화 기능을 언급하는 순간 §9 가 금지하는 표현이 되므로 형태·질감으로 바꿔 말한다.
+ * ★ 카피 규제 검토 완료 (식품표시광고법 §9, CLAUDE.md 규칙 1). 2026-09-14 승인.
+ *   원재료·입자·조리 방법·포장만 말한다.
+ *   - 소화·흡수·위 부담 등 기능 표현 → 쓰지 않는다 (질감으로 말한다)
+ *   - '무첨가'·'자연 그대로' → 쓰지 않는다 (원재료 표기 사실로 말한다)
+ *   - 운동 관련은 "운동 전후 탄수화물 보충" 까지만 허용
  *
  * 레이아웃: 좌측 리드 + 우측 편집형 목록(큰 세리프 숫자 + 하이라인).
- * 똑같은 3열 카드 대신 잡지처럼 읽히게 한다.
+ * 똑같은 카드 반복 대신 잡지처럼 읽히게 한다.
  */
 const reasons: { no: string; title: string; body: string }[] = [
   {
     no: "01",
-    title: "곱게 도정한 입자",
-    body: "입자를 곱게 도정해 물이나 우유에 덩어리 없이 풀립니다. 따로 체에 거를 필요가 없습니다.",
+    title: "국산 멥쌀 100%",
+    body: "원재료는 국산 멥쌀 하나입니다. 표기가 단순해 무엇을 먹는지 그대로 보입니다.",
   },
   {
     no: "02",
-    title: "쌀 100%, 그 외에 없음",
-    body: "인공 감미료와 색소를 넣지 않았습니다. 원재료 표기가 단순해 무엇을 먹는지 그대로 보입니다.",
+    title: "곱게 간 입자",
+    body: "고운 입자로 갈아, 조리하면 죽처럼 부드러운 질감이 됩니다.",
   },
   {
     no: "03",
-    title: "그램 단위 계량",
-    body: "가루 형태라 저울로 정확히 덜어낼 수 있습니다. 식단을 숫자로 관리하는 분들에게 맞습니다.",
+    title: "전자레인지로 간편하게",
+    body: "한 스푼(약 45g)에 물 100ml를 붓고, 30초씩 저어가며 데우면 완성입니다.",
+  },
+  {
+    no: "04",
+    title: "1kg 스탠딩 파우치",
+    body: "소포장을 여러 번 살 필요 없는 넉넉한 용량이고, 세워서 보관할 수 있습니다.",
   },
 ];
 
@@ -41,13 +48,16 @@ export function WhyRizen() {
             id="why-heading"
             className="mt-4 font-display text-[2rem] font-semibold leading-[1.2] tracking-[-0.01em] text-ink md:text-[2.4rem]"
           >
-            같은 쌀이라도,
+            Rice에 Risen을 더해,
             <br />
-            <span className="italic text-clay-deep">결과는 다릅니다</span>
+            <span className="italic text-clay-deep">RiZen</span>
           </h2>
           <p className="mt-5 max-w-sm font-kr text-[15px] leading-relaxed text-ink-soft">
-            입자 크기와 배합이 다르면 풀리는 정도도, 질감도 달라집니다. 조리 편의와 담백함을
-            기준으로 배합을 설계했습니다.
+            해외 직구로만 구하던 크림 오브 라이스의 번거로움, 아쉬운 용량, 가격 부담. 이 셋을
+            덜어내려고 시작했습니다.
+          </p>
+          <p className="mt-3 max-w-sm font-kr text-[15px] leading-relaxed text-ink-soft">
+            아침 대용으로, 운동 전후 탄수화물 보충으로, 필요한 때에 맞춰 드세요.
           </p>
         </div>
 

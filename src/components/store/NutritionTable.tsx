@@ -68,11 +68,18 @@ export function IngredientList({
         { k: "열량", v: label.calorieInfo ?? null },
         { k: "소비기한", v: label.shelfLife },
         { k: "보관방법", v: label.storageMethod },
-        { k: "제조원", v: label.manufacturer },
-        { k: "판매원", v: label.seller },
+        { k: "포장재질", v: label.packageMaterial },
+        { k: "제조원", v: withAddr(label.manufacturer, label.manufacturerAddr) },
+        { k: "판매원", v: withAddr(label.seller, label.sellerAddr) },
         { k: "소비자상담실", v: label.customerService },
       ].filter((r) => r.v)
     : [];
+
+  // 주의사항 — 줄마다 한 항목. 서버에서 살균된 값이지만 HTML 로 넣지 않고 텍스트로 그린다.
+  const notices = (label?.extraNotice ?? "")
+    .split(/\r?\n/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   return (
     <section aria-labelledby="ingredient-heading">
@@ -104,6 +111,22 @@ export function IngredientList({
           ))}
         </dl>
       )}
+
+      {notices.length > 0 && (
+        <ul className="mt-4 flex flex-col gap-1">
+          {notices.map((n, i) => (
+            <li key={i} className="font-kr text-xs leading-relaxed text-ink-faint">
+              ※ {n.replace(/^※\s*/, "")}
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
+}
+
+/** 이름 + 주소를 "이름 / 주소" 로 합친다. 이름이 없으면 줄을 그리지 않는다. */
+function withAddr(name: string | null, addr: string | null): string | null {
+  if (!name) return null;
+  return addr ? `${name} / ${addr}` : name;
 }

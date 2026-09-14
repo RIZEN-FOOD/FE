@@ -59,8 +59,12 @@ type FormState = {
     shelfLife: string;
     storageMethod: string;
     manufacturer: string;
+    manufacturerAddr: string;
     seller: string;
+    sellerAddr: string;
     customerService: string;
+    packageMaterial: string;
+    extraNotice: string;
     // 상품정보 고시
     brand: string;
     origin: string;
@@ -94,7 +98,8 @@ const EMPTY: FormState = {
   nutrition: { servingSizeG: "", kcal: "", carbG: "", proteinG: "", fatG: "", sugarG: "", sodiumMg: "" },
   ingredients: [],
   label: {
-    foodType: "", shelfLife: "", storageMethod: "", manufacturer: "", seller: "", customerService: "",
+    foodType: "", shelfLife: "", storageMethod: "", manufacturer: "", manufacturerAddr: "",
+    seller: "", sellerAddr: "", customerService: "", packageMaterial: "", extraNotice: "",
     brand: "", origin: "", grainType: "", calorieInfo: "",
   },
   purchaseLinks: [],
@@ -149,8 +154,12 @@ function fromDetail(d: ProductDetail): FormState {
       shelfLife: d.label?.shelfLife ?? "",
       storageMethod: d.label?.storageMethod ?? "",
       manufacturer: d.label?.manufacturer ?? "",
+      manufacturerAddr: d.label?.manufacturerAddr ?? "",
       seller: d.label?.seller ?? "",
+      sellerAddr: d.label?.sellerAddr ?? "",
       customerService: d.label?.customerService ?? "",
+      packageMaterial: d.label?.packageMaterial ?? "",
+      extraNotice: d.label?.extraNotice ?? "",
       brand: d.label?.brand ?? "",
       origin: d.label?.origin ?? "",
       grainType: d.label?.grainType ?? "",
@@ -244,12 +253,12 @@ export function ProductForm({
         shelfLife: form.label.shelfLife.trim() || null,
         storageMethod: form.label.storageMethod.trim() || null,
         manufacturer: form.label.manufacturer.trim() || null,
-        manufacturerAddr: null,
+        manufacturerAddr: form.label.manufacturerAddr.trim() || null,
         seller: form.label.seller.trim() || null,
-        sellerAddr: null,
+        sellerAddr: form.label.sellerAddr.trim() || null,
         customerService: form.label.customerService.trim() || null,
-        packageMaterial: null,
-        extraNotice: null,
+        packageMaterial: form.label.packageMaterial.trim() || null,
+        extraNotice: form.label.extraNotice.trim() || null,
         brand: form.label.brand.trim() || null,
         origin: form.label.origin.trim() || null,
         grainType: form.label.grainType.trim() || null,
@@ -473,8 +482,16 @@ export function ProductForm({
               <Field label="소비기한"><Input value={form.label.shelfLife} onChange={(v) => set("label", { ...form.label, shelfLife: v })} /></Field>
               <Field label="보관방법"><Input value={form.label.storageMethod} onChange={(v) => set("label", { ...form.label, storageMethod: v })} /></Field>
               <Field label="제조원"><Input value={form.label.manufacturer} onChange={(v) => set("label", { ...form.label, manufacturer: v })} /></Field>
+              <Field label="제조원 주소"><Input value={form.label.manufacturerAddr} onChange={(v) => set("label", { ...form.label, manufacturerAddr: v })} /></Field>
               <Field label="판매원"><Input value={form.label.seller} onChange={(v) => set("label", { ...form.label, seller: v })} /></Field>
+              <Field label="판매원 주소"><Input value={form.label.sellerAddr} onChange={(v) => set("label", { ...form.label, sellerAddr: v })} /></Field>
               <Field label="소비자상담실"><Input value={form.label.customerService} onChange={(v) => set("label", { ...form.label, customerService: v })} /></Field>
+              <Field label="포장재질"><Input value={form.label.packageMaterial} onChange={(v) => set("label", { ...form.label, packageMaterial: v })} placeholder="폴리에틸렌(내면)" /></Field>
+            </div>
+            <div className="mt-4">
+              <Field label="주의사항" hint="한 줄에 하나씩 적으면 상세 페이지에 줄마다 나뉘어 나옵니다.">
+                <Textarea value={form.label.extraNotice} onChange={(v) => set("label", { ...form.label, extraNotice: v })} rows={4} />
+              </Field>
             </div>
 
             <p className="mt-6 font-kr text-sm font-medium text-ink">상품정보</p>
@@ -613,6 +630,25 @@ function Input({
       inputMode={inputMode}
       onChange={(e) => onChange(e.target.value)}
       className="w-full rounded-[3px] border border-line bg-cream-warm px-3 py-2 font-kr text-sm outline-none focus:border-clay-deep"
+    />
+  );
+}
+
+function Textarea({
+  value,
+  onChange,
+  rows = 3,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  rows?: number;
+}) {
+  return (
+    <textarea
+      value={value}
+      rows={rows}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full resize-y rounded-[3px] border border-line bg-cream-warm px-3 py-2 font-kr text-sm leading-relaxed outline-none focus:border-clay-deep"
     />
   );
 }
