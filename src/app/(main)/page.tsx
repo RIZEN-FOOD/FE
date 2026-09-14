@@ -5,7 +5,7 @@ import { FeaturedProducts } from "@/components/store/FeaturedProducts";
 import { WhyRizen } from "@/components/store/WhyRizen";
 import { NutritionBand } from "@/components/store/NutritionBand";
 import { HowToCook } from "@/components/store/HowToCook";
-import { RecipeGallery } from "@/components/store/RecipeGallery";
+import { FeatureCards } from "@/components/store/FeatureCards";
 import { BrandFaq } from "@/components/store/BrandFaq";
 import { ReviewPreview } from "@/components/store/ReviewPreview";
 import { NoticePreview } from "@/components/store/NoticePreview";
@@ -23,7 +23,7 @@ import type { ReviewPage } from "@/types/member";
  * 헤더·푸터·퀵메뉴는 (main) 템플릿(layout.tsx)이 그린다. 이 페이지는 내용만 그린다.
  *
  * 구성
- *   히어로 → 대표 제품 → 왜 다른가 → 영양성분(다크) → 조리법 → 활용법 → 후기 → Q&A → 공지
+ *   히어로 → 대표 제품 → 왜 다른가 → 영양성분(다크) → 조리법 → 특징 카드 → 후기 → Q&A → 공지
  *
  * 데이터가 없는 섹션은 각 컴포넌트가 알아서 그리지 않는다.
  */
@@ -84,7 +84,7 @@ export default async function Home() {
         productName={primaryDetail?.nameKo ?? "크림오브라이스"}
       />
       <HowToCook />
-      <RecipeGallery />
+      <FeatureCards nutrition={primaryDetail?.nutrition ?? null} />
       <ReviewPreview reviews={reviews} />
       <BrandFaq />
       {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
