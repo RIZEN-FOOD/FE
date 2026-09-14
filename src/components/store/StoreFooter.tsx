@@ -84,7 +84,7 @@ export async function StoreFooter() {
       </div>
 
       {/* (2) 찢긴 종이 엣지 + 브랜드 색 밴드 */}
-      <div className="relative bg-clay-deep text-cream-warm">
+      <div className="relative bg-slate-deep text-cream-warm">
         {/* 위쪽 찢긴 종이 엣지 — 위 밝은 배경(cream-warm)이 찢겨 브랜드 색이 드러나는 느낌 */}
         <svg
           aria-hidden="true"
@@ -116,7 +116,7 @@ export async function StoreFooter() {
                     href={settings[s.key]}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-en text-xs font-medium text-cream-warm/85 underline-offset-4 hover:underline"
+                    className="font-en text-xs font-medium text-cream-warm underline-offset-4 hover:underline"
                   >
                     {s.label}
                   </a>
@@ -128,13 +128,13 @@ export async function StoreFooter() {
           <dl className="mt-7 grid grid-cols-1 gap-x-8 gap-y-1.5 sm:grid-cols-2 lg:grid-cols-3">
             {info.map((it) => (
               <div key={it.label} className="flex gap-2 font-kr text-xs">
-                <dt className="shrink-0 text-cream-warm/55">{it.label}</dt>
-                <dd className="text-cream-warm/85">{it.value}</dd>
+                <dt className="shrink-0 text-cream-warm/75">{it.label}</dt>
+                <dd className="text-cream-warm">{it.value}</dd>
               </div>
             ))}
           </dl>
 
-          <nav className="mt-7 flex flex-wrap gap-4 font-kr text-xs text-cream-warm/85" aria-label="정책">
+          <nav className="mt-7 flex flex-wrap gap-4 font-kr text-xs text-cream-warm" aria-label="정책">
             <Link href="/policy/terms" className="underline-offset-4 hover:underline">이용약관</Link>
             <Link href="/policy/privacy" className="font-medium underline-offset-4 hover:underline">
               개인정보처리방침
@@ -145,7 +145,7 @@ export async function StoreFooter() {
             <Link href="/inquiry" className="underline-offset-4 hover:underline">문의하기</Link>
           </nav>
 
-          <p className="mt-6 font-kr text-xs text-cream-warm/55">
+          <p className="mt-6 font-kr text-xs text-cream-warm/70">
             © {new Date().getFullYear()} RIZEN FOOD. 크림오브라이스는 일반 식품입니다.
           </p>
         </Container>

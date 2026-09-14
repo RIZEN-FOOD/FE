@@ -52,8 +52,16 @@ export function AuthScreen({
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
 
   const isLogin = mode === "login";
-  /** 로그인 후 돌아갈 곳. 없으면 마이페이지. */
-  const redirectTo = searchParams.get("next") ?? "/mypage";
+  /**
+   * 로그인 후 돌아갈 곳. 없으면 마이페이지.
+   * ★ 오픈 리다이렉트 방지 — 같은 사이트의 상대경로("/…")만 허용한다.
+   *   "//evil.com"·"https://evil.com" 같은 외부 주소는 무시하고 마이페이지로.
+   */
+  const nextParam = searchParams.get("next");
+  const redirectTo =
+    nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : "/mypage";
 
   useEffect(() => {
     if (!ready) checkAuth();
@@ -252,7 +260,7 @@ export function AuthScreen({
             )}
 
             {error && (
-              <p role="alert" className="rounded-xl bg-clay-soft/40 px-3.5 py-2.5 font-kr text-xs text-clay-deep">
+              <p role="alert" className="rounded-xl bg-danger/10 px-3.5 py-2.5 font-kr text-xs font-medium text-danger">
                 {error}
               </p>
             )}
@@ -266,18 +274,9 @@ export function AuthScreen({
             </button>
           </form>
 
-          {/* 간편 로그인 */}
-          <div className="mt-7">
-            <div className="flex items-center gap-3">
-              <span className="h-px flex-1 bg-line" />
-              <span className="font-kr text-xs text-ink-faint">또는 간편 로그인</span>
-              <span className="h-px flex-1 bg-line" />
-            </div>
-            <div className="mt-4 flex flex-col gap-2.5">
-              <SocialButton provider="kakao" />
-              <SocialButton provider="naver" />
-            </div>
-          </div>
+          {/* 간편 로그인(카카오·네이버)은 OAuth 연동 후 노출한다.
+              동작하지 않는 안내(alert) 버튼을 상용 화면에 두지 않는다.
+              연동 시 아래 SocialButton 블록을 되살린다. */}
 
           {/* 하단 전환 링크 */}
           <p className="mt-7 text-center font-kr text-xs text-ink-soft">

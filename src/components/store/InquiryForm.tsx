@@ -154,7 +154,7 @@ export function InquiryForm() {
           </label>
 
           {error && (
-            <p role="alert" className="rounded-[3px] bg-clay-soft/40 px-3.5 py-2.5 font-kr text-xs text-clay-deep">
+            <p role="alert" className="rounded-[3px] bg-danger/10 px-3.5 py-2.5 font-kr text-xs text-danger">
               {error}
             </p>
           )}

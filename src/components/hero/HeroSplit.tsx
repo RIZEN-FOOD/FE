@@ -164,13 +164,13 @@ export function HeroSplit({
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link
               href={buyHref}
-              className="rounded-[3px] bg-cream-warm px-8 py-3.5 font-kr text-sm font-bold text-ink transition hover:bg-paper"
+              className="rounded-full bg-cream-warm px-8 py-3.5 font-kr text-sm font-bold text-ink shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:bg-paper"
             >
               구매하기
             </Link>
             <Link
               href="/products"
-              className="rounded-[3px] border border-cream-warm/50 px-8 py-3.5 font-kr text-sm font-medium text-cream-warm transition hover:bg-cream-warm/10"
+              className="rounded-full border border-cream-warm/50 px-8 py-3.5 font-kr text-sm font-medium text-cream-warm shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:bg-cream-warm/10"
             >
               전체 상품 보기
             </Link>

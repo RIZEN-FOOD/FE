@@ -164,7 +164,7 @@ function CartRow({ item }: { item: CartItemView }) {
           </span>
         )}
         {error && (
-          <span role="alert" className="mt-2 font-kr text-[11px] text-clay-deep">
+          <span role="alert" className="mt-2 font-kr text-[11px] text-danger">
             {error}
           </span>
         )}

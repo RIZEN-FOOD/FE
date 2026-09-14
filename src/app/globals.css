@@ -24,7 +24,11 @@
   /* 텍스트 */
   --color-ink: #221E1C;
   --color-ink-soft: #5A524C;
-  --color-ink-faint: #9A8E85;
+  /* 옅은 보조 텍스트. 지면(paper/cream) 위 WCAG AA(4.5:1) 를 확보하도록 조정. */
+  --color-ink-faint: #7C7067;
+
+  /* 경고·에러 — 지면 위에서 또렷해야 한다(AA). clay-deep 은 대비가 낮아 에러엔 안 쓴다. */
+  --color-danger: #B4321F;
 
   /* 보울 남색 — 수치 강조와 다크 섹션 */
   --color-slate: #4F5660;
@@ -80,6 +84,14 @@
     color: var(--color-ink);
     font-family: "Pretendard Variable", var(--font-noto-sans-kr), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* 접근성: 키보드 포커스는 어디서나 또렷하게 보인다.
+     마우스 클릭(:focus)엔 링을 주지 않고 키보드 이동(:focus-visible)에만 준다. */
+  :focus-visible {
+    outline: 2px solid var(--color-clay-deep);
+    outline-offset: 2px;
+    border-radius: 3px;
   }
 
   /* 숫자·영문은 Archivo 로. 한글 폰트의 숫자보다 조판이 안정적이다. */
