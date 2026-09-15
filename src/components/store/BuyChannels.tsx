@@ -34,7 +34,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
             </p>
             <h3 className="mt-3 font-kr text-lg font-bold text-cream-warm">공식몰</h3>
             <p className="mt-2 flex-1 font-kr text-sm leading-relaxed text-cream-warm/70">
-              전 라인업과 용량 옵션을 모두 취급합니다. 배송비 3,000원, 50,000원 이상 무료입니다.
+              전 라인업과 용량 옵션을 모두 취급합니다. 배송비는 배송 안내에서 확인해 주세요.
             </p>
             {primary ? (
               <Link

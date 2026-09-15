@@ -41,6 +41,29 @@ export function CheckoutForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [islandFee, setIslandFee] = useState(0);
+  /** 화면 표시용 도서산간 추가분. 빈 장바구니면 0 (서버 계산과 같은 규칙). */
+  const islandExtra = cart && cart.itemsAmount > 0 ? islandFee : 0;
+
+  // 도서산간 추가 배송비 미리보기. 실제 금액은 주문 생성 때 서버가 우편번호로 다시 계산한다.
+  useEffect(() => {
+    if (!/^\d{5}$/.test(form.zipcode)) {
+      setIslandFee(0);
+      return;
+    }
+    let alive = true;
+    api
+      .get<{ island: boolean; extraFee: number }>(`/api/shipping-policy/island?zipcode=${form.zipcode}`)
+      .then((r) => {
+        if (alive) setIslandFee(r.island ? r.extraFee : 0);
+      })
+      .catch(() => {
+        if (alive) setIslandFee(0);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [form.zipcode]);
 
   /** 결제 수단. 간편결제는 공급자까지 골라 포트원에 넘긴다. */
   const PAY_METHODS = [
@@ -295,15 +318,20 @@ export function CheckoutForm() {
           </div>
           <div className="flex justify-between">
             <dt className="text-ink-soft">배송비</dt>
-            <dd className="font-numeric text-ink">
-              {cart.shippingFee === 0 ? "무료" : `${won(cart.shippingFee)}원`}
+            <dd className="text-right font-numeric text-ink">
+              {cart.shippingFee + islandExtra === 0 ? "무료" : `${won(cart.shippingFee + islandExtra)}원`}
+              {islandExtra > 0 && (
+                <span className="mt-0.5 block font-kr text-xs text-ink-faint">
+                  도서산간 {won(islandExtra)}원 포함
+                </span>
+              )}
             </dd>
           </div>
         </dl>
         <div className="mt-5 flex items-baseline justify-between border-t border-line pt-5">
           <span className="font-kr text-sm font-medium text-ink">최종 결제금액</span>
           <span className="font-numeric text-2xl font-bold text-ink">
-            {won(cart.totalAmount)}
+            {won(cart.totalAmount + islandExtra)}
             <span className="ml-1 font-kr text-base font-medium">원</span>
           </span>
         </div>
@@ -352,7 +380,7 @@ export function CheckoutForm() {
         )}
 
         <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={busy || !payConfig || (payConfig.provider === "portone" && availableMethods.length === 0)}>
-          {busy ? "처리 중…" : `${won(cart.totalAmount)}원 결제하기`}
+          {busy ? "처리 중…" : `${won(cart.totalAmount + islandExtra)}원 결제하기`}
         </Button>
         <Link
           href="/cart"

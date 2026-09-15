@@ -11,11 +11,17 @@ import { ADMIN_ORDER_STATUSES, type AdminOrderPage, type AdminOrderSummary } fro
 
 /**
  * 주문 관리 목록. 상태로 거르고, 클릭하면 상세로 들어간다.
+ *
+ * 출고용 엑셀: 출고 대행사(3PL)에 보낼 주문 목록을 .xlsx 로 내려받는다.
+ *   '전체'를 고른 상태면 출고 대기(결제 완료·상품 준비중)만, 상태를 고르면 그 상태만 담는다.
+ *   운송장 번호는 대행사에서 받아 주문 상세에서 입력한다.
  */
 export default function AdminOrdersPage() {
   const [data, setData] = useState<AdminOrderPage | null>(null);
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -31,12 +37,61 @@ export default function AdminOrdersPage() {
     load();
   }, [load]);
 
+  async function downloadExport() {
+    setExporting(true);
+    setExportError(null);
+    try {
+      const q = status ? `?status=${status}` : "";
+      const res = await fetch(`/api/admin/orders/export${q}`, { credentials: "include" });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { message?: string };
+        throw new Error(body.message ?? "엑셀 파일을 만들지 못했습니다. 다시 로그인해 주세요.");
+      }
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+      const filename = encoded ? decodeURIComponent(encoded) : "orders.xlsx";
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : "엑셀 파일을 만들지 못했습니다.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   const won = (n: number) => n.toLocaleString("ko-KR");
+  const statusLabel = ADMIN_ORDER_STATUSES.find((s) => s.value === status)?.label;
 
   return (
     <div>
-      <h1 className="font-kr text-2xl font-bold text-ink">주문 관리</h1>
-      <p className="mt-1 font-kr text-sm text-ink-soft">주문을 확인하고 상태를 변경하거나 운송장을 등록합니다.</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-kr text-2xl font-bold text-ink">주문 관리</h1>
+          <p className="mt-1 font-kr text-sm text-ink-soft">주문을 확인하고 상태를 변경하거나 운송장을 등록합니다.</p>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <button
+            type="button"
+            onClick={downloadExport}
+            disabled={exporting}
+            className="rounded-[3px] bg-ink px-4 py-2.5 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+          >
+            {exporting ? "만드는 중…" : "출고용 엑셀 받기"}
+          </button>
+          <p className="font-kr text-xs text-ink-faint">
+            {statusLabel ? `'${statusLabel}' 주문만 담습니다.` : "결제 완료·상품 준비중 주문을 담습니다."}
+          </p>
+          {exportError && <p className="font-kr text-xs text-clay-deep">{exportError}</p>}
+        </div>
+      </div>
 
       {/* 상태 필터 */}
       <div className="mt-6 flex flex-wrap gap-2">

@@ -31,6 +31,8 @@ export async function StoreFooter() {
     { label: "통신판매업 신고번호", value: v("company.mail_order_no") },
     { label: "주소", value: v("company.address") },
     { label: "고객센터", value: v("company.tel") },
+    { label: "이메일", value: v("company.email") },
+    { label: "운영시간", value: v("company.hours") },
   ];
 
   const sns: { label: string; key: string }[] = [

@@ -40,6 +40,11 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     keys: ["order.cutoff_time", "order.guest_enabled"],
   },
   {
+    title: "배송·출고",
+    note: "배송·교환·환불 안내 페이지에 표시됩니다. 배송비 금액은 왼쪽 '배송비' 메뉴에서 바꿉니다.",
+    keys: ["shipping.carrier", "shipping.return_address", "shipping.island_zip_ranges"],
+  },
+  {
     title: "메인 화면",
     keys: ["main.hero_images", "main.section.review", "main.section.notice"],
   },
@@ -55,7 +60,7 @@ const BOOLEAN_KEYS = new Set([
   "order.guest_enabled", "main.section.review", "main.section.notice",
 ]);
 // 여러 줄 입력이 필요한 키
-const TEXTAREA_KEYS = new Set(["main.hero_images"]);
+const TEXTAREA_KEYS = new Set(["main.hero_images", "shipping.island_zip_ranges"]);
 
 // 어떤 형식으로 넣어야 하는지 애매한 칸에 붙이는 안내 문구 (CLAUDE.md 규칙 4).
 const HINTS: Record<string, string> = {
@@ -67,6 +72,10 @@ const HINTS: Record<string, string> = {
   "sns.blog": "전체 주소로 넣어주세요. 예: https://blog.naver.com/…",
   "company.biz_no": "숫자와 하이픈만. 예: 123-45-67890",
   "company.mail_order_no": "예: 2026-서울강남-01234",
+  "shipping.carrier": "예: 롯데택배",
+  "shipping.return_address": "반품 상품을 받을 주소입니다. 출고 대행사 창고라면 업체명도 함께 넣어주세요.",
+  "shipping.island_zip_ranges":
+    "도서산간 추가 배송비를 받을 우편번호입니다. 비워 두면 기본 목록(제주·울릉·옹진·신안·완도 등)을 씁니다. 택배사 목록이 다를 때만 쉼표로 나눠 넣고, 범위는 '-'로 이어주세요.",
   "auth.login_image":
     "로그인 화면 배경 사진의 주소입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
   "auth.signup_image":
@@ -75,6 +84,7 @@ const HINTS: Record<string, string> = {
 
 const PLACEHOLDERS: Record<string, string> = {
   "main.hero_images": "/assets/hero/hero-a.jpg, /assets/hero/hero-b.jpg",
+  "shipping.island_zip_ranges": "63000-63644, 40200-40240, 54000",
 };
 
 export default function AdminSettingsPage() {

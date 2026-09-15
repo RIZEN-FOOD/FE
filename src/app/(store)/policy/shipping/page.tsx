@@ -15,33 +15,39 @@ type Shipping = { baseFee?: number; freeThreshold?: number; islandExtraFee?: num
 /**
  * 배송·교환·환불 안내. 전자상거래법상 청약철회·배송/교환/환불 정책 게시 의무.
  *
- * ★ 배송비 숫자는 shipping_policy 에서 읽는다(코드에 박지 않음).
+ * ★ 배송비 숫자는 shipping_policy 에서, 택배사·반품지·고객센터는 site_setting 에서 읽는다(코드에 박지 않음).
  *   식품은 청약철회 제한 사유가 있으므로 명시한다(전자상거래법 §17②).
  */
 export default async function ShippingPolicyPage() {
   const s = (await serverApi.getJson<Shipping>("/api/shipping-policy")) ?? {};
   const settings = (await serverApi.getJson<Record<string, string>>("/api/settings")) ?? {};
   const won = (n?: number) => (typeof n === "number" ? n.toLocaleString("ko-KR") + "원" : null);
+  const setting = (key: string) => settings[key]?.trim() || null;
 
   const baseFee = won(s.baseFee);
   const freeThreshold = won(s.freeThreshold);
   const island = won(s.islandExtraFee);
-  const cutoff = settings["order.cutoff_time"]?.trim();
-  const cs = settings["company.tel"]?.trim();
+  const cutoff = setting("order.cutoff_time");
+  const cs = setting("company.tel");
+  const hours = setting("company.hours");
+  const email = setting("company.email");
+  const carrier = setting("shipping.carrier");
+  const returnAddress = setting("shipping.return_address");
 
   return (
     <PolicyPage title="배송·교환·환불 안내" effectiveDate={EFFECTIVE}>
       <h2>1. 배송 안내</h2>
       <ul>
-        <li>
-          배송 방법: 택배 (배송업체 <Pending />)
-        </li>
+        <li>배송 방법: 택배 ({carrier ?? <>배송업체 <Pending /></>})</li>
         <li>
           배송비: 기본 {baseFee ?? <Pending />}
           {freeThreshold ? <>, {freeThreshold} 이상 구매 시 무료</> : null}
         </li>
         {island && Number(s.islandExtraFee) > 0 ? (
-          <li>도서·산간 지역은 배송비 {island}가 추가될 수 있습니다.</li>
+          <li>
+            제주·도서·산간 지역은 무료배송 여부와 관계없이 배송비 {island}가 추가됩니다. 주문서에서
+            우편번호를 입력하면 자동으로 계산됩니다.
+          </li>
         ) : (
           <li>도서·산간 지역은 배송비가 추가될 수 있습니다.</li>
         )}
@@ -69,6 +75,13 @@ export default async function ShippingPolicyPage() {
         마이페이지 &gt; 주문 내역 또는 고객센터
         {cs ? <>({cs})</> : null}·<a href="/inquiry">1:1 문의</a>로 신청해 주세요. 요청 시각과 처리
         결과는 기록·안내됩니다.
+      </p>
+      <h3>반품 보내실 곳</h3>
+      <p>
+        {returnAddress ?? <Pending />}
+        <br />
+        먼저 교환·반품을 신청하신 뒤 안내에 따라 보내주세요. 신청 없이 보내시면 처리가 늦어질 수
+        있습니다.
       </p>
 
       <h3>교환·반품이 제한되는 경우</h3>
@@ -102,8 +115,9 @@ export default async function ShippingPolicyPage() {
 
       <h2>4. 문의</h2>
       <p>
-        배송·교환·환불에 관한 문의는 고객센터{cs ? <>({cs})</> : <> (<Pending />)</>} 또는{" "}
-        <a href="/inquiry">1:1 문의</a>를 이용해 주세요.
+        배송·교환·환불에 관한 문의는 고객센터{cs ? <>({cs})</> : <> (<Pending />)</>}
+        {email ? <>, 이메일({email})</> : null} 또는 <a href="/inquiry">1:1 문의</a>를 이용해 주세요.
+        {hours ? <> 운영시간은 {hours}(주말·공휴일 제외)입니다.</> : null}
       </p>
     </PolicyPage>
   );
