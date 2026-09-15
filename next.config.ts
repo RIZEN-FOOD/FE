@@ -17,6 +17,8 @@ import type { NextConfig } from "next";
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8080";
 
 const nextConfig: NextConfig = {
+  // 운영은 Docker 로 띄운다(FE/Dockerfile). 실행에 필요한 파일만 .next/standalone 에 모은다.
+  output: "standalone",
   images: {
     // 로컬 정적 이미지(영양·레시피 등)를 AVIF/WebP 반응형으로 자동 최적화한다.
     // 제품 이미지는 BE 파이프라인이 이미 webp 다중 사이즈로 서빙하므로 next/image

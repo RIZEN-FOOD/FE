@@ -1,0 +1,12 @@
+# 이미지에 넣지 않는 것 — 로컬 빌드 산출물, 의존성(이미지 안에서 새로 설치), 로그, 시크릿
+node_modules
+.next
+.open-next
+.wrangler
+.dev.vars*
+*.log
+.git
+.github
+.env
+.env.*
+!.env.example
