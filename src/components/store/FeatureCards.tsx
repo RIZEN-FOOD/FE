@@ -11,11 +11,15 @@ import type { Nutrition } from "@/types/product";
  *   스마트스토어 FEATURES 원문의 '무첨가·자연 그대로·소화·흡수·에너지 충전' 표현은
  *   전부 원재료·맛·탄수화물 보충 사실로 바꿨다.
  *
- * ★ 3번 수치는 대표 상품의 DB 영양성분에서 온다 (코드에 박지 않는다).
+ * ★ 문구·사진은 관리자(사이트 설정 main.feature{1..4}.title/desc/image)에서 바꾼다.
+ *   비어 있으면 아래 기본값이 나간다. 대표가 새로 쓴 문구에도 위 규제 기준이 그대로 걸리므로
+ *   관리자 화면에 금지 표현 안내를 붙였다.
+ *
+ * ★ 3번 기본 문구의 수치는 대표 상품의 DB 영양성분에서 온다 (코드에 박지 않는다).
  *   값이 없으면 수치 문장을 빼고 보여준다 — 숫자를 지어내지 않는다.
  *
- * 사진: public/assets/features/feature-{1..4}.jpg 를 넣으면 그 사진이 나온다.
- *   없으면 기존 조리·히어로 사진으로 대신한다 (빈 칸끼리 전환되면 모션이 밋밋해진다).
+ * 사진: 관리자가 올린 사진이 없으면 public/assets/features/feature-{1..4}.jpg 를 쓰고,
+ *   그것도 없으면 기존 조리·히어로 사진으로 대신한다 (빈 칸끼리 전환되면 모션이 밋밋해진다).
  */
 function fmt(v: number) {
   return v.toLocaleString("ko-KR");
@@ -33,37 +37,68 @@ function firstExisting(candidates: string[]): string | null {
   return candidates.find((src) => hasPublicAsset(src)) ?? null;
 }
 
-export function FeatureCards({ nutrition }: { nutrition: Nutrition | null }) {
-  const items: FeatureItem[] = [
-    {
-      no: "01",
-      title: "국산 멥쌀 한 가지",
-      body: "국산 멥쌀만으로 만들었습니다. 원재료명에 멥쌀 한 줄뿐입니다.",
-      imageSrc: firstExisting(["/assets/features/feature-1.jpg", "/assets/recipes/recipe-2.jpg"]),
-      alt: "국산 멥쌀로 만든 크림오브라이스 한 그릇",
-    },
-    {
-      no: "02",
-      title: "자극이 적은 담백한 맛",
-      body: "고운 입자로 갈아, 조리하면 죽처럼 부드럽고 담백한 맛이 납니다.",
-      imageSrc: firstExisting(["/assets/features/feature-2.jpg", "/assets/recipes/recipe-3.jpg"]),
-      alt: "부드럽게 조리한 크림오브라이스",
-    },
-    {
-      no: "03",
-      title: "운동 전후 탄수화물 보충",
-      body: carbBody(nutrition),
-      imageSrc: firstExisting(["/assets/features/feature-3.jpg", "/assets/hero/hero-a.jpg"]),
-      alt: "크림오브라이스 한 그릇과 제품 패키지",
-    },
-    {
-      no: "04",
-      title: "다양한 맞춤 레시피",
-      body: "프로틴 파우더, 견과류, 과일 등을 조합해 기호에 맞춰 손쉽게 완성할 수 있습니다.",
-      imageSrc: firstExisting(["/assets/features/feature-4.jpg", "/assets/recipes/recipe-1.jpg"]),
-      alt: "과일과 견과를 올린 크림오브라이스",
-    },
-  ];
+type FeatureDefault = {
+  no: string;
+  title: string;
+  body: (nutrition: Nutrition | null) => string;
+  imageCandidates: string[];
+  alt: string;
+};
+
+const DEFAULTS: FeatureDefault[] = [
+  {
+    no: "01",
+    title: "국산 멥쌀 한 가지",
+    body: () => "국산 멥쌀만으로 만들었습니다. 원재료명에 멥쌀 한 줄뿐입니다.",
+    imageCandidates: ["/assets/features/feature-1.jpg", "/assets/recipes/recipe-2.jpg"],
+    alt: "국산 멥쌀로 만든 크림오브라이스 한 그릇",
+  },
+  {
+    no: "02",
+    title: "자극이 적은 담백한 맛",
+    body: () => "고운 입자로 갈아, 조리하면 죽처럼 부드럽고 담백한 맛이 납니다.",
+    imageCandidates: ["/assets/features/feature-2.jpg", "/assets/recipes/recipe-3.jpg"],
+    alt: "부드럽게 조리한 크림오브라이스",
+  },
+  {
+    no: "03",
+    title: "운동 전후 탄수화물 보충",
+    body: carbBody,
+    imageCandidates: ["/assets/features/feature-3.jpg", "/assets/hero/hero-a.jpg"],
+    alt: "크림오브라이스 한 그릇과 제품 패키지",
+  },
+  {
+    no: "04",
+    title: "다양한 맞춤 레시피",
+    body: () => "프로틴 파우더, 견과류, 과일 등을 조합해 기호에 맞춰 손쉽게 완성할 수 있습니다.",
+    imageCandidates: ["/assets/features/feature-4.jpg", "/assets/recipes/recipe-1.jpg"],
+    alt: "과일과 견과를 올린 크림오브라이스",
+  },
+];
+
+export function FeatureCards({
+  nutrition,
+  settings = {},
+}: {
+  nutrition: Nutrition | null;
+  settings?: Record<string, string>;
+}) {
+  /** 관리자가 채운 값만 쓴다. 공백만 있는 값은 안 채운 것으로 본다. */
+  const setting = (key: string) => settings[key]?.trim() || null;
+
+  const items: FeatureItem[] = DEFAULTS.map((d, index) => {
+    const n = index + 1;
+    const title = setting(`main.feature${n}.title`) ?? d.title;
+    const photo = setting(`main.feature${n}.image`);
+    return {
+      no: d.no,
+      title,
+      body: setting(`main.feature${n}.desc`) ?? d.body(nutrition),
+      imageSrc: photo ?? firstExisting(d.imageCandidates),
+      // 관리자가 올린 사진은 내용을 알 수 없으므로 제목을 대체 텍스트로 쓴다.
+      alt: photo ? title : d.alt,
+    };
+  });
 
   return <FeatureScroller items={items} />;
 }
