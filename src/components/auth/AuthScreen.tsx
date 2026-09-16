@@ -11,6 +11,38 @@ import { api, ApiError } from "@/lib/api/client";
 
 type Mode = "login" | "signup";
 
+const PROVIDER_LABEL: Record<string, string> = { kakao: "카카오", naver: "네이버", local: "이메일" };
+
+/**
+ * 간편 로그인에서 돌아왔을 때의 안내 문장. 서버가 ?social_error= 로 사유를 준다.
+ * 같은 이메일 계정이 있으면 자동으로 합치지 않고, 원래 가입한 방식으로 로그인하도록 안내한다.
+ */
+function socialErrorMessage(code: string | null, existing: string | null): string | null {
+  switch (code) {
+    case null:
+      return null;
+    case "cancelled":
+      return "간편 로그인을 취소했습니다.";
+    case "expired":
+      return "로그인 시간이 지났습니다. 다시 시도해 주세요.";
+    case "unavailable":
+      return "이용할 수 없는 계정입니다. 고객센터로 문의해 주세요.";
+    case "unavailable_provider":
+      return "지금은 이 간편 로그인을 쓸 수 없습니다. 이메일로 로그인해 주세요.";
+    case "email_exists": {
+      if (existing === "local") {
+        return "이미 같은 이메일로 가입된 계정이 있습니다. 이메일과 비밀번호로 로그인해 주세요.";
+      }
+      const label = PROVIDER_LABEL[existing ?? ""];
+      return label
+        ? `이미 ${label}(으)로 가입된 계정이 있습니다. ${label}(으)로 로그인해 주세요.`
+        : "이미 같은 이메일로 가입된 계정이 있습니다. 원래 가입한 방법으로 로그인해 주세요.";
+    }
+    default:
+      return "간편 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.";
+  }
+}
+
 /** 관리자가 사진을 안 넣었을 때 쓰는 기본 배경 (저장소 번들). */
 const DEFAULT_LOGIN_IMAGE = "/assets/auth/login.webp";
 const DEFAULT_SIGNUP_IMAGE = "/assets/auth/signup.webp";
@@ -38,7 +70,11 @@ export function AuthScreen({
   const { me, ready, checkAuth, login, signup } = useMemberAuth();
 
   const [mode, setMode] = useState<Mode>(initialMode);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    socialErrorMessage(searchParams.get("social_error"), searchParams.get("existing")),
+  );
+  /** 키가 설정돼 켜진 간편 로그인만 버튼으로 보여준다. */
+  const [providers, setProviders] = useState<("kakao" | "naver")[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -66,6 +102,13 @@ export function AuthScreen({
   useEffect(() => {
     if (!ready) checkAuth();
   }, [ready, checkAuth]);
+
+  useEffect(() => {
+    api
+      .get<Record<string, boolean>>("/api/auth/oauth/providers")
+      .then((res) => setProviders((["kakao", "naver"] as const).filter((p) => res[p])))
+      .catch(() => setProviders([]));
+  }, []);
 
   // 이미 로그인돼 있으면 원래 가려던 곳으로 보낸다.
   useEffect(() => {
@@ -274,9 +317,24 @@ export function AuthScreen({
             </button>
           </form>
 
-          {/* 간편 로그인(카카오·네이버)은 OAuth 연동 후 노출한다.
-              동작하지 않는 안내(alert) 버튼을 상용 화면에 두지 않는다.
-              연동 시 아래 SocialButton 블록을 되살린다. */}
+          {/* 간편 로그인 — 키가 설정된 제공자만 보인다 (누르면 실패하는 버튼을 두지 않는다) */}
+          {providers.length > 0 && (
+            <div className="mt-6">
+              <div className="flex items-center gap-3">
+                <span className="h-px flex-1 bg-line" />
+                <span className="font-kr text-xs text-ink-faint">또는 간편하게</span>
+                <span className="h-px flex-1 bg-line" />
+              </div>
+              <div className="mt-4 flex flex-col gap-2.5">
+                {providers.map((p) => (
+                  <SocialButton key={p} provider={p} next={redirectTo} />
+                ))}
+              </div>
+              <p className="mt-2.5 text-center font-kr text-[11px] leading-relaxed text-ink-faint">
+                처음이시면 약관 동의 후 바로 가입됩니다.
+              </p>
+            </div>
+          )}
 
           {/* 하단 전환 링크 */}
           <p className="mt-7 text-center font-kr text-xs text-ink-soft">
@@ -321,22 +379,21 @@ function Field({
 }
 
 /**
- * 소셜 로그인 버튼.
- * OAuth 연동은 카카오·네이버 앱 등록이 선행돼야 한다. 지금은 안내만 한다.
+ * 간편 로그인 버튼. 서버의 시작 주소로 이동한다(화면 전체 이동).
+ * 서버가 카카오·네이버 로그인 화면으로 보내고, 끝나면 원래 가려던 화면(next)으로 돌려보낸다.
  */
-function SocialButton({ provider }: { provider: "kakao" | "naver" }) {
+function SocialButton({ provider, next }: { provider: "kakao" | "naver"; next: string }) {
   const meta = {
     kakao: { label: "카카오로 시작하기", bg: "bg-[#FEE500]", text: "text-[#191600]" },
     naver: { label: "네이버로 시작하기", bg: "bg-[#03C75A]", text: "text-white" },
   }[provider];
 
   return (
-    <button
-      type="button"
-      onClick={() => window.alert("간편 로그인은 준비 중입니다.")}
-      className={`h-[50px] w-full rounded-full font-kr text-sm font-semibold shadow-[0_6px_16px_rgba(34,30,28,0.14)] transition hover:-translate-y-0.5 hover:opacity-90 ${meta.bg} ${meta.text}`}
+    <a
+      href={`/api/auth/oauth/${provider}/start?next=${encodeURIComponent(next)}`}
+      className={`flex h-[50px] w-full items-center justify-center rounded-full font-kr text-sm font-semibold shadow-[0_6px_16px_rgba(34,30,28,0.14)] transition hover:-translate-y-0.5 hover:opacity-90 ${meta.bg} ${meta.text}`}
     >
       {meta.label}
-    </button>
+    </a>
   );
 }
