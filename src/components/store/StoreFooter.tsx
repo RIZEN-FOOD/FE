@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { serverApi } from "@/lib/server/api";
+import { safeUrl } from "@/lib/safeUrl";
 
 /**
  * 공개 페이지 공용 푸터.
@@ -40,7 +41,10 @@ export async function StoreFooter() {
     { label: "YouTube", key: "sns.youtube" },
     { label: "Blog", key: "sns.blog" },
   ];
-  const activeSns = sns.filter((s) => settings[s.key] && settings[s.key].trim());
+  // 주소 형식이 아닌 값(javascript: 등)은 링크로 걸지 않는다.
+  const activeSns = sns
+    .map((s) => ({ ...s, href: safeUrl(settings[s.key]) }))
+    .filter((s): s is { label: string; key: string; href: string } => Boolean(s.href));
 
   return (
     <footer className="mt-24">
@@ -115,7 +119,7 @@ export async function StoreFooter() {
                 {activeSns.map((s) => (
                   <a
                     key={s.key}
-                    href={settings[s.key]}
+                    href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-en text-xs font-medium text-cream-warm underline-offset-4 hover:underline"

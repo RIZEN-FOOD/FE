@@ -1,4 +1,5 @@
 import { AddToCart } from "@/components/store/AddToCart";
+import { safeUrl } from "@/lib/safeUrl";
 import type { ProductDetail } from "@/types/product";
 
 const CHANNEL_LABEL: Record<string, string> = {
@@ -61,7 +62,7 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
             {links.map((link, i) => (
               <a
                 key={i}
-                href={link.url}
+                href={safeUrl(link.url) ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-[2px] border border-line px-3 py-1.5 font-kr text-xs text-ink-soft transition hover:border-ink hover:text-ink"

@@ -7,6 +7,7 @@
  * 사진은 관리자 설정(auth.login_image / auth.signup_image)에서 온다.
  * 비어 있으면 저장소에 넣어둔 기본 사진을 쓴다 — 하드코딩이 아니라 폴백이다.
  */
+import { safeUrl } from "@/lib/safeUrl";
 export function AuthVisual({
   mode,
   loginImage,
@@ -38,7 +39,12 @@ function Scene({ active, src }: { active: boolean; src: string }) {
       aria-hidden={!active}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt="" className="h-full w-full select-none object-cover" draggable={false} />
+      <img
+        src={safeUrl(src) ?? ""}
+        alt=""
+        className="h-full w-full select-none object-cover"
+        draggable={false}
+      />
     </div>
   );
 }
