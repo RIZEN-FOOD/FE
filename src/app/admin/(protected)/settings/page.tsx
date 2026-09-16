@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { api, ApiError } from "@/lib/api/client";
-import { ImageUploader } from "@/components/admin/ImageUploader";
 
 type AdminSetting = { key: string; value: string; description: string };
 
@@ -50,18 +49,6 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     keys: ["main.hero_images", "main.section.review", "main.section.notice"],
   },
   {
-    title: "메인 FEATURES (4칸)",
-    note:
-      "메인 화면 가운데 'RIZEN 쌀가루는 뭐가 다른가요?' 네 칸입니다. 비워 두면 지금 나오는 문구·사진이 그대로 나옵니다. " +
-      "크림오브라이스는 일반 식품이라 '다이어트 효과', '소화가 잘 됩니다', '근육 증가' 같은 효능 표현은 넣을 수 없습니다(식품표시광고법).",
-    keys: [
-      "main.feature1.title", "main.feature1.desc", "main.feature1.image",
-      "main.feature2.title", "main.feature2.desc", "main.feature2.image",
-      "main.feature3.title", "main.feature3.desc", "main.feature3.image",
-      "main.feature4.title", "main.feature4.desc", "main.feature4.image",
-    ],
-  },
-  {
     title: "로그인 화면",
     note: "로그인·회원가입 화면 왼쪽(모바일에선 전체 배경)에 깔리는 사진입니다. 비우면 기본 사진이 나옵니다.",
     keys: ["auth.login_image", "auth.signup_image"],
@@ -73,14 +60,7 @@ const BOOLEAN_KEYS = new Set([
   "order.guest_enabled", "main.section.review", "main.section.notice",
 ]);
 // 여러 줄 입력이 필요한 키
-const TEXTAREA_KEYS = new Set([
-  "main.hero_images", "shipping.island_zip_ranges",
-  "main.feature1.desc", "main.feature2.desc", "main.feature3.desc", "main.feature4.desc",
-]);
-// 사진 칸 — 주소를 입력하는 대신 파일을 올린다
-const IMAGE_KEYS = new Set([
-  "main.feature1.image", "main.feature2.image", "main.feature3.image", "main.feature4.image",
-]);
+const TEXTAREA_KEYS = new Set(["main.hero_images", "shipping.island_zip_ranges"]);
 
 // 어떤 형식으로 넣어야 하는지 애매한 칸에 붙이는 안내 문구 (CLAUDE.md 규칙 4).
 const HINTS: Record<string, string> = {
@@ -92,8 +72,6 @@ const HINTS: Record<string, string> = {
   "sns.blog": "전체 주소로 넣어주세요. 예: https://blog.naver.com/…",
   "company.biz_no": "숫자와 하이픈만. 예: 123-45-67890",
   "company.mail_order_no": "예: 2026-서울강남-01234",
-  "main.feature3.desc":
-    "비워 두면 상품의 영양성분(1회 제공량·탄수화물·열량)으로 문장이 자동으로 만들어집니다.",
   "shipping.carrier": "예: 롯데택배",
   "shipping.return_address": "반품 상품을 받을 주소입니다. 출고 대행사 창고라면 업체명도 함께 넣어주세요.",
   "shipping.island_zip_ranges":
@@ -189,30 +167,18 @@ export default function AdminSettingsPage() {
               <p className="mt-1 font-kr text-xs leading-relaxed text-ink-soft">{group.note}</p>
             )}
             <div className="mt-5 flex flex-col gap-5">
-              {group.keys.map((key) =>
-                IMAGE_KEYS.has(key) ? (
-                  <ImageUploader
-                    key={key}
-                    label={descOf(key) || key}
-                    hint="권장 1200x1500 이상 (세로 4:5). 모바일에서는 정사각형으로 잘리니 피사체를 가운데에 두세요."
-                    previewUrl={draft[key]?.trim() ? draft[key] : null}
-                    category="main"
-                    onChange={(_imageKey, url) => setDraft((d) => ({ ...d, [key]: url }))}
-                    onClear={() => setDraft((d) => ({ ...d, [key]: "" }))}
-                  />
-                ) : (
-                  <SettingField
-                    key={key}
-                    label={descOf(key) || key}
-                    hint={HINTS[key]}
-                    placeholder={PLACEHOLDERS[key]}
-                    value={draft[key] ?? ""}
-                    onChange={(v) => setDraft((d) => ({ ...d, [key]: v }))}
-                    boolean={BOOLEAN_KEYS.has(key)}
-                    textarea={TEXTAREA_KEYS.has(key)}
-                  />
-                ),
-              )}
+              {group.keys.map((key) => (
+                <SettingField
+                  key={key}
+                  label={descOf(key) || key}
+                  hint={HINTS[key]}
+                  placeholder={PLACEHOLDERS[key]}
+                  value={draft[key] ?? ""}
+                  onChange={(v) => setDraft((d) => ({ ...d, [key]: v }))}
+                  boolean={BOOLEAN_KEYS.has(key)}
+                  textarea={TEXTAREA_KEYS.has(key)}
+                />
+              ))}
             </div>
           </section>
         ))}

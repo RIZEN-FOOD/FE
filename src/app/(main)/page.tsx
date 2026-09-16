@@ -83,7 +83,7 @@ export default async function Home() {
         productName={primaryDetail?.nameKo ?? "크림오브라이스"}
       />
       <HowToCook />
-      <FeatureCards nutrition={primaryDetail?.nutrition ?? null} settings={settings ?? {}} />
+      <FeatureCards nutrition={primaryDetail?.nutrition ?? null} />
       <ReviewPreview reviews={reviews} />
       <BrandFaq />
       {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
