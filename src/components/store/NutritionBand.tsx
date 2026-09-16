@@ -17,9 +17,12 @@ import type { Nutrition } from "@/types/product";
 export function NutritionBand({
   nutrition,
   productName,
+  backgroundImage,
 }: {
   nutrition: Nutrition | null;
   productName: string;
+  /** 관리자가 올린 배경 사진. 없으면 기본 사진을 쓴다. */
+  backgroundImage?: string | null;
 }) {
   if (!nutrition) return null;
 
@@ -42,7 +45,7 @@ export function NutritionBand({
     >
       {/* 배경 사진 — next/image 로 AVIF/WebP 반응형 최적화 */}
       <Image
-        src="/assets/sections/nutrition.jpg"
+        src={backgroundImage?.trim() ? backgroundImage : "/assets/sections/nutrition.jpg"}
         alt=""
         aria-hidden="true"
         fill

@@ -81,6 +81,7 @@ export default async function Home() {
       <NutritionBand
         nutrition={primaryDetail?.nutrition ?? null}
         productName={primaryDetail?.nameKo ?? "크림오브라이스"}
+        backgroundImage={settings?.["main.nutrition_image"] ?? null}
       />
       <HowToCook />
       <FeatureCards nutrition={primaryDetail?.nutrition ?? null} />

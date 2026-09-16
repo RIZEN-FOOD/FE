@@ -48,18 +48,25 @@ const PAY_ORIGINS = [
   "https://*.inicis.com",
   "https://*.kcp.co.kr",
 ];
-const POSTCODE_ORIGINS = ["https://t1.daumcdn.net", "https://*.daumcdn.net", "https://postcode.map.daum.net"];
+// 주소 검색 위젯은 스크립트(daumcdn)를 받아 검색 화면(postcode.map.*)을 프레임으로 띄운다.
+// 개발 서버는 http 라 위젯도 http 주소를 쓰므로, 개발에서만 http 주소를 함께 허용한다.
+const POSTCODE_ORIGINS = [
+  "https://t1.daumcdn.net",
+  "https://*.daumcdn.net",
+  "https://postcode.map.daum.net",
+  "https://postcode.map.kakao.com",
+  ...(isDev ? ["http://postcode.map.kakao.com", "http://postcode.map.daum.net"] : []),
+];
 
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
   "style-src 'self' 'unsafe-inline'",
-  // 운영에서 업로드 사진은 같은 도메인(https://www.도메인/uploads)에서 온다.
-  // 개발에서만 API 서버(8080)가 따로 떠 있어 그 주소를 예외로 둔다.
-  `img-src 'self' data: blob: https:${isDev ? " http://localhost:8080" : ""}`,
+  // 업로드 사진은 개발·운영 모두 같은 출처(/uploads)에서 온다.
+  "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   // 개발 서버는 웹소켓으로 화면을 새로 고친다(HMR).
-  `connect-src 'self' ${isDev ? "ws: wss: http://localhost:8080 " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
+  `connect-src 'self' ${isDev ? "ws: wss: " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
   `frame-src 'self' ${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
   // 우리 화면을 남의 사이트에 끼워 넣지 못하게 한다(클릭재킹).
   "frame-ancestors 'self'",

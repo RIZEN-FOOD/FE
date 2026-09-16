@@ -8,11 +8,10 @@
  */
 const toppings: { src: string; x: number; y: number; size: number; z: number; rot: number }[] = [
   // x·y 는 그릇 중심 기준 %(백분율), size 는 컨테이너 대비 %
-  { src: "/assets/ingredients/blueberry.png", x: -18, y: -8, size: 26, z: 3, rot: -8 },
-  { src: "/assets/ingredients/banana.png", x: 20, y: -12, size: 24, z: 2, rot: 10 },
-  { src: "/assets/ingredients/almond.png", x: 30, y: 14, size: 17, z: 3, rot: 18 },
-  { src: "/assets/ingredients/walnut.png", x: -30, y: 16, size: 20, z: 2, rot: -14 },
-  { src: "/assets/ingredients/rice.png", x: 4, y: 22, size: 14, z: 1, rot: 6 },
+  { src: "/assets/ingredients/blueberry.webp", x: -18, y: -8, size: 26, z: 3, rot: -8 },
+  { src: "/assets/ingredients/banana.webp", x: 20, y: -12, size: 24, z: 2, rot: 10 },
+  { src: "/assets/ingredients/almond.webp", x: 30, y: 14, size: 17, z: 3, rot: 18 },
+  { src: "/assets/ingredients/walnut.webp", x: -30, y: 16, size: 20, z: 2, rot: -14 },
 ];
 
 export function BowlScene({ className }: { className?: string }) {

@@ -13,7 +13,7 @@ import { safeUrl } from "@/lib/safeUrl";
  *   값은 site_setting 에서 읽는다 — 코드에 박지 않는다. 대표가 관리자 화면에서 채운다.
  *   아직 입력되지 않은 항목은 "확인 후 표기"로 보여준다 — 값을 지어내지 않는다.
  *
- * ★ 제품 사진은 메인 배너와 같은 번들 누끼(하드코딩)라 어느 환경에서도 뜬다.
+ * ★ 제품 사진은 관리자(main.footer_image)에서 바꾼다. 비어 있으면 번들 누끼를 쓴다.
  *   카피는 일반 식품 표시 규정을 지킨다 — 효능·효과 표현을 넣지 않는다.
  */
 export async function StoreFooter() {
@@ -80,7 +80,7 @@ export async function StoreFooter() {
           <div className="relative flex justify-center md:justify-end">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/assets/hero-banner/rice-bag.webp"
+              src={safeUrl(settings["main.footer_image"]) ?? "/assets/hero-banner/rice-bag.webp"}
               alt="크림오브라이스 제품 패키지"
               className="w-[62%] max-w-[300px] select-none object-contain drop-shadow-[0_26px_44px_rgba(90,60,40,0.28)] md:w-[78%]"
               draggable={false}

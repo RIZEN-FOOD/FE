@@ -8,3 +8,19 @@
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 ).replace(/\/+$/, "");
+
+/**
+ * 공유 미리보기(OG)·구조화 데이터에 넣을 절대 주소.
+ *
+ * 업로드 사진은 도메인 없이 "/uploads/..." 로 저장된다 — 개발·운영에서 주소가 달라지지
+ * 않게 하려는 것이다. 다만 카카오톡·검색엔진에 보내는 주소는 절대 주소여야 한다.
+ */
+export function absoluteUrl(path: string | null | undefined): string {
+  if (!path) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+  return SITE_URL + (path.startsWith("/") ? path : "/" + path);
+}

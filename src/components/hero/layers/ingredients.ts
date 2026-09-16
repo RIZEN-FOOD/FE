@@ -20,18 +20,19 @@ export type Ingredient = {
   speed: number;
   /**
    * 누끼 이미지 경로. 채우면 도형 대신 이 이미지를 그린다.
-   * 예: "/assets/ingredients/blueberry-01.png"
+   * 예: "/assets/ingredients/blueberry.webp"
    */
   sprite?: string;
 };
 
 export const ingredients: Ingredient[] = [
-  { kind: "blueberry", count: 7, radius: 15, speed: 1.0, sprite: "/assets/ingredients/blueberry.png" },
-  { kind: "almond", count: 5, radius: 13, speed: 0.9, sprite: "/assets/ingredients/almond.png" },
-  { kind: "walnut", count: 3, radius: 16, speed: 0.85, sprite: "/assets/ingredients/walnut.png" },
-  { kind: "banana", count: 4, radius: 17, speed: 0.8, sprite: "/assets/ingredients/banana.png" },
-  // 또렷한 쌀알. 누끼 이미지로 떨어진다. 제품의 정체(쌀)를 보여주는 핵심 재료라 개수를 넉넉히 둔다.
-  { kind: "rice", count: 12, radius: 8, speed: 1.05, sprite: "/assets/ingredients/rice.png" },
+  { kind: "blueberry", count: 7, radius: 15, speed: 1.0, sprite: "/assets/ingredients/blueberry.webp" },
+  { kind: "almond", count: 5, radius: 13, speed: 0.9, sprite: "/assets/ingredients/almond.webp" },
+  { kind: "walnut", count: 3, radius: 16, speed: 0.85, sprite: "/assets/ingredients/walnut.webp" },
+  { kind: "banana", count: 4, radius: 17, speed: 0.8, sprite: "/assets/ingredients/banana.webp" },
+  // 쌀알. 누끼 사진이 없어 도형으로 그린다(있으면 sprite 에 경로를 넣으면 된다).
+  //   제품의 정체(쌀)를 보여주는 핵심 재료라 개수를 넉넉히 둔다.
+  { kind: "rice", count: 12, radius: 8, speed: 1.05 },
   // 미세 가루는 이미지 없이 도형으로 흩날린다 (작고 많아 이미지가 오히려 무겁다)
   { kind: "powder", count: 22, radius: 4, speed: 1.25 },
 ];

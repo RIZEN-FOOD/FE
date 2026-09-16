@@ -13,7 +13,7 @@ export function Backdrop() {
       {/* 파우더 흩날림 질감 (AI 생성). 그라디언트 위에 얹어 깊이를 더한다. */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-45 mix-blend-soft-light"
-        style={{ backgroundImage: "url('/assets/bg/hero-bg.png')" }}
+        style={{ backgroundImage: "url('/assets/bg/hero-bg.webp')" }}
       />
 
       {/* 위쪽에서 비추는 광원 */}

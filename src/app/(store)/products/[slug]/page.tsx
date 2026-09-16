@@ -5,6 +5,7 @@ import { ProductGallery } from "@/components/store/ProductGallery";
 import { PurchasePanel } from "@/components/store/PurchasePanel";
 import { NutritionFacts, IngredientList } from "@/components/store/NutritionTable";
 import { serverApi } from "@/lib/server/api";
+import { absoluteUrl } from "@/lib/site";
 import type { ProductDetail } from "@/types/product";
 
 async function loadProduct(slug: string): Promise<ProductDetail | null> {
@@ -27,7 +28,7 @@ export async function generateMetadata({
     openGraph: {
       title: product.nameKo,
       description,
-      images: product.thumbnailKey ? [product.images[0]?.url ?? ""] : [],
+      images: product.thumbnailKey ? [absoluteUrl(product.images[0]?.url)] : [],
     },
   };
 }

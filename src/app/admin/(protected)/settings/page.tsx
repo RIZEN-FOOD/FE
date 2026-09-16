@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { api, ApiError } from "@/lib/api/client";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 type AdminSetting = { key: string; value: string; description: string };
 
@@ -46,7 +47,11 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
   },
   {
     title: "메인 화면",
-    keys: ["main.hero_images", "main.section.review", "main.section.notice"],
+    note: "사진은 올리면 바로 반영됩니다. 올리지 않으면 지금 쓰는 기본 사진이 그대로 나옵니다.",
+    keys: [
+      "main.hero_images", "main.nutrition_image", "main.footer_image",
+      "main.section.review", "main.section.notice",
+    ],
   },
   {
     title: "로그인 화면",
@@ -60,12 +65,20 @@ const BOOLEAN_KEYS = new Set([
   "order.guest_enabled", "main.section.review", "main.section.notice",
 ]);
 // 여러 줄 입력이 필요한 키
-const TEXTAREA_KEYS = new Set(["main.hero_images", "shipping.island_zip_ranges"]);
+const TEXTAREA_KEYS = new Set(["shipping.island_zip_ranges"]);
+// 사진 한 장을 올리는 칸
+const IMAGE_KEYS = new Set([
+  "main.nutrition_image", "main.footer_image", "auth.login_image", "auth.signup_image",
+]);
+// 사진 여러 장을 올리는 칸 (순서대로 번갈아 보인다)
+const IMAGE_LIST_KEYS = new Set(["main.hero_images"]);
 
 // 어떤 형식으로 넣어야 하는지 애매한 칸에 붙이는 안내 문구 (CLAUDE.md 규칙 4).
 const HINTS: Record<string, string> = {
   "main.hero_images":
-    "메인 상단에 크게 도는 사진들입니다. 이미지 주소를 쉼표(,)로 구분해 여러 장 넣으면 순서대로 번갈아 보입니다. 비우면 기본 사진이 나옵니다.",
+    "메인 상단에 크게 도는 사진입니다. 여러 장 올리면 순서대로 번갈아 보입니다. 하나도 없으면 기본 사진이 나옵니다. 권장 가로형 1600x1200 이상.",
+  "main.nutrition_image": "영양성분 띠의 배경 사진입니다. 가로로 넓은 사진(권장 1920x1080 이상)을 올려주세요.",
+  "main.footer_image": "화면 맨 아래 배너에 들어가는 제품 사진입니다. 배경이 없는 누끼 사진이 잘 어울립니다.",
   "order.cutoff_time": "24시간 형식으로 넣어주세요. 예: 14:00 (이 시각 이전 주문까지 당일 발송)",
   "sns.instagram": "전체 주소로 넣어주세요. 예: https://instagram.com/…",
   "sns.youtube": "전체 주소로 넣어주세요. 예: https://youtube.com/@…",
@@ -77,13 +90,12 @@ const HINTS: Record<string, string> = {
   "shipping.island_zip_ranges":
     "도서산간 추가 배송비를 받을 우편번호입니다. 비워 두면 기본 목록(제주·울릉·옹진·신안·완도 등)을 씁니다. 택배사 목록이 다를 때만 쉼표로 나눠 넣고, 범위는 '-'로 이어주세요.",
   "auth.login_image":
-    "로그인 화면 배경 사진의 주소입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
+    "로그인 화면 배경 사진입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
   "auth.signup_image":
-    "회원가입 화면 배경 사진의 주소입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
+    "회원가입 화면 배경 사진입니다. 세로로 긴 화면이라 인물·피사체를 가운데에 두세요. 권장 세로형(예: 1067x1600 이상). 비우면 기본 사진이 나옵니다.",
 };
 
 const PLACEHOLDERS: Record<string, string> = {
-  "main.hero_images": "/assets/hero/hero-a.jpg, /assets/hero/hero-b.jpg",
   "shipping.island_zip_ranges": "63000-63644, 40200-40240, 54000",
 };
 
@@ -167,18 +179,43 @@ export default function AdminSettingsPage() {
               <p className="mt-1 font-kr text-xs leading-relaxed text-ink-soft">{group.note}</p>
             )}
             <div className="mt-5 flex flex-col gap-5">
-              {group.keys.map((key) => (
-                <SettingField
-                  key={key}
-                  label={descOf(key) || key}
-                  hint={HINTS[key]}
-                  placeholder={PLACEHOLDERS[key]}
-                  value={draft[key] ?? ""}
-                  onChange={(v) => setDraft((d) => ({ ...d, [key]: v }))}
-                  boolean={BOOLEAN_KEYS.has(key)}
-                  textarea={TEXTAREA_KEYS.has(key)}
-                />
-              ))}
+              {group.keys.map((key) => {
+                const set = (v: string) => setDraft((d) => ({ ...d, [key]: v }));
+                if (IMAGE_LIST_KEYS.has(key)) {
+                  return (
+                    <SettingImageList
+                      key={key}
+                      label={descOf(key) || key}
+                      hint={HINTS[key]}
+                      value={draft[key] ?? ""}
+                      onChange={set}
+                    />
+                  );
+                }
+                if (IMAGE_KEYS.has(key)) {
+                  return (
+                    <SettingImage
+                      key={key}
+                      label={descOf(key) || key}
+                      hint={HINTS[key]}
+                      value={draft[key] ?? ""}
+                      onChange={set}
+                    />
+                  );
+                }
+                return (
+                  <SettingField
+                    key={key}
+                    label={descOf(key) || key}
+                    hint={HINTS[key]}
+                    placeholder={PLACEHOLDERS[key]}
+                    value={draft[key] ?? ""}
+                    onChange={set}
+                    boolean={BOOLEAN_KEYS.has(key)}
+                    textarea={TEXTAREA_KEYS.has(key)}
+                  />
+                );
+              })}
             </div>
           </section>
         ))}
@@ -274,5 +311,88 @@ function SettingField({
         />
       )}
     </label>
+  );
+}
+
+/** 사진 한 장 칸. 주소를 손으로 적는 대신 파일을 올린다. */
+function SettingImage({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <ImageUploader
+        label={label}
+        hint=""
+        previewUrl={value.trim() ? value : null}
+        category="main"
+        onChange={(_key, url) => onChange(url)}
+        onClear={() => onChange("")}
+      />
+      {hint && <p className="mt-1.5 font-kr text-xs leading-relaxed text-ink-faint">{hint}</p>}
+    </div>
+  );
+}
+
+/** 사진 여러 장 칸. 올린 순서대로 화면에 나온다. */
+function SettingImageList({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const urls = value.split(",").map((v) => v.trim()).filter(Boolean);
+  const write = (next: string[]) => onChange(next.join(", "));
+
+  return (
+    <div>
+      <span className="block font-kr text-sm font-medium text-ink">{label}</span>
+      {hint && <p className="mt-0.5 font-kr text-xs leading-relaxed text-ink-faint">{hint}</p>}
+
+      {urls.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-3">
+          {urls.map((url, i) => (
+            <li key={url + i} className="w-24">
+              <div className="h-24 w-24 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" className="h-full w-full object-cover" />
+              </div>
+              <div className="mt-1 flex items-center justify-between">
+                <span className="font-kr text-xs text-ink-faint">{i + 1}번째</span>
+                <button
+                  type="button"
+                  onClick={() => write(urls.filter((_, idx) => idx !== i))}
+                  className="font-kr text-xs text-ink-faint transition hover:text-clay-deep"
+                >
+                  빼기
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="mt-3">
+        <ImageUploader
+          label="사진 추가"
+          hint=""
+          previewUrl={null}
+          category="main"
+          onChange={(_key, url) => write([...urls, url])}
+        />
+      </div>
+    </div>
   );
 }
