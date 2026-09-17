@@ -143,9 +143,7 @@ export function MobileNav() {
                 </Link>
               ))}
               <div className="my-2 border-t border-line" />
-              <div className="px-4 py-3 font-kr text-base font-medium text-ink [&_a]:block">
-                <MemberNavLink />
-              </div>
+              <MemberNavLink variant="mobile" />
               <Link
                 href="/cart"
                 className="rounded-[3px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream"
