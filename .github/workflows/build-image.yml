@@ -2,10 +2,18 @@
 # 운영 서버(Lightsail, x86)에서 docker compose pull 로 받는다 (BE/deploy/README.md).
 #
 # 지금은 수동 실행만 연다(Actions 탭 → Run workflow).
+#
+# ★ 사이트 주소는 빌드 때 이미지에 박힌다(sitemap·robots·공유 미리보기 절대 주소).
+#   실행할 때 운영 주소(https://www.도메인)를 넣는다. 도메인이 바뀌면 다시 빌드한다.
 name: Build web image
 
 on:
   workflow_dispatch:
+    inputs:
+      site_url:
+        description: "사이트 주소 (예: https://www.rizenfood.co.kr)"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -34,9 +42,20 @@ jobs:
         id: name
         run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
+      - name: 사이트 주소 확인
+        env:
+          SITE_URL: ${{ inputs.site_url }}
+        run: |
+          if ! [[ "$SITE_URL" =~ ^https://[a-z0-9.-]+$ ]]; then
+            echo "사이트 주소 형식이 이상합니다: '$SITE_URL' (https:// 로 시작, 끝에 / 없이)"
+            exit 1
+          fi
+
       - uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ inputs.site_url }}
           platforms: linux/amd64
           push: true
           tags: |
