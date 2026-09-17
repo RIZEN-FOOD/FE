@@ -1,18 +1,23 @@
-# 쇼핑몰 화면 Docker 이미지를 빌드해 GitHub 패키지(ghcr.io)에 올린다.
-# 운영 서버(Lightsail, x86)에서 docker compose pull 로 받는다 (BE/deploy/README.md).
+# 쇼핑몰 화면: main 푸시 → 타입·린트 검사 → Docker 이미지 빌드 → GitHub 패키지(ghcr.io)에 올린다.
 #
-# 지금은 수동 실행만 연다(Actions 탭 → Run workflow).
+# 운영 반영은 서버가 한다. 서버의 auto-deploy(2분마다)가 새 latest 이미지를 보고
+# 받아서 교체하고, 상태 확인에 실패하면 이전 이미지로 되돌린다 (BE/deploy/auto-deploy.sh).
 #
 # ★ 사이트 주소는 빌드 때 이미지에 박힌다(sitemap·robots·공유 미리보기 절대 주소).
-#   실행할 때 운영 주소(https://www.도메인)를 넣는다. 도메인이 바뀌면 다시 빌드한다.
+#   손으로 실행할 때 넣은 값 → 저장소 변수 SITE_URL → 기본값 순서로 쓴다.
 name: Build web image
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/deploy-cloudflare.yml"
   workflow_dispatch:
     inputs:
       site_url:
-        description: "사이트 주소 (예: https://www.rizenfood.co.kr)"
-        required: true
+        description: "사이트 주소 (비우면 기본 https://www.rizenfoods.com)"
+        required: false
         type: string
 
 permissions:
@@ -23,12 +28,43 @@ concurrency:
   group: build-web-image
   cancel-in-progress: false
 
+env:
+  SITE_URL: ${{ inputs.site_url || vars.SITE_URL || 'https://www.rizenfoods.com' }}
+
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: 타입 검사
+        run: npm run assets:manifest && npx tsc --noEmit
+
+      - name: 린트
+        run: npm run lint
+
   build:
+    needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
+      - name: 사이트 주소 확인
+        run: |
+          if ! [[ "$SITE_URL" =~ ^https://[a-z0-9.-]+$ ]]; then
+            echo "사이트 주소 형식이 이상합니다: '$SITE_URL' (https:// 로 시작, 끝에 / 없이)"
+            exit 1
+          fi
+          echo "사이트 주소: $SITE_URL"
 
       - uses: docker/setup-buildx-action@v3
 
@@ -42,24 +78,17 @@ jobs:
         id: name
         run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
-      - name: 사이트 주소 확인
-        env:
-          SITE_URL: ${{ inputs.site_url }}
-        run: |
-          if ! [[ "$SITE_URL" =~ ^https://[a-z0-9.-]+$ ]]; then
-            echo "사이트 주소 형식이 이상합니다: '$SITE_URL' (https:// 로 시작, 끝에 / 없이)"
-            exit 1
-          fi
-
       - uses: docker/build-push-action@v6
         with:
           context: .
-          build-args: |
-            NEXT_PUBLIC_SITE_URL=${{ inputs.site_url }}
           platforms: linux/amd64
           push: true
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ env.SITE_URL }}
           tags: |
             ${{ steps.name.outputs.image }}:latest
             ${{ steps.name.outputs.image }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
