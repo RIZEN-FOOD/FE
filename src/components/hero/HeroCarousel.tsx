@@ -51,6 +51,10 @@ function heroGradient(hex: string): string {
   return `radial-gradient(120% 90% at 50% 22%, ${shade(hex, 0.16)} 0%, ${hex} 45%, ${shade(hex, -0.24)} 100%)`;
 }
 
+/** 기둥 사진의 위·아래 끝(각 12%)을 투명하게 녹이는 마스크 — 더 넓히면 제품 위아래로 보이는 기둥이 사라진다 */
+const BACKDROP_FADE =
+  "linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)";
+
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const count = slides.length;
   const [active, setActive] = useState(0);
@@ -221,7 +225,8 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
         {/* 제품 스테이지 — 제품들을 대각선으로 나열하고, 넘어가면 대각선을 따라 이동 */}
         <div className="relative z-0 order-1 h-[46svh] md:order-2 md:h-[70svh]">
-          {/* 중앙 제품 뒤 세로 배경(스플래시) */}
+          {/* 중앙 제품 뒤 세로 배경(스플래시)
+              사진의 위·아래 끝이 직선으로 잘려 보이지 않게, 끝부분을 배경 속으로 서서히 사라지게 한다. */}
           {current.heroBackdropUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -231,7 +236,11 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               aria-hidden="true"
               draggable={false}
               className="pointer-events-none absolute left-1/2 top-1/2 z-[2] h-[120%] w-auto -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-80 md:h-[98%]"
-              style={{ animation: "rz-textin 800ms ease both" }}
+              style={{
+                animation: "rz-textin 800ms ease both",
+                maskImage: BACKDROP_FADE,
+                WebkitMaskImage: BACKDROP_FADE,
+              }}
             />
           )}
           {slides.map((s, i) => {
