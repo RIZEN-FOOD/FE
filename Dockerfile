@@ -29,7 +29,9 @@ RUN npm run build
 # ── 실행 ──────────────────────────────────────────────
 FROM node:22-slim AS run
 WORKDIR /app
-ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_SITE_URL
+# 실행 중에 만드는 화면(robots·sitemap 등)도 같은 주소를 읽는다. compose 의 값이 우선한다.
+ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 RUN useradd --system --uid 10001 --no-create-home web
 COPY --from=build --chown=web /app/.next/standalone ./
 COPY --from=build --chown=web /app/.next/static ./.next/static
