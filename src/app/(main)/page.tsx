@@ -1,6 +1,5 @@
 import { HeroSplit, type HeroPhoto } from "@/components/hero/HeroSplit";
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
-import { StickyBuyBar } from "@/components/layout/StickyBuyBar";
 import { FeaturedProducts } from "@/components/store/FeaturedProducts";
 import { WhyRizen } from "@/components/store/WhyRizen";
 import { NutritionBand } from "@/components/store/NutritionBand";
@@ -89,18 +88,6 @@ export default async function Home() {
       <BrandFaq />
       {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
       <NoticePreview notices={notices} />
-
-      {primary && (
-        <>
-          {/* 하단 고정 바에 가려지지 않도록 여유를 둔다 */}
-          <div className="h-20" aria-hidden="true" />
-          <StickyBuyBar
-            productName={primary.nameKo}
-            price={primary.effectivePrice}
-            href={`/products/${primary.slug}`}
-          />
-        </>
-      )}
     </>
   );
 }
