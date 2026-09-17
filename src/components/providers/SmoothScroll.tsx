@@ -14,6 +14,10 @@ gsap.registerPlugin(ScrollTrigger);
  * 안 그러면 스크롤 연동 애니메이션이 한 박자씩 밀린다.
  *
  * 모션 최소화 설정을 켠 사용자에게는 아예 켜지 않는다. 브라우저 기본 스크롤이 그대로 동작한다.
+ *
+ * ★ 모바일 메뉴·주소 검색 창처럼 body 스크롤을 잠그는 화면이 열리면 Lenis 도 멈춘다.
+ *   Lenis 는 body 의 overflow 와 상관없이 휠로 문서를 움직이므로, 멈추지 않으면
+ *   창 뒤 페이지가 스크롤된다. 잠금이 풀리면 다시 켠다.
  */
 export function SmoothScroll() {
   useEffect(() => {
@@ -38,7 +42,15 @@ export function SmoothScroll() {
     gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
 
+    const syncLock = () => {
+      if (document.body.style.overflow === "hidden") lenis.stop();
+      else lenis.start();
+    };
+    const observer = new MutationObserver(syncLock);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["style"] });
+
     return () => {
+      observer.disconnect();
       gsap.ticker.remove(onTick);
       lenis.destroy();
     };

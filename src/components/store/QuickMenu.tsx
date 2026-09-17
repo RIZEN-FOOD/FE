@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 /**
@@ -14,6 +15,10 @@ import { useEffect, useState } from "react";
 export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boolean }) {
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState(!revealAfterHero);
+  const pathname = usePathname();
+
+  // 다른 화면으로 이동하면 펼친 메뉴를 접는다
+  useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
     if (!revealAfterHero) return;

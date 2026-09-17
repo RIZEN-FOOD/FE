@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { BrandLogo } from "@/components/ui";
@@ -29,18 +30,52 @@ import { MemberNavLink } from "./MemberNavLink";
  *   - 패널은 role="dialog" aria-modal, Escape 로 닫힘
  *   - 열려 있는 동안 본문 스크롤을 잠근다
  *   - 패널 안의 링크를 누르면(이동하면) 자동으로 닫힌다 (이벤트 위임)
+ *
+ * ★ 닫힌 뒤 투명한 배경이 남아 화면 전체 터치를 막으면 안 된다 (2026-09-17 모바일 버그).
+ *   닫는 전환의 transitionend 는 페이지 이동·탭 전환 중에 오지 않을 수 있다. 그래서
+ *   - 닫히는 중인 배경은 pointer-events 를 끈다
+ *   - DOM 에서 내리는 것은 transitionend 가 아니라 타이머로 확실히 한다
+ *   - 주소가 바뀌면 즉시 내리고 스크롤 잠금도 푼다
  */
+const CLOSE_MS = 320;
+
 export function MobileNav() {
   const [mounted, setMounted] = useState(false); // DOM 에 존재하는가
   const [shown, setShown] = useState(false); // 전환이 들어온 상태(패널이 화면 안)
+  const unmountTimer = useRef<number | null>(null);
+  const pathname = usePathname();
+
+  const clearTimer = () => {
+    if (unmountTimer.current !== null) {
+      window.clearTimeout(unmountTimer.current);
+      unmountTimer.current = null;
+    }
+  };
 
   const open = useCallback(() => {
+    clearTimer();
     setMounted(true);
     // 다음 프레임에 전환을 켜서 translate-x-full → 0 슬라이드가 보이게 한다.
     requestAnimationFrame(() => requestAnimationFrame(() => setShown(true)));
   }, []);
 
-  const close = useCallback(() => setShown(false), []);
+  const close = useCallback(() => {
+    setShown(false);
+    clearTimer();
+    unmountTimer.current = window.setTimeout(() => {
+      unmountTimer.current = null;
+      setMounted(false);
+    }, CLOSE_MS);
+  }, []);
+
+  // 다른 화면으로 이동했으면 전환을 기다리지 않고 바로 내린다
+  useEffect(() => {
+    clearTimer();
+    setShown(false);
+    setMounted(false);
+  }, [pathname]);
+
+  useEffect(() => clearTimer, []);
 
   // 열려 있는 동안 배경 스크롤 잠금 + Escape 로 닫기
   useEffect(() => {
@@ -89,7 +124,7 @@ export function MobileNav() {
             aria-hidden="true"
             onClick={close}
             className={`fixed inset-0 z-50 bg-ink/40 transition-opacity duration-300 ${
-              shown ? "opacity-100" : "opacity-0"
+              shown ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
           />
 
@@ -102,11 +137,8 @@ export function MobileNav() {
             onClick={(e) => {
               if ((e.target as HTMLElement).closest("a")) close();
             }}
-            onTransitionEnd={(e) => {
-              if (e.propertyName === "transform" && !shown) setMounted(false);
-            }}
             className={`fixed inset-y-0 right-0 z-50 flex w-[78%] max-w-[320px] flex-col bg-cream-warm shadow-[-12px_0_40px_rgba(90,60,40,0.18)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              shown ? "translate-x-0" : "translate-x-full"
+              shown ? "translate-x-0" : "pointer-events-none translate-x-full"
             }`}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">

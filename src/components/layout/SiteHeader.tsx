@@ -14,6 +14,9 @@ import { CartBadge } from "@/components/store/CartBadge";
  * 히어로(어두운 사진) 위에서는 투명 배경 + 밝은 로고/메뉴,
  * 스크롤해 히어로를 지나면 크림 배경 + 어두운 로고/메뉴로 바뀐다.
  * 그래야 어느 구간에서도 헤더가 읽힌다.
+ *
+ * 모바일(md 미만)은 히어로 위에서도 항상 크림 배경 + 어두운 로고다 (2026-09-17 요청).
+ * 화면 폭으로 갈리는 부분은 CSS(max-md:)로 처리해 첫 화면부터 깜빡이지 않게 한다.
  */
 export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
   const [solid, setSolid] = useState(forceSolid);
@@ -38,16 +41,28 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        solid ? "border-b border-line bg-cream-warm/95 backdrop-blur" : "bg-transparent"
+        solid
+          ? "border-b border-line bg-cream-warm/95 backdrop-blur"
+          : "bg-transparent max-md:border-b max-md:border-line max-md:bg-cream-warm/95 max-md:backdrop-blur"
       }`}
     >
       <div className="mx-auto flex w-full max-w-wrap items-center justify-between px-7 py-5">
         <Link href="/" aria-label="라이즌푸드 홈">
+          {light && (
+            // 데스크톱 히어로 위: 밝은 로고
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/assets/brand/logo-white.png"
+              alt="RiZen"
+              className="hidden h-7 w-auto select-none md:block"
+              draggable={false}
+            />
+          )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={light ? "/assets/brand/logo-white.png" : "/assets/brand/logo.png"}
+            src="/assets/brand/logo.png"
             alt="RiZen"
-            className="h-7 w-auto select-none"
+            className={`h-7 w-auto select-none ${light ? "md:hidden" : ""}`}
             draggable={false}
           />
         </Link>
@@ -76,8 +91,8 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
         </nav>
 
         {/* 모바일: 장바구니 + 햄버거 */}
-        <div className={`flex items-center gap-4 md:hidden ${light ? "text-cream-warm" : "text-ink"}`}>
-          <CartBadge className={light ? "!text-cream-warm" : ""} />
+        <div className="flex items-center gap-4 text-ink md:hidden">
+          <CartBadge />
           <MobileNav />
         </div>
       </div>
