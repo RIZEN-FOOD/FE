@@ -8,12 +8,14 @@ import { FeatureCards } from "@/components/store/FeatureCards";
 import { BrandFaq } from "@/components/store/BrandFaq";
 import { ReviewPreview } from "@/components/store/ReviewPreview";
 import { NoticePreview } from "@/components/store/NoticePreview";
+import { MainPopup } from "@/components/store/MainPopup";
 import { hasPublicAsset } from "@/lib/publicAssets";
 
 import { serverApi } from "@/lib/server/api";
 import type { ProductDetail, ProductListItem, HeroSlide } from "@/types/product";
-import type { NoticePublicPage } from "@/types/content";
+import type { NoticePublicDetail } from "@/types/content";
 import type { ReviewPage } from "@/types/member";
+import type { PopupPublic } from "@/types/popup";
 
 /**
  * 메인 페이지. 서버에서 실데이터를 가져와 SSR 한다.
@@ -26,13 +28,16 @@ import type { ReviewPage } from "@/types/member";
  * 데이터가 없는 섹션은 각 컴포넌트가 알아서 그리지 않는다.
  */
 export default async function Home() {
-  const [featured, heroData, noticeData, reviewData, settings] = await Promise.all([
+  const [featured, heroData, noticeData, reviewData, settings, popups] = await Promise.all([
     serverApi.getJson<ProductListItem[]>("/api/products/featured"),
     // 메인 히어로 배너 — 사진·색·문구·가격·순서·노출 모두 관리자(상품 히어로 필드)에서 온다.
     serverApi.getJson<HeroSlide[]>("/api/products/hero"),
-    serverApi.getJson<NoticePublicPage>("/api/notices?page=0&size=3"),
+    // 공지 아코디언용 최신 3건(본문 포함, 조회수 영향 없음)
+    serverApi.getJson<NoticePublicDetail[]>("/api/notices/latest?size=3"),
     serverApi.getJson<ReviewPage>("/api/reviews?page=0&size=3"),
     serverApi.getJson<Record<string, string>>("/api/settings"),
+    // 관리자가 등록한 팝업 (노출 중인 것만, 순서대로)
+    serverApi.getJson<PopupPublic[]>("/api/popups"),
   ]);
 
   // 노출(hero_enabled) 슬라이드가 표시 순서대로 이미 정렬돼 온다.
@@ -56,7 +61,7 @@ export default async function Home() {
   }
 
   const products = featured ?? [];
-  const notices = noticeData?.items ?? [];
+  const notices = noticeData ?? [];
   const reviews = reviewData?.items ?? [];
   const primary = products.find((p) => !p.soldOut) ?? products[0] ?? null;
 
@@ -88,6 +93,7 @@ export default async function Home() {
       <BrandFaq />
       {/* 구매 안내(BuyChannels) 섹션은 우선 숨김 — 필요 시 다시 넣는다. */}
       <NoticePreview notices={notices} />
+      <MainPopup popups={popups ?? []} />
     </>
   );
 }

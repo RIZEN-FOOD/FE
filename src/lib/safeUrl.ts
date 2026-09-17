@@ -18,9 +18,9 @@ export function safeUrl(value: string | null | undefined): string | undefined {
   if (!url) {
     return undefined;
   }
-  // 우리 서버 안의 경로. "//evil.com" 은 바깥 주소라 막는다.
-  if (url.startsWith("/") && !url.startsWith("//")) {
-    return url;
+  // 우리 서버 안의 경로. "//evil.com" 과 "/\evil.com"(브라우저가 // 로 읽는다)은 바깥 주소라 막는다.
+  if (url.startsWith("/")) {
+    return /^\/[/\\]/.test(url) ? undefined : url;
   }
   return /^https?:\/\//i.test(url) ? url : undefined;
 }
