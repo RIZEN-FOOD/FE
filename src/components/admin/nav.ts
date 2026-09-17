@@ -24,4 +24,5 @@ export const adminNav: NavItem[] = [
   { href: "/admin/shipping", label: "배송비 정책", ready: true },
   { href: "/admin/settings", label: "사이트 설정", ready: true },
   { href: "/admin/members", label: "회원 관리", ready: true },
+  { href: "/admin/accounts", label: "관리자 관리", ready: true },
 ];
