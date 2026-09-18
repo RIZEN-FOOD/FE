@@ -326,7 +326,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             {current.linkable ? (
               <Link
                 href={`/products/${current.slug}`}
-                className="rounded-full px-7 py-3.5 font-kr text-sm font-bold shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:opacity-95"
+                className="inline-flex min-h-12 items-center rounded-[6px] px-6 py-3 font-kr text-[15px] font-bold shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:opacity-95"
                 style={{ backgroundColor: ink, color: bg }}
               >
                 {current.soldOut ? "제품 보기" : "구매하기"}
@@ -335,7 +335,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               // 출시 예정(비공개) 상품 — 상세가 없으므로 링크하지 않는다.
               <span
                 aria-disabled="true"
-                className="cursor-default rounded-full px-7 py-3.5 font-kr text-sm font-bold opacity-80"
+                className="inline-flex min-h-12 cursor-default items-center rounded-[6px] px-6 py-3 font-kr text-[15px] font-bold opacity-80"
                 style={{ backgroundColor: ink, color: bg }}
               >
                 출시 예정
@@ -343,7 +343,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             )}
             <Link
               href="/products"
-              className="rounded-full border px-7 py-3.5 font-kr text-sm font-medium shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:opacity-90"
+              className="inline-flex min-h-12 items-center rounded-[6px] border px-6 py-3 font-kr text-[15px] font-medium shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:opacity-90"
               style={{ borderColor: light ? "rgba(34,30,28,0.4)" : "rgba(250,247,241,0.5)", color: ink }}
             >
               전체 상품

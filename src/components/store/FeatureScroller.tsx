@@ -80,9 +80,11 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
 
   return (
     <section ref={rootRef} aria-labelledby="features-heading" className="bg-cream-warm">
-      <div className="relative">
-        {/* 고정되는 화면 */}
-        <div className="sticky top-0 h-svh overflow-hidden bg-ink">
+      {/* ★ 바탕을 어둡게 둔다. 모바일에서 주소창이 접히며 화면이 커지는 순간
+             sticky 화면 아래로 바탕이 잠깐 비치는데, 크림색이면 흰 띠처럼 보인다. */}
+      <div className="relative bg-ink">
+        {/* 고정되는 화면 — 주소창 상태에 따라 늘어나는 높이(lvh)를 쓰고, 지원하지 않으면 svh 로 떨어진다 */}
+        <div className="sticky top-0 h-svh overflow-hidden bg-ink [height:100lvh]">
           {/* 배경 사진들 — 활성 한 장만 보인다 */}
           {items.map((f, i) => (
             <div key={f.no} data-feature-layer className="absolute inset-0" style={{ opacity: i === 0 ? 1 : 0 }}>
@@ -112,7 +114,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
           />
 
           {/* 문구 */}
-          <Container className="relative flex h-full flex-col justify-end pb-12 md:justify-center md:pb-0">
+          <Container className="relative flex h-full flex-col justify-end pb-24 md:justify-center md:pb-0">
             <div className="max-w-xl pr-16 md:pr-0">
               <SectionTag tone="onDark">Features</SectionTag>
               <h2
@@ -167,9 +169,9 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
         </div>
 
         {/* 스크롤 구간 — 고정 화면 위에 겹쳐 두고, 각 칸이 지나갈 때 위 문구·배경이 바뀐다 */}
-        <div className="relative -mt-[100svh]" aria-hidden="true">
+        <div className="relative -mt-[100svh] [margin-top:-100lvh]" aria-hidden="true">
           {items.map((f) => (
-            <div key={f.no} data-feature-block className="h-svh" />
+            <div key={f.no} data-feature-block className="h-svh [height:100lvh]" />
           ))}
         </div>
       </div>

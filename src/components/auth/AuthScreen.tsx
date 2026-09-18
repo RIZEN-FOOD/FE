@@ -97,7 +97,7 @@ export function AuthScreen({
   const redirectTo =
     nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
       ? nextParam
-      : "/mypage";
+      : "/";
 
   useEffect(() => {
     if (!ready) checkAuth();

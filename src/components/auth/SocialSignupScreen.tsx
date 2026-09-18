@@ -55,7 +55,7 @@ export function SocialSignupScreen() {
         agreeMarketing,
       });
       await checkAuth();
-      router.replace(res.next || "/mypage");
+      router.replace(res.next || "/");
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setExpired(true);

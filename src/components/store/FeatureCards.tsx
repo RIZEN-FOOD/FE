@@ -19,11 +19,15 @@ function fmt(v: number) {
   return v.toLocaleString("ko-KR");
 }
 
-/** 탄수화물 보충 문장. 필요한 값이 하나라도 없으면 수치 없이 쓴다. */
+/**
+ * 탄수화물 보충 문장. DB 에 있는 값만 쓴다 — 없는 수치는 지어내지 않는다.
+ * 열량(kcal)이 비어 있으면 그 부분만 빼고 쓴다.
+ */
 function carbBody(n: Nutrition | null): string {
   const tail = "운동 전후 탄수화물 보충용으로 드시기 좋습니다.";
-  if (!n || n.servingSizeG == null || n.carbG == null || n.kcal == null) return tail;
-  return `1회 제공량 ${fmt(n.servingSizeG)}g에 탄수화물 ${fmt(n.carbG)}g, ${fmt(n.kcal)}kcal가 들어 있습니다. ${tail}`;
+  if (!n || n.servingSizeG == null || n.carbG == null) return tail;
+  const kcal = n.kcal != null ? `, ${fmt(n.kcal)}kcal` : "";
+  return `1회 제공량 ${fmt(n.servingSizeG)}g에 탄수화물 ${fmt(n.carbG)}g${kcal}가 들어 있습니다. ${tail}`;
 }
 
 export async function FeatureCards({ nutrition }: { nutrition: Nutrition | null }) {

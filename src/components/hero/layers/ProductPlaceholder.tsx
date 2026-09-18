@@ -72,7 +72,7 @@ export function ProductPlaceholder({ className }: { className?: string }) {
         y="312"
         textAnchor="middle"
         fill="#5A524C"
-        fontFamily="var(--font-noto-sans-kr), sans-serif"
+        fontFamily="var(--font-kr), sans-serif"
         fontSize="14"
       >
         쌀가루

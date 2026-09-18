@@ -51,7 +51,7 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
             <Link
               key={item.label}
               href={item.href}
-              className="rounded-full border border-line bg-paper px-4 py-2 font-kr text-sm text-ink shadow-[0_6px_20px_rgba(90,60,40,0.14)] transition hover:bg-clay-soft/40"
+              className="inline-flex min-h-10 items-center rounded-[6px] border border-line bg-paper px-4 py-2 font-kr text-sm text-ink shadow-[0_6px_20px_rgba(90,60,40,0.14)] transition hover:bg-clay-soft/40"
             >
               {item.label}
             </Link>
@@ -60,7 +60,7 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
               key={item.label}
               type="button"
               onClick={item.onClick}
-              className="rounded-full border border-line bg-paper px-4 py-2 font-kr text-sm text-ink shadow-[0_6px_20px_rgba(90,60,40,0.14)] transition hover:bg-clay-soft/40"
+              className="inline-flex min-h-10 items-center rounded-[6px] border border-line bg-paper px-4 py-2 font-kr text-sm text-ink shadow-[0_6px_20px_rgba(90,60,40,0.14)] transition hover:bg-clay-soft/40"
             >
               {item.label}
             </button>

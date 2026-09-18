@@ -64,13 +64,13 @@ export async function StoreFooter() {
             <div className="mt-7 flex flex-wrap justify-center gap-3 md:justify-start">
               <Link
                 href="/products"
-                className="rounded-full bg-ink px-7 py-3.5 font-kr text-sm font-bold text-cream-warm shadow-[0_8px_20px_rgba(34,30,28,0.22)] transition hover:-translate-y-0.5 hover:bg-slate-deep"
+                className="inline-flex min-h-12 items-center rounded-[6px] bg-ink px-6 py-3 font-kr text-[15px] font-bold text-cream-warm shadow-[0_8px_20px_rgba(34,30,28,0.22)] transition hover:-translate-y-0.5 hover:bg-slate-deep"
               >
                 제품 보러가기
               </Link>
               <Link
                 href="/inquiry"
-                className="rounded-full border border-ink/40 px-7 py-3.5 font-kr text-sm font-medium text-ink shadow-[0_6px_16px_rgba(34,30,28,0.12)] transition hover:-translate-y-0.5 hover:bg-ink hover:text-cream-warm"
+                className="inline-flex min-h-12 items-center rounded-[6px] border border-ink/40 px-6 py-3 font-kr text-[15px] font-medium text-ink shadow-[0_6px_16px_rgba(34,30,28,0.12)] transition hover:-translate-y-0.5 hover:bg-ink hover:text-cream-warm"
               >
                 문의하기
               </Link>

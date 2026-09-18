@@ -26,7 +26,7 @@ const reasons: { no: string; title: string; body: string }[] = [
   {
     no: "03",
     title: "전자레인지로 간편하게",
-    body: "한 스푼(약 45g)에 물 100ml를 붓고, 30초씩 저어가며 데우면 완성입니다.",
+    body: "한 스푼(약 40g)에 물 100ml를 붓고, 30초씩 저어가며 데우면 완성입니다.",
   },
   {
     no: "04",

@@ -53,8 +53,8 @@ export default function DesignSystemPage() {
           <SectionTag>Typography</SectionTag>
           <div className="space-y-2">
             <p className="font-en text-2xl font-extrabold">Archivo — 영문·숫자 1234567890</p>
-            <p className="font-kr text-2xl font-bold">Noto Sans KR — 크림오브라이스</p>
-            <p className="font-script text-3xl text-clay-deep">Kaushan Script — Rizen Food</p>
+            <p className="font-kr text-2xl font-bold">Pretendard — 크림오브라이스 (본문·메뉴·버튼)</p>
+            <p className="font-display text-3xl">고운바탕 — 쌀, 그대로 (제목 전용)</p>
           </div>
         </section>
 

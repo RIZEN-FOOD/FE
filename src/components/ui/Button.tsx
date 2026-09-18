@@ -4,8 +4,9 @@ import { cn } from "@/lib/cn";
 type Variant = "dark" | "line";
 type Size = "md" | "sm";
 
+// CI v1: 모서리 6px · 최소 높이 48px (작은 버튼은 40px) · 글자 15~16px
 const base =
-  "inline-block cursor-pointer rounded-full border-none text-center font-kr font-bold transition duration-[250ms] " +
+  "inline-flex cursor-pointer items-center justify-center rounded-[6px] border-none text-center font-kr font-bold transition duration-[250ms] " +
   "hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-deep " +
   "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0";
 
@@ -15,8 +16,8 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  md: "px-[26px] py-3 text-[13.5px]",
-  sm: "px-5 py-[9px] text-[12.5px]",
+  md: "min-h-12 px-6 py-3 text-[15px]",
+  sm: "min-h-10 px-5 py-2 text-[13.5px]",
 };
 
 type CommonProps = {

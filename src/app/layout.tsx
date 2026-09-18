@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Noto_Sans_KR, Fraunces, Kaushan_Script } from "next/font/google";
+import { Archivo, Gowun_Batang } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { SITE_URL } from "@/lib/site";
 // 본문 한글: Pretendard(동적 서브셋 — 필요한 글자만 로드). Noto Sans 보다 부드럽다.
@@ -7,11 +7,15 @@ import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 
 /**
- * 서체.
+ * 서체 (2026-09-18 정리).
  * next/font 가 빌드 시 폰트를 셀프호스팅해서 외부 요청과 레이아웃 시프트를 없앤다.
  *
- * 본문은 산세리프(Noto Sans KR / Archivo), 제목은 세리프 디스플레이
- * (본명조 Noto Serif KR + Fraunces)로 편집·프리미엄 식품 감성을 준다.
+ *   본문·메뉴·버튼 : Pretendard Variable (동적 서브셋, 아래 import)
+ *   제목           : 고운바탕(Gowun Batang) — 한글 세리프. 본문과 확실히 구분된다
+ *   숫자·영문 라벨 : Archivo (가격·영양 수치·제품 영문명)
+ *
+ * 셋 다 SIL Open Font License 1.1 이라 상업 이용·웹 임베딩에 문제가 없다.
+ * 쓰지 않던 Noto Sans KR(라틴 서브셋만 로드돼 한글에 기여 0)·Fraunces·Kaushan Script 는 걷어냈다.
  */
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -20,28 +24,11 @@ const archivo = Archivo({
   display: "swap",
 });
 
-const notoSansKr = Noto_Sans_KR({
-  variable: "--font-noto-sans-kr",
+/** 제목 전용 한글 세리프. 굵기 두 단계만 쓴다. */
+const gowunBatang = Gowun_Batang({
+  variable: "--font-gowun",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700", "900"],
-  display: "swap",
-});
-
-
-/** 라틴 제목용 세리프. optical sizing 이 있어 큰 제목에서 표정이 산다. */
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
-/** 로고 워드마크 전용. 본문에 쓰지 않는다. */
-const kaushan = Kaushan_Script({
-  variable: "--font-kaushan",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -79,7 +66,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${archivo.variable} ${notoSansKr.variable} ${fraunces.variable} ${kaushan.variable} antialiased`}
+        className={`${archivo.variable} ${gowunBatang.variable} antialiased`}
       >
         {/* 키보드 사용자를 위한 본문 바로가기. 평소엔 숨고 포커스되면 나타난다. */}
         <a
