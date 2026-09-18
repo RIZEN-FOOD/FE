@@ -15,16 +15,21 @@ export type FeatureItem = {
   body: string;
   /** 없으면 같은 톤의 빈 칸으로 그린다 */
   imageSrc: string | null;
+  /** 모바일 전용 사진(세로). 없으면 imageSrc 를 위쪽 기준으로 채운다. */
+  imageMobileSrc?: string | null;
   alt: string;
 };
 
 /**
  * 특징 4가지 — 스크롤 연출. (문구·사진은 FeatureCards 가 서버에서 정해 넘긴다)
  *
- * 데스크톱 — 관리자가 등록한 사진이 화면 전체 배경으로 깔린 채 고정되고,
- *   스크롤이 내려갈 때마다 배경 사진이 크로스페이드되며 문구가 바뀐다 (2026-09-18 요청).
- *   지나간 문구는 위에 옅게 남아 몇 번째를 보고 있는지 알 수 있다.
- * 모바일 — 고정 연출 대신 네모 카드 4장(글 + 정사각형 사진). 스크롤을 붙잡지 않는다 (기획서 §3.1).
+ * 관리자가 등록한 사진이 화면 전체 배경으로 깔린 채 고정되고, 스크롤이 내려갈 때마다
+ * 배경 사진이 크로스페이드되며 문구가 바뀐다 (2026-09-18 요청).
+ * 지나간 문구는 옅게 남아 몇 번째를 보고 있는지 알 수 있다.
+ *
+ * 모바일 — 같은 연출을 쓰되 글을 아래쪽에 모은다. 가로 사진이 세로 화면에서 좌우로 잘리므로
+ *   사진은 위쪽(object-top)을 기준으로 채우고, 글 영역은 아래에서 어둡게 덮는다.
+ *   스크롤 자체는 붙잡지 않는다(브라우저 기본 스크롤, 기획서 §3.1).
  * 모션 최소화 — 크로스페이드 없이 즉시 전환된다. 스크롤은 브라우저 기본 동작 그대로다.
  *
  * ★ 사진 위에 흰 글씨를 얹으므로 어두운 그라데이션을 깔아 대비를 확보한다(WCAG AA).
@@ -40,8 +45,8 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
-      // 데스크톱에서만 배경 고정 전환을 켠다. 모바일은 정적 카드로 충분하다.
-      mm.add("(min-width: 768px)", () => {
+      // 화면 크기와 상관없이 같은 전환을 쓴다. 스크롤을 붙잡지 않고 sticky 로만 고정한다.
+      mm.add("(min-width: 0px)", () => {
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const blocks = gsap.utils.toArray<HTMLElement>("[data-feature-block]", root);
         const layers = gsap.utils.toArray<HTMLElement>("[data-feature-layer]", root);
@@ -75,72 +80,55 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
 
   return (
     <section ref={rootRef} aria-labelledby="features-heading" className="bg-cream-warm">
-      {/* ── 모바일: 네모 카드 4장 (글 + 정사각형 사진) ── */}
-      <div className="py-24 md:hidden">
-        <Container>
-          <SectionTag>Features</SectionTag>
-          <h2 id="features-heading" className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">
-            RIZEN 쌀가루는 뭐가 다른가요?
-          </h2>
-
-          <ul className="mt-10 flex flex-col gap-4">
-            {items.map((f) => (
-              <li
-                key={f.no}
-                className="grid grid-cols-[1fr_7rem] items-center gap-4 rounded-[4px] border border-line bg-paper p-5 shadow-[0_6px_24px_-12px_rgba(34,30,28,0.18)] sm:grid-cols-[1fr_9rem]"
-              >
-                <div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="grid h-7 min-w-7 place-items-center rounded-[3px] bg-ink px-1.5 font-numeric text-xs font-medium text-cream-warm">
-                      {f.no}
-                    </span>
-                    <h3 className="font-kr text-base font-bold text-ink">{f.title}</h3>
-                  </div>
-                  <p className="mt-2.5 font-kr text-[13px] leading-relaxed text-ink-soft">{f.body}</p>
-                </div>
-                <Photo item={f} className="aspect-square w-full rounded-[4px]" sizes="144px" />
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </div>
-
-      {/* ── 데스크톱: 배경 사진 고정 + 스크롤 따라 전환 ── */}
-      <div className="relative hidden md:block">
+      <div className="relative">
         {/* 고정되는 화면 */}
         <div className="sticky top-0 h-svh overflow-hidden bg-ink">
           {/* 배경 사진들 — 활성 한 장만 보인다 */}
           {items.map((f, i) => (
             <div key={f.no} data-feature-layer className="absolute inset-0" style={{ opacity: i === 0 ? 1 : 0 }}>
-              <Photo item={f} className="h-full w-full" sizes="100vw" priority={i === 0} />
+              {/* 모바일 전용 사진이 있으면 좁은 화면에서 그걸 쓴다(잘림 최소화) */}
+              {f.imageMobileSrc && (
+                <Photo
+                  item={{ ...f, imageSrc: f.imageMobileSrc }}
+                  className="h-full w-full md:hidden"
+                  sizes="100vw"
+                  priority={i === 0}
+                />
+              )}
+              <Photo
+                item={f}
+                className={`h-full w-full ${f.imageMobileSrc ? "hidden md:block" : ""}`}
+                sizes="100vw"
+                priority={i === 0}
+                objectTop={!f.imageMobileSrc}
+              />
             </div>
           ))}
 
           {/* 글씨 대비용 그라데이션 (왼쪽·아래를 어둡게) */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/45 to-ink/10"
+            className="absolute inset-0 bg-gradient-to-t from-ink/92 via-ink/72 to-ink/35 md:bg-gradient-to-r md:from-ink/85 md:via-ink/45 md:to-ink/10"
           />
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/70 to-transparent" />
 
           {/* 문구 */}
-          <Container className="relative flex h-full flex-col justify-center">
-            <div className="max-w-xl">
+          <Container className="relative flex h-full flex-col justify-end pb-12 md:justify-center md:pb-0">
+            <div className="max-w-xl pr-16 md:pr-0">
               <SectionTag tone="onDark">Features</SectionTag>
               <h2
                 id="features-heading"
-                className="font-display text-[clamp(1.9rem,3vw,2.75rem)] font-semibold tracking-[-0.01em] text-cream-warm"
+                className="font-display text-[clamp(1.6rem,5.5vw,2.75rem)] font-semibold tracking-[-0.01em] text-cream-warm"
               >
                 RIZEN 쌀가루는 뭐가 다른가요?
               </h2>
 
-              <ol className="mt-10 flex flex-col">
+              <ol className="mt-6 flex flex-col md:mt-10">
                 {items.map((f, i) => {
                   const isActive = i === active;
                   return (
                     <li
                       key={f.no}
-                      className={`border-t border-cream-warm/20 py-5 transition-opacity duration-500 last:border-b ${
+                      className={`border-t border-cream-warm/20 py-3.5 transition-opacity duration-500 last:border-b md:py-5 ${
                         isActive ? "opacity-100" : "opacity-45"
                       }`}
                     >
@@ -154,7 +142,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
                         </span>
                         <h3
                           className={`font-kr font-bold leading-tight tracking-[-0.02em] text-cream-warm transition-all duration-500 ${
-                            isActive ? "text-[clamp(1.5rem,2.4vw,2rem)]" : "text-[clamp(1.1rem,1.6vw,1.35rem)]"
+                            isActive ? "text-[clamp(1.15rem,4.4vw,2rem)]" : "text-[clamp(0.95rem,3.6vw,1.35rem)]"
                           }`}
                         >
                           {f.title}
@@ -166,7 +154,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
                           isActive ? "mt-3 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                         }`}
                       >
-                        <p className="overflow-hidden font-kr text-[15px] leading-relaxed text-cream-warm/85">
+                        <p className="overflow-hidden font-kr text-[13.5px] leading-relaxed text-cream-warm/85 md:text-[15px]">
                           {f.body}
                         </p>
                       </div>
@@ -195,11 +183,14 @@ function Photo({
   className,
   sizes = "(min-width: 768px) 40vw, 100vw",
   priority = false,
+  objectTop = false,
 }: {
   item: FeatureItem;
   className?: string;
   sizes?: string;
   priority?: boolean;
+  /** 세로 화면에서 가로 사진이 잘릴 때 위쪽을 기준으로 채운다 */
+  objectTop?: boolean;
 }) {
   return (
     <div className={`relative overflow-hidden bg-clay-soft/30 ${className ?? ""}`}>
@@ -210,7 +201,7 @@ function Photo({
           fill
           sizes={sizes}
           priority={priority}
-          className="object-cover"
+          className={objectTop ? "object-cover object-top md:object-center" : "object-cover"}
         />
       )}
     </div>

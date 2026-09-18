@@ -37,6 +37,7 @@ export async function FeatureCards({ nutrition }: { nutrition: Nutrition | null 
     title: f.title,
     body: f.body?.trim() ? f.body : f.useNutritionBody ? carbBody(nutrition) : "",
     imageSrc: f.imageUrl,
+    imageMobileSrc: f.imageMobileUrl,
     alt: f.altText?.trim() ? f.altText : f.title,
   }));
 

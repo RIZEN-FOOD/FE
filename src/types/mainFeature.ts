@@ -6,6 +6,8 @@ export type MainFeaturePublic = {
   body: string;
   /** 관리자가 올린 사진. 없으면 null — 코드에 박힌 기본 사진은 쓰지 않는다. */
   imageUrl: string | null;
+  /** 모바일 전용 사진. 없으면 null — 화면이 imageUrl 을 그대로 쓴다. */
+  imageMobileUrl: string | null;
   altText: string;
   /** 본문이 비어 있을 때 영양성분 수치로 문장을 만들지 여부 */
   useNutritionBody: boolean;
@@ -17,6 +19,8 @@ export type MainFeatureAdmin = {
   body: string;
   imageKey: string | null;
   imageUrl: string | null;
+  imageMobileKey: string | null;
+  imageMobileUrl: string | null;
   altText: string | null;
   autoNutritionBody: boolean;
   sortOrder: number;

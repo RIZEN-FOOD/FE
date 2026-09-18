@@ -64,6 +64,7 @@ export default function AdminFeaturesPage() {
         title: "새 칸",
         body: "",
         imageKey: null,
+        imageMobileKey: null,
         altText: null,
         autoNutritionBody: false,
         visible: true,
@@ -104,6 +105,7 @@ export default function AdminFeaturesPage() {
           title: it.title,
           body: it.body,
           imageKey: it.imageKey,
+          imageMobileKey: it.imageMobileKey,
           altText: it.altText,
           autoNutritionBody: it.autoNutritionBody,
           visible: it.visible,
@@ -237,16 +239,28 @@ export default function AdminFeaturesPage() {
               </label>
 
               <ImageUploader
-                label="사진"
-                hint="권장 1200x1500 이상 (세로 4:5)"
+                label="사진 (PC)"
+                hint="권장 1920×1080 이상 (가로로 넓게)"
                 previewUrl={item.imageUrl}
                 category="main"
                 onChange={(key, url) => patch(item.id, { imageKey: key, imageUrl: url })}
                 onClear={() => patch(item.id, { imageKey: null, imageUrl: null })}
               />
               <p className="-mt-3 font-kr text-xs text-ink-faint">
-                PC 에서는 세로로 긴 모양, 휴대폰에서는 정사각형으로 잘립니다. 피사체를 가운데에 두세요.
-                사진을 올리지 않으면 그 칸은 글자만 보입니다.
+                메인 화면에서 이 칸의 배경으로 깔립니다. 왼쪽에 글자가 얹히니 피사체는 오른쪽에 두세요.
+                사진을 올리지 않으면 그 칸은 어두운 배경에 글자만 보입니다.
+              </p>
+
+              <ImageUploader
+                label="사진 (휴대폰, 선택)"
+                hint="권장 1080×1350 (세로 4:5)"
+                previewUrl={item.imageMobileUrl}
+                category="main"
+                onChange={(key, url) => patch(item.id, { imageMobileKey: key, imageMobileUrl: url })}
+                onClear={() => patch(item.id, { imageMobileKey: null, imageMobileUrl: null })}
+              />
+              <p className="-mt-3 font-kr text-xs text-ink-faint">
+                올리지 않으면 휴대폰에서도 PC 사진을 쓰되 좌우가 잘립니다. 세로 사진을 올리면 잘림이 줄어듭니다.
               </p>
 
               <label className="block">
