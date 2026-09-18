@@ -205,6 +205,17 @@ export type HeroBannerSaveRequest = {
 };
 
 // ── 메인 히어로 캐러셀 슬라이드 ──────────────────────
+/** 히어로 영양성분 — 관리자 상품 화면에서 입력한 값 (서버는 소수를 문자열로 줄 수 있다) */
+export type HeroNutritionData = {
+  servingSizeG: number | string | null;
+  kcal: number | string | null;
+  carbG: number | string | null;
+  proteinG: number | string | null;
+  fatG: number | string | null;
+  sugarG: number | string | null;
+  sodiumMg: number | string | null;
+};
+
 export type HeroSlide = {
   id: number;
   slug: string;
@@ -219,4 +230,6 @@ export type HeroSlide = {
   accentImageUrls: (string | null)[];
   /** 상세 페이지로 보낼 수 있는지(상품 공개 여부). 출시 예정처럼 비공개면 false. */
   linkable: boolean;
+  /** 배너 아래 영양성분 그래프용. 입력이 없으면 null. */
+  nutrition: HeroNutritionData | null;
 };

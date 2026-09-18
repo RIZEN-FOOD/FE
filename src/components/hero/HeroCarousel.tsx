@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import type { HeroSlide } from "@/types/product";
+import { HeroNutrition } from "./HeroNutrition";
 
 /**
  * 메인 히어로 — 제품 전환 캐러셀.
@@ -23,9 +24,12 @@ const SWIPE_THRESHOLD = 60;
 // 구성 장식 위치 — accentImageUrls 순서 [0:우상단, 1:우하단, 2:좌하단]
 // 우상단은 높게, 하단 둘은 낮게 둬서 양옆 미리보기·구매 버튼과 겹치지 않게 한다.
 const ACCENT_POS = [
-  "right-[5%] top-[4%] w-[29%] md:right-[15%] md:top-[19%] md:w-[19%] rz-accent-a",
-  "right-[4%] top-[46%] w-[27%] md:right-[15%] md:top-auto md:bottom-[13%] md:w-[17%] rz-accent-b",
-  "left-[4%] top-[46%] w-[29%] md:left-[16%] md:top-auto md:bottom-[13%] md:w-[20%] rz-accent-a",
+  // 0: 오른쪽 위 (쌀 흩뿌림)
+  "-right-[6%] top-[2%] w-[38%] md:-right-[10%] md:top-[4%] md:w-[40%] rz-accent-a",
+  // 1: 오른쪽 아래
+  "-right-[4%] bottom-[10%] w-[34%] md:-right-[8%] md:bottom-[8%] md:w-[34%] rz-accent-b",
+  // 2: 왼쪽 아래 (쌀가마니) — 제품 왼쪽 아래에 걸친다
+  "-left-[14%] -bottom-[6%] w-[46%] md:-left-[30%] md:bottom-[0%] md:w-[54%] rz-accent-a",
 ];
 
 function isLight(hex: string): boolean {
@@ -179,21 +183,6 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 }`,
         }}
       />
-      {/* 구성 장식 — 고정 순서 [우상단, 우하단, 좌하단]. 없는 자리는 건너뛴다. */}
-      {(current.accentImageUrls ?? []).map((url, ai) =>
-        url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={`${active}-${ai}`}
-            src={url}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${ACCENT_POS[ai] ?? ""}`}
-          />
-        ) : null,
-      )}
-
       {/* 콘텐츠: 문구(좌) · 제품 스테이지(중앙) · 가격(우) — 레이아웃 고정 */}
       <div className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_1fr] md:px-12 md:py-0">
         {/* 문구 (내용만 크로스페이드) */}
@@ -210,6 +199,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             </p>
           )}
 
+          {/* 영양성분 — 관리자에 입력된 값이 있을 때만. 문구 바로 아래에 둔다. */}
+          <HeroNutrition
+            nutrition={current.nutrition}
+            ink={ink}
+            subInk={subInk}
+            className="mt-7 justify-center md:justify-start"
+          />
+
           {/* 모바일: 부제 아래 가운데에 맛별 문양 내비 (데스크톱은 CTA 아래에 따로 렌더) */}
           <FlavorNav
             slides={slides}
@@ -223,8 +220,25 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           />
         </div>
 
-        {/* 제품 스테이지 — 제품들을 대각선으로 나열하고, 넘어가면 대각선을 따라 이동 */}
+        {/* 제품 스테이지 — 제품들을 대각선으로 나열하고, 넘어가면 대각선을 따라 이동
+            ★ 구성 장식도 이 안에 둔다. 화면 전체 기준으로 두면 넓은 모니터에서 장식이
+              바깥으로 벌어져 문구를 덮었다 (2026-09-18). 제품 기준이면 어느 폭에서도
+              제품 옆에 같은 모양으로 붙어 있다. */}
         <div className="relative z-0 order-1 h-[46svh] md:order-2 md:h-[70svh]">
+          {/* 구성 장식 — 고정 순서 [우상단, 우하단, 좌하단]. 없는 자리는 건너뛴다. */}
+          {(current.accentImageUrls ?? []).map((url, ai) =>
+            url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`${active}-${ai}`}
+                src={url}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${ACCENT_POS[ai] ?? ""}`}
+              />
+            ) : null,
+          )}
           {/* 중앙 제품 뒤 세로 배경(스플래시)
               사진의 위·아래 끝이 직선으로 잘려 보이지 않게, 끝부분을 배경 속으로 서서히 사라지게 한다. */}
           {current.heroBackdropUrl && (
