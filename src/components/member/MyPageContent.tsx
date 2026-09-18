@@ -57,15 +57,15 @@ export function MyPageContent() {
         <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">마이페이지</h1>
         <p className="mt-2 font-kr text-sm text-ink-soft">{me.name} 님, 안녕하세요.</p>
 
-        {/* 탭 */}
-        <div className="mt-8 flex gap-2 border-b border-line">
+        {/* 탭 — 좁은 화면에서는 글자를 쪼개지 않고 가로로 넘긴다 (2026-09-18) */}
+        <div className="-mx-5 mt-8 flex gap-1 overflow-x-auto border-b border-line px-5 [-ms-overflow-style:none] [scrollbar-width:none] md:mx-0 md:gap-2 md:px-0 [&::-webkit-scrollbar]:hidden">
           {tabs.map((t) => (
             <button
               key={t.key}
               type="button"
               onClick={() => setTab(t.key)}
               className={cn(
-                "-mb-px border-b-2 px-4 py-2.5 font-kr text-sm font-medium transition",
+                "-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2.5 font-kr text-sm font-medium transition md:px-4",
                 tab === t.key
                   ? "border-ink text-ink"
                   : "border-transparent text-ink-faint hover:text-ink-soft",
