@@ -108,6 +108,8 @@ export type ProductDetail = {
   ingredients: Ingredient[];
   label: ProductLabel | null;
   purchaseLinks: PurchaseLink[];
+  /** 사진형 상세페이지 블록. 없으면 빈 배열 */
+  detailSections: DetailSection[];
 };
 
 /** 관리자 목록 한 줄. 공개 목록과 달리 재고·노출 여부를 담는다. */
@@ -214,6 +216,39 @@ export type HeroNutritionData = {
   fatG: number | string | null;
   sugarG: number | string | null;
   sodiumMg: number | string | null;
+};
+
+/** 상품 상세페이지 블록 (사진형 상세페이지) */
+export type DetailSectionType = "IMAGE" | "VIDEO" | "TEXT";
+
+export type DetailSection = {
+  type: DetailSectionType;
+  imageUrl: string | null;
+  altText: string | null;
+  /** 유튜브 주소 */
+  videoUrl: string | null;
+  /** 올린 영상 파일 주소 (지금은 쓰지 않는다) */
+  videoFileUrl: string | null;
+  thumbnailUrl: string | null;
+  heading: string | null;
+  body: string | null;
+  caption: string | null;
+};
+
+export type AdminDetailSection = {
+  type: DetailSectionType;
+  visible: boolean;
+  imageKey: string | null;
+  imageUrl: string | null;
+  altText: string | null;
+  videoUrl: string | null;
+  videoFileKey: string | null;
+  videoFileUrl: string | null;
+  thumbnailKey: string | null;
+  thumbnailUrl: string | null;
+  heading: string | null;
+  body: string | null;
+  caption: string | null;
 };
 
 export type HeroSlide = {

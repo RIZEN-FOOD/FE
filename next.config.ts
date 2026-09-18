@@ -58,16 +58,23 @@ const POSTCODE_ORIGINS = [
   ...(isDev ? ["http://postcode.map.kakao.com", "http://postcode.map.daum.net"] : []),
 ];
 
+// 상품 상세의 유튜브 영상 블록. 재생기를 프레임으로 띄우고, 표지 이미지를 받아온다.
+// 쿠키를 적게 쓰는 youtube-nocookie 도메인을 쓴다.
+const YOUTUBE_ORIGINS = [
+  "https://www.youtube-nocookie.com",
+  "https://www.youtube.com",
+];
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
+  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...YOUTUBE_ORIGINS].join(" ")}`,
   "style-src 'self' 'unsafe-inline'",
   // 업로드 사진은 개발·운영 모두 같은 출처(/uploads)에서 온다.
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   // 개발 서버는 웹소켓으로 화면을 새로 고친다(HMR).
   `connect-src 'self' ${isDev ? "ws: wss: " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
-  `frame-src 'self' ${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
+  `frame-src 'self' ${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...YOUTUBE_ORIGINS].join(" ")}`,
   // 우리 화면을 남의 사이트에 끼워 넣지 못하게 한다(클릭재킹).
   "frame-ancestors 'self'",
   "base-uri 'self'",

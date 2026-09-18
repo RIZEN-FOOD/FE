@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import { ProductGallery } from "@/components/store/ProductGallery";
 import { PurchasePanel } from "@/components/store/PurchasePanel";
+import { ProductDetailSections } from "@/components/store/ProductDetailSections";
 import { NutritionFacts, IngredientList } from "@/components/store/NutritionTable";
 import { serverApi } from "@/lib/server/api";
 import { absoluteUrl } from "@/lib/site";
@@ -89,6 +90,9 @@ export default async function ProductDetailPage({
           />
         </section>
       )}
+
+      {/* 사진형 상세페이지 — 관리자가 쌓은 사진·영상·글이 틈 없이 이어진다 */}
+      <ProductDetailSections sections={product.detailSections ?? []} />
 
       {/* 영양성분 · 원재료 — 텍스트 */}
       <div className="mt-14 grid gap-10 border-t border-line pt-10 md:grid-cols-2">

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, ApiError } from "@/lib/api/client";
 import type { ProductDetail, ProductSaveRequest } from "@/types/product";
+import { DetailSectionEditor } from "./DetailSectionEditor";
 import { ImageUploader } from "./ImageUploader";
 import { RichTextEditor } from "./RichTextEditor";
 import { SafeHtml } from "./SafeHtml";
@@ -552,6 +553,9 @@ export function ProductForm({
               켜면 재고와 상관없이 화면에 &lsquo;품절&rsquo;로 나오고 구매가 막힙니다. 재고가 0이어도 자동으로 품절 처리됩니다.
             </p>
           </Section>
+
+          {/* 사진형 상세페이지 — 저장한 상품에만 (블록을 붙이려면 상품 id 가 필요하다) */}
+          {mode === "edit" && productId != null && <DetailSectionEditor productId={productId} />}
         </div>
       )}
     </div>
