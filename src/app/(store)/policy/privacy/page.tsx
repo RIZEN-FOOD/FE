@@ -26,6 +26,12 @@ export default async function PrivacyPolicyPage() {
   const officer = val("company.privacy_officer");
   const email = val("company.email");
   const tel = val("company.tel");
+  // 개인정보 처리 수탁업체. 계약이 끝나기 전에는 비어 있고, 화면에는 '확인 후 표기'로 나온다.
+  const processors: { name: string | null; work: string }[] = [
+    { name: val("privacy.processor_fulfillment"), work: "상품 보관·출고" },
+    { name: val("privacy.processor_delivery"), work: "상품 배송" },
+    { name: val("privacy.processor_payment"), work: "결제 처리(PG)" },
+  ];
 
   return (
     <PolicyPage title="개인정보처리방침" effectiveDate={EFFECTIVE}>
@@ -116,14 +122,12 @@ export default async function PrivacyPolicyPage() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><Pending /></td>
-            <td>상품 배송</td>
-          </tr>
-          <tr>
-            <td><Pending /></td>
-            <td>결제 처리(PG)</td>
-          </tr>
+          {processors.map((p) => (
+            <tr key={p.work}>
+              <td>{p.name ?? <Pending />}</td>
+              <td>{p.work}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <p>수탁업체와 위탁 업무 내용은 확정되는 대로 본 방침에 반영합니다.</p>

@@ -54,6 +54,13 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     ],
   },
   {
+    title: "개인정보 수탁업체",
+    note: "주문 정보를 맡기는 업체 이름입니다. 개인정보처리방침에 공개할 의무가 있습니다(개인정보보호법 제26조). 업체가 바뀌면 여기만 고치면 됩니다.",
+    keys: [
+      "privacy.processor_fulfillment", "privacy.processor_delivery", "privacy.processor_payment",
+    ],
+  },
+  {
     title: "로그인 화면",
     note: "로그인·회원가입 화면 왼쪽(모바일에선 전체 배경)에 깔리는 사진입니다. 비우면 기본 사진이 나옵니다.",
     keys: ["auth.login_image", "auth.signup_image"],
@@ -83,6 +90,9 @@ const HINTS: Record<string, string> = {
   "sns.instagram": "전체 주소로 넣어주세요. 예: https://instagram.com/…",
   "sns.youtube": "전체 주소로 넣어주세요. 예: https://youtube.com/@…",
   "sns.blog": "전체 주소로 넣어주세요. 예: https://blog.naver.com/…",
+  "privacy.processor_fulfillment": "상품을 보관하고 내보내는 업체입니다. 예: 와이에스컴퍼니",
+  "privacy.processor_delivery": "상품을 배송하는 택배사입니다. 예: 롯데택배",
+  "privacy.processor_payment": "결제를 대행하는 회사입니다. 계약 전이면 비워 두세요.",
   "company.biz_no": "숫자와 하이픈만. 예: 123-45-67890",
   "company.mail_order_no": "예: 2026-서울강남-01234",
   "shipping.carrier": "예: 롯데택배",
