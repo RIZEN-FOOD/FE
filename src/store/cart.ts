@@ -14,6 +14,10 @@ import type { CartView } from "@/types/cart";
  *
  * add/updateQty/remove 는 실패 시 ApiError 를 그대로 던진다.
  * 재고 부족·품절 같은 사유 문구를 화면이 받아서 보여줄 수 있게 하기 위해서다.
+ *
+ * ★ 헤더가 PC용·모바일용 배지를 함께 그려 refresh 가 같은 순간에 두 번 불린다
+ *   (개발 모드에서는 Strict Mode 때문에 더 늘어난다). 진행 중인 요청을 공유해
+ *   한 번만 나가게 한다.
  */
 type CartState = {
   cart: CartView | null;
@@ -26,18 +30,28 @@ type CartState = {
   clear: () => Promise<void>;
 };
 
+/** 진행 중인 조회. 같은 순간에 여러 번 불려도 한 번만 나가게 공유한다. */
+let inFlight: Promise<void> | null = null;
+
 export const useCart = create<CartState>((set) => ({
   cart: null,
   loaded: false,
 
-  async refresh() {
-    try {
-      const cart = await api.get<CartView>("/api/cart");
-      set({ cart, loaded: true });
-    } catch {
-      // 조회 실패(네트워크 등)는 조용히 넘긴다. 배지가 없을 뿐이다.
-      set({ loaded: true });
+  refresh() {
+    if (inFlight) {
+      return inFlight;
     }
+    inFlight = (async () => {
+      try {
+        set({ cart: await api.get<CartView>("/api/cart"), loaded: true });
+      } catch {
+        // 조회 실패(네트워크 등)는 조용히 넘긴다. 배지가 없을 뿐이다.
+        set({ loaded: true });
+      }
+    })().finally(() => {
+      inFlight = null;
+    });
+    return inFlight;
   },
 
   async add(productId, quantity, optionId) {
