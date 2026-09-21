@@ -44,6 +44,19 @@ export type OrderView = {
   orderedAt: string;
   paidAt: string | null;
   items: OrderItemView[];
+  /** 운송장. 아직 안 나왔으면 null */
+  delivery: DeliveryView | null;
+};
+
+/** 손님에게 보여주는 배송 정보 */
+export type DeliveryView = {
+  status: string;
+  carrier: string | null;
+  trackingNo: string;
+  /** 택배사 조회 화면. 설정이 비어 있으면 null */
+  trackingUrl: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
 };
 
 export type CreateOrderRequest = {

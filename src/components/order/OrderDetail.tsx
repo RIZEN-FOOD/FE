@@ -7,6 +7,7 @@ import { Button } from "@/components/ui";
 import { api, ApiError } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/datetime";
 import { ClaimSection } from "@/components/order/ClaimSection";
+import { DeliveryInfo } from "./DeliveryInfo";
 import { ORDER_STATUS_LABEL, type OrderView } from "@/types/order";
 
 /**
@@ -122,6 +123,9 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
           {order.deliveryMemo && <p className="text-ink-faint">메모: {order.deliveryMemo}</p>}
         </div>
       </div>
+
+      {/* 배송 정보 (운송장이 나온 뒤에만) */}
+      <DeliveryInfo delivery={order.delivery} />
 
       {/* 취소·반품·교환 */}
       <ClaimSection orderNo={order.orderNo} status={order.status} />
