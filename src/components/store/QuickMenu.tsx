@@ -11,7 +11,12 @@ import { useEffect, useState } from "react";
  *
  * ★ revealAfterHero: 메인처럼 첫 화면이 히어로일 때, 히어로를 지나야 나타난다.
  *   (히어로 위에 버튼이 겹치지 않게)
+ * ★ 주문서·결제 화면에서는 숨긴다. 좁은 화면에서 버튼이 주소 입력칸을 가렸고
+ *   (모바일 390px 에서 82px 겹침), 결제 중에 다른 곳으로 새게 할 이유도 없다.
  */
+
+/** 이 화면들에서는 띄우지 않는다. 주문을 끝내는 흐름이라 방해가 된다. */
+const HIDDEN_PATHS = ["/checkout", "/cart"];
 export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boolean }) {
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState(!revealAfterHero);
@@ -36,14 +41,18 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
     },
   ];
 
-  if (!shown) return null;
+  const hidden = HIDDEN_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+  if (!shown || hidden) return null;
 
   return (
-    <div className="fixed bottom-24 right-5 z-50 flex flex-col items-end gap-2 md:bottom-8">
+    // ★ 바깥 상자는 터치를 받지 않는다(pointer-events-none). 접힌 메뉴도 자리는 그대로 차지해서,
+    //   상자가 터치를 받으면 그 아래 깔린 푸터 링크가 눌리지 않는다(실제로 '문의하기'가 막혔다).
+    //   실제로 눌려야 하는 버튼에만 pointer-events-auto 를 준다.
+    <div className="pointer-events-none fixed bottom-24 right-5 z-50 flex flex-col items-end gap-2 md:bottom-8">
       {/* 펼쳐지는 메뉴 */}
       <div
         className={`flex flex-col items-end gap-2 transition-all duration-300 ${
-          open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
+          open ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
         }`}
       >
         {items.map((item) =>
@@ -74,7 +83,7 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="문의 메뉴"
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream-warm shadow-[0_10px_28px_rgba(34,30,28,0.28)] transition hover:bg-slate-deep"
+        className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream-warm shadow-[0_10px_28px_rgba(34,30,28,0.28)] transition hover:bg-slate-deep"
       >
         <span className={`text-xl transition-transform duration-300 ${open ? "rotate-45" : ""}`}>
           {open ? "+" : "?"}

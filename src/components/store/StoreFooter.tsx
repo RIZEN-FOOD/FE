@@ -151,7 +151,8 @@ export async function StoreFooter() {
             <Link href="/inquiry" className="underline-offset-4 hover:underline">문의하기</Link>
           </nav>
 
-          <p className="mt-6 font-kr text-xs text-cream-warm/70">
+          {/* 아래 여백은 떠 있는 문의 버튼이 정책 링크를 가리지 않게 하려는 것이다(모바일). */}
+          <p className="mt-6 pb-16 font-kr text-xs text-cream-warm/70 md:pb-0">
             © {new Date().getFullYear()} RIZEN FOOD. 크림오브라이스는 일반 식품입니다.
           </p>
         </Container>

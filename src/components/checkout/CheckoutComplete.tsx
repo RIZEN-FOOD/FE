@@ -30,6 +30,11 @@ export function CheckoutComplete() {
 
     const orderNo = params.get("paymentId") ?? params.get("orderNo");
     const code = params.get("code");
+    // 나이스페이는 서버가 승인·확정까지 마친 뒤 되돌려 보낸다.
+    //   paid=1  확정 완료 — 확정 요청을 다시 보내지 않는다
+    //   fail=…  인증 실패·창 닫기 — 잡아둔 재고를 풀어야 한다
+    const nicePaid = params.get("paid") === "1";
+    const niceFail = params.get("fail");
     if (!orderNo) {
       setFailure("주문 정보를 찾을 수 없습니다.");
       return;
@@ -41,6 +46,15 @@ export function CheckoutComplete() {
     };
 
     void (async () => {
+      if (nicePaid) {
+        await goDone();
+        return;
+      }
+      if (niceFail) {
+        await api.post(`${path}/cancel-pending`).catch(() => undefined);
+        setFailure(niceFail);
+        return;
+      }
       if (code) {
         await api.post(`${path}/cancel-pending`).catch(() => undefined);
         setFailure(params.get("message") || "결제가 취소되었습니다.");

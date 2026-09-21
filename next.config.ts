@@ -36,6 +36,9 @@ const isDev = process.env.NODE_ENV !== "production";
  * 미들웨어가 필요하다. 지금은 바깥 출처 차단 효과를 먼저 취한다.
  */
 const PAY_ORIGINS = [
+  // 나이스페이 — 결제창 SDK(pay.nicepay.co.kr)와 결제창이 띄우는 카드사 페이지
+  "https://pay.nicepay.co.kr",
+  "https://*.nicepay.co.kr",
   "https://cdn.portone.io",
   "https://*.portone.io",
   "https://*.iamport.kr",

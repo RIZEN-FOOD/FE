@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { PostcodeButton } from "@/components/checkout/PostcodeButton";
 import { api, ApiError } from "@/lib/api/client";
+import { loadNicePaySdk } from "@/lib/payment/nicepay";
 import { useCart } from "@/store/cart";
 import type { CreateOrderRequest, OrderView } from "@/types/order";
 
@@ -79,10 +80,22 @@ export function CheckoutForm() {
    * 결제 방식 설정(서버가 알려준다). portone 이면 포트원 결제창을 연다.
    * 포트원은 결제사마다 채널이 따로라 결제수단별 채널 키를 받는다. 키가 없는 결제수단은 보이지 않는다.
    */
-  type PayConfig = { provider: string; storeId?: string; channels?: Partial<Record<PayMethodKey, string>> };
+  type NiceMethod = { key: string; label: string };
+  type PayConfig = {
+    provider: string;
+    storeId?: string;
+    channels?: Partial<Record<PayMethodKey, string>>;
+    /** 나이스페이 — 결제창에 넘기는 공개값 */
+    clientId?: string;
+    /** 나이스페이 — 계약된 결제수단. 비면 결제 버튼이 막힌다 */
+    methods?: NiceMethod[];
+  };
   const [payConfig, setPayConfig] = useState<PayConfig | null>(null);
   const [payMethod, setPayMethod] = useState<PayMethodKey>("CARD");
+  /** 나이스페이 결제수단(나이스 method 값 그대로). 포트원 키와 체계가 달라 따로 둔다. */
+  const [niceMethod, setNiceMethod] = useState<string>("");
   const availableMethods = PAY_METHODS.filter((m) => Boolean(payConfig?.channels?.[m.key]));
+  const niceMethods = payConfig?.methods ?? [];
 
   useEffect(() => {
     void refresh();
@@ -98,6 +111,7 @@ export function CheckoutForm() {
           (k) => cfg.channels?.[k],
         );
         if (first) setPayMethod(first);
+        if (cfg.methods?.length) setNiceMethod(cfg.methods[0].key);
       })
       .catch(() => setPayConfig({ provider: "mock" }));
   }, []);
@@ -125,6 +139,34 @@ export function CheckoutForm() {
       // 1) 주문 생성 — 서버가 장바구니를 읽어 금액을 확정하고 재고를 잡아둔다.
       const order = await api.post<OrderView>("/api/orders", payload);
       orderNo = order.orderNo;
+
+      // 2-나) 나이스페이 — 결제창을 연다. 결과는 나이스가 우리 서버로 POST 하고(returnUrl),
+      //      서버가 서명·금액을 검증한 뒤 승인까지 마친 다음 브라우저를 결과 화면으로 돌려보낸다.
+      //      즉 여기서 기다릴 응답이 없다. 창을 닫으면 fnError 로만 돌아온다.
+      if (payConfig?.provider === "nicepay") {
+        if (!payConfig.clientId || !niceMethod) {
+          throw new Error("선택한 결제수단을 지금은 쓸 수 없습니다. 다른 결제수단을 골라 주세요.");
+        }
+        await loadNicePaySdk();
+        window.AUTHNICE?.requestPay({
+          clientId: payConfig.clientId,
+          method: niceMethod,
+          orderId: order.orderNo, // 우리 주문번호 = 나이스 orderId (서버가 이 값으로 주문을 찾는다)
+          amount: order.totalAmount,
+          goodsName: orderNameOf(order),
+          returnUrl: `${window.location.origin}/api/payment/nicepay/return`,
+          buyerName: payload.ordererName,
+          buyerTel: payload.ordererPhone.replace(/\D/g, ""),
+          buyerEmail: payload.ordererEmail || undefined,
+          fnError: async (res: { errorMsg?: string }) => {
+            // 결제창을 닫았거나 인증에 실패했다 — 잡아둔 재고를 풀고 장바구니는 그대로 둔다.
+            await api.post(`/api/orders/${order.orderNo}/cancel-pending`).catch(() => undefined);
+            setError(res?.errorMsg || "결제가 취소되었습니다.");
+            setBusy(false);
+          },
+        });
+        return; // 결제창이 뜬 뒤에는 브라우저가 나이스로 넘어간다
+      }
 
       // 2) 결제창 — 포트원이면 결제창을 연다. 금액은 서버가 확정한 값을 쓴다.
       if (payConfig?.provider === "portone") {
@@ -367,9 +409,40 @@ export function CheckoutForm() {
               ))}
             </div>
           </fieldset>
+        ) : payConfig?.provider === "nicepay" ? (
+          <fieldset className="mt-5">
+            <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
+            {niceMethods.length === 0 && (
+              <p className="mt-2 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
+                지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
+              </p>
+            )}
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {niceMethods.map((m) => (
+                <label
+                  key={m.key}
+                  className={`flex cursor-pointer items-center justify-center rounded-full border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
+                    niceMethod === m.key
+                      ? "border-ink bg-ink text-cream-warm"
+                      : "border-line text-ink-soft hover:border-ink hover:text-ink"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="niceMethod"
+                    value={m.key}
+                    checked={niceMethod === m.key}
+                    onChange={() => setNiceMethod(m.key)}
+                    className="sr-only"
+                  />
+                  {m.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
         ) : (
           <p className="mt-4 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
-            지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 포트원 키 설정 후 열립니다.
+            지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 결제사 키를 넣으면 열립니다.
           </p>
         )}
 
@@ -379,7 +452,12 @@ export function CheckoutForm() {
           </p>
         )}
 
-        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={busy || !payConfig || (payConfig.provider === "portone" && availableMethods.length === 0)}>
+        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={
+            busy ||
+            !payConfig ||
+            (payConfig.provider === "portone" && availableMethods.length === 0) ||
+            (payConfig.provider === "nicepay" && niceMethods.length === 0)
+          }>
           {busy ? "처리 중…" : `${won(cart.totalAmount + islandExtra)}원 결제하기`}
         </Button>
         <Link
