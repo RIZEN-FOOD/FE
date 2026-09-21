@@ -43,7 +43,10 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
   {
     title: "배송·출고",
     note: "배송·교환·환불 안내 페이지에 표시됩니다. 배송비 금액은 왼쪽 '배송비' 메뉴에서 바꿉니다.",
-    keys: ["shipping.carrier", "shipping.return_address", "shipping.island_zip_ranges"],
+    keys: [
+      "shipping.carrier", "shipping.return_address", "shipping.tracking_url",
+      "shipping.auto_complete_days", "shipping.island_zip_ranges",
+    ],
   },
   {
     title: "메인 화면",
@@ -93,6 +96,10 @@ const HINTS: Record<string, string> = {
   "privacy.processor_fulfillment": "상품을 보관하고 내보내는 업체입니다. 예: 와이에스컴퍼니",
   "privacy.processor_delivery": "상품을 배송하는 택배사입니다. 예: 롯데택배",
   "privacy.processor_payment": "결제를 대행하는 회사입니다. 계약 전이면 비워 두세요.",
+  "shipping.tracking_url":
+    "손님이 누르면 열리는 택배사 조회 주소입니다. 송장번호가 들어갈 자리에 {{송장번호}} 라고 적어 주세요. 비우면 조회 버튼이 나오지 않습니다.",
+  "shipping.auto_complete_days":
+    "숫자만 넣어주세요. 예: 3 (발송 후 3일이 지나면 자동으로 배송 완료). 0 으로 두면 자동으로 바뀌지 않고 직접 변경해야 합니다.",
   "company.biz_no": "숫자와 하이픈만. 예: 123-45-67890",
   "company.mail_order_no": "예: 2026-서울강남-01234",
   "shipping.carrier": "예: 롯데택배",
