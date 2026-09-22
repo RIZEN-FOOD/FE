@@ -69,6 +69,8 @@ export type CreateOrderRequest = {
   addr1: string;
   addr2?: string;
   deliveryMemo?: string;
+  /** 할인코드. 금액은 보내지 않는다 — 서버가 코드로 다시 계산한다. */
+  couponCode?: string;
 };
 
 export type OrderSummary = {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container, SectionTag } from "@/components/ui";
+import { Container } from "@/components/ui";
 import { ProductCard } from "./ProductCard";
 import type { ProductListItem } from "@/types/product";
 
@@ -13,9 +13,8 @@ export function FeaturedProducts({ products }: { products: ProductListItem[] }) 
   return (
     <section className="bg-cream py-24" aria-labelledby="featured-heading">
       <Container>
-        <SectionTag>Product</SectionTag>
         <div className="flex items-end justify-between">
-          <h2 id="featured-heading" className="font-display text-section font-semibold tracking-[-0.01em] text-ink">
+          <h2 id="featured-heading" className="font-display text-section font-semibold text-ink">
             상품
           </h2>
           <Link href="/products" className="font-kr text-sm text-ink-soft underline-offset-4 hover:underline">

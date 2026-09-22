@@ -6,15 +6,19 @@ import { safeUrl } from "@/lib/safeUrl";
 /**
  * 공개 페이지 공용 푸터.
  *
- * 구성: (1) 밝은 브랜드 배너 — 제품 사진 + 한 줄 카피 + CTA,
- *       (2) 찢긴 종이 엣지로 이어지는 브랜드 색 밴드 — 로고·법정정보·정책·저작권.
+ * 찢긴 종이 엣지로 이어지는 브랜드 색 밴드 하나다 — 로고·법정정보·정책·저작권.
+ * 제품 사진이 그 엣지에 걸쳐 위로 솟는다.
+ *
+ * 2026-09-22. 그 전에는 위에 "곱게 도정한 쌀 100%" 밝은 배너가 한 칸 더 있었다.
+ * 그 배너의 제목이 48px 이라 모든 페이지에서 푸터가 그 페이지 제목보다 커 보였고,
+ * 페이지마다 같은 카피가 반복됐다. 배너를 걷어내고 푸터 하나로 합쳤다.
  *
  * ★ 전자상거래법상 사업자정보와 통신판매업 신고번호를 게시해야 한다 (CLAUDE.md §7).
  *   값은 site_setting 에서 읽는다 — 코드에 박지 않는다. 대표가 관리자 화면에서 채운다.
  *   아직 입력되지 않은 항목은 "확인 후 표기"로 보여준다 — 값을 지어내지 않는다.
  *
  * ★ 제품 사진은 관리자(main.footer_image)에서 바꾼다. 비어 있으면 번들 누끼를 쓴다.
- *   카피는 일반 식품 표시 규정을 지킨다 — 효능·효과 표현을 넣지 않는다.
+ *   장식이므로 alt 를 비운다 — 읽어줄 내용이 따로 없다.
  */
 export async function StoreFooter() {
   const settings = (await serverApi.getJson<Record<string, string>>("/api/settings")) ?? {};
@@ -46,50 +50,12 @@ export async function StoreFooter() {
     .map((s) => ({ ...s, href: safeUrl(settings[s.key]) }))
     .filter((s): s is { label: string; key: string; href: string } => Boolean(s.href));
 
+  // 관리자가 올린 사진이 있으면 그걸, 없으면 번들 누끼를 쓴다.
+  const footerImage =
+    safeUrl(settings["main.footer_image"]) ?? "/assets/brand/footer-product.webp";
+
   return (
-    <footer className="mt-24">
-      {/* (1) 밝은 브랜드 배너 — 제품 사진 + 카피 + CTA */}
-      <div className="bg-cream-warm">
-        <Container className="grid items-center gap-8 py-14 md:grid-cols-[1.1fr_0.9fr] md:py-20">
-          <div className="text-center md:text-left">
-            <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em] text-ink-soft">
-              Cream of Rice
-            </p>
-            <h2 className="mt-3 font-display text-section font-semibold leading-[1.12] tracking-[-0.02em] text-ink [word-break:keep-all]">
-              곱게 도정한 쌀 100%,<br className="hidden sm:block" /> 크림오브라이스
-            </h2>
-            <p className="mx-auto mt-4 max-w-md font-kr text-[15px] leading-[1.7] text-ink-soft [word-break:keep-all] md:mx-0">
-              담백한 한 그릇으로, 매일의 루틴을 채우세요.
-            </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3 md:justify-start">
-              <Link
-                href="/products"
-                className="inline-flex min-h-12 items-center rounded-[6px] bg-ink px-6 py-3 font-kr text-[15px] font-bold text-cream-warm shadow-[0_8px_20px_rgba(34,30,28,0.22)] transition hover:-translate-y-0.5 hover:bg-slate-deep"
-              >
-                제품 보러가기
-              </Link>
-              <Link
-                href="/inquiry"
-                className="inline-flex min-h-12 items-center rounded-[6px] border border-ink/40 px-6 py-3 font-kr text-[15px] font-medium text-ink shadow-[0_6px_16px_rgba(34,30,28,0.12)] transition hover:-translate-y-0.5 hover:bg-ink hover:text-cream-warm"
-              >
-                문의하기
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative flex justify-center md:justify-end">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={safeUrl(settings["main.footer_image"]) ?? "/assets/hero-banner/rice-bag.webp"}
-              alt="크림오브라이스 제품 패키지"
-              className="w-[62%] max-w-[300px] select-none object-contain drop-shadow-[0_26px_44px_rgba(90,60,40,0.28)] md:w-[78%]"
-              draggable={false}
-            />
-          </div>
-        </Container>
-      </div>
-
-      {/* (2) 찢긴 종이 엣지 + 브랜드 색 밴드 */}
+    <footer className="mt-28">
       <div className="relative bg-slate-deep text-cream-warm">
         {/* 위쪽 찢긴 종이 엣지 — 위 밝은 배경(cream-warm)이 찢겨 브랜드 색이 드러나는 느낌 */}
         <svg
@@ -104,7 +70,19 @@ export async function StoreFooter() {
           />
         </svg>
 
-        <Container className="py-14">
+        {/* 제품 사진 — 찢긴 엣지에 걸쳐 위로 솟는다.
+            글을 가리지 않게 오른쪽에 두고, 아래 Container 에 그만큼 여백을 준다.
+            좁은 화면에서는 자리가 없어 감춘다. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={footerImage}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="pointer-events-none absolute -top-20 right-[6%] hidden w-[190px] select-none drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)] md:block lg:-top-24 lg:w-[230px]"
+        />
+
+        <Container className="py-14 md:pr-[250px] lg:pr-[300px]">
           <div className="flex flex-wrap items-start justify-between gap-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -122,7 +100,7 @@ export async function StoreFooter() {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-en text-xs font-medium text-cream-warm underline-offset-4 hover:underline"
+                    className="font-en text-caption font-medium text-cream-warm underline-offset-4 hover:underline"
                   >
                     {s.label}
                   </a>
@@ -133,14 +111,14 @@ export async function StoreFooter() {
 
           <dl className="mt-7 grid grid-cols-1 gap-x-8 gap-y-1.5 sm:grid-cols-2 lg:grid-cols-3">
             {info.map((it) => (
-              <div key={it.label} className="flex gap-2 font-kr text-xs">
+              <div key={it.label} className="flex gap-2 font-kr text-caption">
                 <dt className="shrink-0 text-cream-warm/75">{it.label}</dt>
                 <dd className="text-cream-warm">{it.value}</dd>
               </div>
             ))}
           </dl>
 
-          <nav className="mt-7 flex flex-wrap gap-4 font-kr text-xs text-cream-warm" aria-label="정책">
+          <nav className="mt-7 flex flex-wrap gap-4 font-kr text-caption text-cream-warm" aria-label="정책">
             <Link href="/policy/terms" className="underline-offset-4 hover:underline">이용약관</Link>
             <Link href="/policy/privacy" className="font-medium underline-offset-4 hover:underline">
               개인정보처리방침
@@ -154,7 +132,7 @@ export async function StoreFooter() {
           </nav>
 
           {/* 아래 여백은 떠 있는 문의 버튼이 정책 링크를 가리지 않게 하려는 것이다(모바일). */}
-          <p className="mt-6 pb-16 font-kr text-xs text-cream-warm/70 md:pb-0">
+          <p className="mt-6 pb-16 font-kr text-caption text-cream-warm/70 md:pb-0">
             © {new Date().getFullYear()} RIZEN FOOD. 크림오브라이스는 일반 식품입니다.
           </p>
         </Container>

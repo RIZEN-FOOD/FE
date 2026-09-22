@@ -81,7 +81,7 @@ export function WishlistButton({
         disabled={busy}
         aria-pressed={on}
         aria-label={on ? "찜 해제" : "찜하기"}
-        className={`inline-flex items-center gap-1.5 rounded-[2px] border px-4 py-2.5 font-kr text-sm transition ${
+        className={`inline-flex items-center gap-1.5 rounded-[6px] border px-4 py-2.5 font-kr text-sm transition ${
           on ? "border-clay-deep text-clay-deep" : "border-line text-ink hover:border-ink"
         } ${className ?? ""}`}
       >

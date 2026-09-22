@@ -32,15 +32,15 @@ export function DeliveryInfo({ delivery }: { delivery: DeliveryView | null }) {
   }
 
   return (
-    <div className="mt-8 rounded-[4px] border border-line bg-paper p-5">
+    <div className="mt-8 rounded-[12px] border border-line bg-paper p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-kr text-sm font-bold text-ink">배송 정보</h2>
         {delivered ? (
-          <span className="font-kr text-xs text-ink-faint">
+          <span className="font-kr text-caption text-ink-faint">
             배송 완료{delivery.deliveredAt ? ` · ${formatDateTime(delivery.deliveredAt)}` : ""}
           </span>
         ) : delivery.shippedAt ? (
-          <span className="font-kr text-xs text-ink-faint">발송 {formatDateTime(delivery.shippedAt)}</span>
+          <span className="font-kr text-caption text-ink-faint">발송 {formatDateTime(delivery.shippedAt)}</span>
         ) : null}
       </div>
 
@@ -51,7 +51,7 @@ export function DeliveryInfo({ delivery }: { delivery: DeliveryView | null }) {
         <button
           type="button"
           onClick={() => copyTrackingNo(delivery.trackingNo)}
-          className="rounded-[6px] border border-line px-3 py-1.5 font-kr text-xs text-ink-soft transition hover:border-ink hover:text-ink"
+          className="rounded-[6px] border border-line px-3 py-1.5 font-kr text-caption text-ink-soft transition hover:border-ink hover:text-ink"
         >
           {copied ? "복사했습니다" : "번호 복사"}
         </button>
@@ -61,14 +61,14 @@ export function DeliveryInfo({ delivery }: { delivery: DeliveryView | null }) {
             href={delivery.trackingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-[6px] border border-ink px-3 py-1.5 font-kr text-xs font-medium text-ink transition hover:bg-clay-soft/40"
+            className="rounded-[6px] border border-ink px-3 py-1.5 font-kr text-caption font-medium text-ink transition hover:bg-clay-soft/40"
           >
             배송조회
           </a>
         )}
       </div>
 
-      <p className="mt-3 font-kr text-xs text-ink-faint">
+      <p className="mt-3 font-kr text-caption text-ink-faint">
         {delivery.trackingUrl
           ? "택배사 조회 화면이 새 창으로 열립니다. 번호가 자동으로 입력되지 않으면 복사한 번호를 붙여넣어 주세요. 발송 직후에는 조회가 되지 않을 수 있습니다."
           : "복사한 송장번호로 택배사 홈페이지에서 조회하실 수 있습니다."}

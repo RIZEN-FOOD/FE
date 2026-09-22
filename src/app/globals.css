@@ -62,6 +62,31 @@
   --text-section: clamp(1.6rem, 2.6vw, 2.125rem);
   --text-lead: clamp(1.25rem, 2vw, 1.6rem);
   --text-sub: clamp(1.125rem, 1.6vw, 1.3rem);
+
+  /* ── 본문 3단 (한글 기준) ─────────────────────────────────
+     한글은 라틴보다 획이 많고 네모틀에 꽉 차서, 같은 px 라도 작아 보이고 빨리 뭉개진다.
+       body     본문                 16px  (전에는 14~15px 가 섞여 있었다)
+       small    보조 설명·메타       14px
+       caption  날짜·배지·꼬리표     13px  ← 한글 하한. 이 아래로 내려가지 마라.
+     영문 소제목(아이브로우)만 12px 까지 허용한다. 한글엔 쓰지 않는다. */
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.8125rem;
+
+  /* ── 모서리 3종 ──────────────────────────────────────────
+     전에는 2·3·4·6·8·12·16px 이 뒤섞여 있었다. 셋만 쓴다.
+       누르는 것(버튼·입력칸·선택칩)  6px   CI v1 그대로
+       담는 것(카드·패널·사진 틀)     12px
+       배지·아바타                     full */
+  --radius-press: 6px;
+  --radius-box: 12px;
+
+  /* ── 움직임 ──────────────────────────────────────────────
+     ease-in-out 과 linear 는 쓰지 않는다. 질량이 느껴지는 감속 곡선 하나로 통일한다. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
 }
 
 /* 서체 토큰은 next/font 가 <body> 에 심는 변수를 참조한다.
@@ -101,7 +126,28 @@
     background-color: var(--color-cream);
     color: var(--color-ink);
     font-family: "Pretendard Variable", system-ui, sans-serif;
+    font-size: var(--text-body);
+    line-height: 1.75;
     -webkit-font-smoothing: antialiased;
+    /* 한글 줄바꿈 원칙. 단어 중간에서 끊지 않고(keep-all), 주소·URL 처럼
+       띄어쓰기 없는 긴 문자열만 어디서든 꺾는다(anywhere). 전에는 여섯 군데에만
+       keep-all 을 손으로 붙였는데, 한글 사이트에서는 전역 기본값이어야 한다. */
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    /* 한글은 자간을 좁히면 자모가 붙어 읽기 나빠진다. 기본은 0. 라틴 대문자 소제목만 넓힌다. */
+    letter-spacing: 0;
+  }
+
+  /* 제목은 본문보다 줄간을 좁히되 한글 받침이 잘리지 않는 선(1.25)을 지킨다.
+     leading-none / leading-tight 를 한글 제목에 쓰면 받침이 윗줄에 닿는다. */
+  h1, h2, h3 {
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+
+  /* 상호작용 요소 공통: 눌리는 감각(살짝 가라앉음)과 감속 곡선 */
+  button, [role="button"], a {
+    transition-timing-function: var(--ease-out);
   }
 
   /* 접근성: 키보드 포커스는 어디서나 또렷하게 보인다.

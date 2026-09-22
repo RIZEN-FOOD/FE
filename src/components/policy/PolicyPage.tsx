@@ -28,8 +28,8 @@ export function PolicyPage({
   return (
     <Container className="py-12 md:py-16">
       <div className="mx-auto max-w-3xl">
-        <h1 className="font-kr text-title font-bold tracking-tight text-ink">{title}</h1>
-        <p className="mt-2 font-kr text-xs text-ink-faint">시행일 {effectiveDate}</p>
+        <h1 className="font-kr text-title font-bold text-ink">{title}</h1>
+        <p className="mt-2 font-kr text-caption text-ink-faint">시행일 {effectiveDate}</p>
 
         {/* 정책 문서 간 이동 */}
         <nav className="mt-6 flex flex-wrap gap-2" aria-label="정책 문서">
@@ -37,7 +37,7 @@ export function PolicyPage({
             <Link
               key={t.href}
               href={t.href}
-              className={`rounded-full border px-3.5 py-1.5 font-kr text-xs transition ${
+              className={`rounded-full border px-3.5 py-1.5 font-kr text-caption transition ${
                 t.label === title || title.startsWith(t.label)
                   ? "border-ink bg-ink text-cream-warm"
                   : "border-line text-ink-soft hover:border-ink hover:text-ink"
@@ -73,7 +73,7 @@ export function PolicyPage({
  */
 export function Pending({ children }: { children?: React.ReactNode }) {
   return (
-    <span className="rounded-[2px] bg-cream-warm px-1.5 py-0.5 font-kr text-xs text-clay-deep">
+    <span className="rounded-[6px] bg-cream-warm px-1.5 py-0.5 font-kr text-caption text-clay-deep">
       {children ?? "확인 후 표기"}
     </span>
   );

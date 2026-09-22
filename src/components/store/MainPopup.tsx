@@ -151,19 +151,19 @@ export function PopupCard({
 
   return (
     <div className="mx-auto w-full max-w-[400px]">
-      <div className="overflow-hidden rounded-[4px] bg-paper shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+      <div className="overflow-hidden rounded-[12px] bg-paper shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
         <div className="bg-ink">{img && linked(img, "block")}</div>
         <div className="flex flex-col gap-2 px-6 py-5">
           {showLinkButton && (href || preview) &&
             linked(
               "자세히 보기",
-              "block rounded-[3px] bg-ink py-3 text-center font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep",
+              "block rounded-[6px] bg-ink py-3 text-center font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep",
             )}
           <button
             ref={closeRef}
             type="button"
             onClick={close}
-            className="rounded-[3px] border border-ink py-3 font-kr text-sm font-medium text-ink transition hover:bg-cream"
+            className="rounded-[6px] border border-ink py-3 font-kr text-sm font-medium text-ink transition hover:bg-cream"
           >
             닫기
           </button>
@@ -175,7 +175,7 @@ export function PopupCard({
             type="checkbox"
             checked={hideToday}
             onChange={(e) => setHideToday(e.target.checked)}
-            className="h-5 w-5 rounded-[3px] accent-cream-warm"
+            className="h-5 w-5 rounded-[6px] accent-cream-warm"
           />
           <span className="font-kr text-sm font-medium">오늘 하루 보지 않기</span>
         </label>

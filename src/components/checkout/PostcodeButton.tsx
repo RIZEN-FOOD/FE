@@ -122,7 +122,7 @@ export function PostcodeButton({
         {children ?? (loading ? "여는 중…" : "주소 검색")}
       </button>
 
-      {error && <p className="mt-1 font-kr text-xs text-clay-deep">{error}</p>}
+      {error && <p className="mt-1 font-kr text-caption text-clay-deep">{error}</p>}
 
       {/* body 에 바로 띄운다. 페이지 안쪽에 움직임(transform)이 걸린 요소가 있으면
           fixed 가 화면이 아니라 그 요소 기준으로 잡혀 창이 엉뚱한 곳에 뜬다. */}
@@ -136,7 +136,7 @@ export function PostcodeButton({
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div className="flex h-[min(560px,calc(100dvh-2rem))] w-full max-w-[500px] flex-col overflow-hidden rounded-[4px] bg-paper shadow-xl">
+          <div className="flex h-[min(560px,calc(100dvh-2rem))] w-full max-w-[500px] flex-col overflow-hidden rounded-[12px] bg-paper shadow-xl">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <span className="font-kr text-sm font-bold text-ink">주소 검색</span>
               <button

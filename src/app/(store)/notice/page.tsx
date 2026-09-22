@@ -39,7 +39,8 @@ export default async function NoticeListPage({
         eyebrow="Notice"
         title="공지사항"
         description="배송·주문과 관련한 안내를 올립니다."
-        image="/assets/sections/nutrition.jpg"
+        settingKey="main.page_hero_notice"
+        fallbackImage="/assets/sections/nutrition.jpg"
       />
       <Container className="py-14">
 
@@ -50,9 +51,9 @@ export default async function NoticeListPage({
           name="keyword"
           defaultValue={keyword}
           placeholder="제목 검색"
-          className="w-full max-w-xs rounded-[3px] border border-line bg-paper px-3 py-2 font-kr text-sm outline-none focus:border-clay-deep"
+          className="w-full max-w-xs rounded-[6px] border border-line bg-paper px-3 py-2 font-kr text-sm outline-none focus:border-clay-deep"
         />
-        <button type="submit" className="rounded-[2px] bg-ink px-4 py-2 font-kr text-sm font-medium text-cream-warm">
+        <button type="submit" className="rounded-[6px] bg-ink px-4 py-2 font-kr text-sm font-medium text-cream-warm">
           검색
         </button>
       </form>
@@ -67,16 +68,16 @@ export default async function NoticeListPage({
             <li key={n.id} className="border-b border-line">
               <Link href={`/notice/${n.id}`} className="flex items-center gap-3 py-4 transition hover:bg-clay-soft/20">
                 {n.pinned ? (
-                  <span className="shrink-0 rounded-[2px] bg-clay-deep px-1.5 py-0.5 font-kr text-[10px] font-bold text-cream-warm">
+                  <span className="shrink-0 rounded-[6px] bg-clay-deep px-1.5 py-0.5 font-kr text-caption font-bold text-cream-warm">
                     공지
                   </span>
                 ) : (
-                  <span className="shrink-0 rounded-[2px] bg-cream-warm px-1.5 py-0.5 font-kr text-[10px] text-ink-soft">
+                  <span className="shrink-0 rounded-[6px] bg-cream-warm px-1.5 py-0.5 font-kr text-caption text-ink-soft">
                     {categoryLabel(n.category)}
                   </span>
                 )}
                 <span className="min-w-0 flex-1 truncate font-kr text-sm text-ink">{n.title}</span>
-                <span className="hidden shrink-0 font-kr text-xs text-ink-faint sm:inline">
+                <span className="hidden shrink-0 font-kr text-caption text-ink-faint sm:inline">
                   {formatDateTime(n.publishedAt)}
                 </span>
               </Link>
@@ -92,7 +93,7 @@ export default async function NoticeListPage({
               key={i}
               href={`/notice?page=${i}${keyword ? `&keyword=${encodeURIComponent(keyword)}` : ""}`}
               aria-current={i === page ? "page" : undefined}
-              className={`h-9 w-9 rounded-[3px] text-center font-numeric text-sm leading-9 transition ${
+              className={`h-9 w-9 rounded-[6px] text-center font-numeric text-sm leading-9 transition ${
                 i === page ? "bg-ink text-cream-warm" : "text-ink-soft hover:bg-clay-soft/40"
               }`}
             >

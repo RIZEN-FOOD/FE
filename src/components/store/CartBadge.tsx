@@ -46,7 +46,7 @@ export function CartBadge({ className }: { className?: string }) {
         <path d="M16 10a4 4 0 0 1-8 0" />
       </svg>
       {count > 0 && (
-        <span className="absolute -right-2 -top-2 flex min-w-[18px] items-center justify-center rounded-full bg-clay-deep px-1 font-numeric text-[11px] font-bold leading-[18px] text-paper">
+        <span className="absolute -right-2 -top-2 flex min-w-[18px] items-center justify-center rounded-full bg-clay-deep px-1 font-numeric text-[12px] font-bold leading-[18px] text-paper">
           {count > 99 ? "99+" : count}
         </span>
       )}

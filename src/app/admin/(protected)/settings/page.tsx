@@ -53,6 +53,7 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     note: "사진은 올리면 바로 반영됩니다. 올리지 않으면 지금 쓰는 기본 사진이 그대로 나옵니다.",
     keys: [
       "main.hero_images", "main.nutrition_image", "main.footer_image",
+      "main.page_hero_reviews", "main.page_hero_notice",
       "main.section.review", "main.section.notice",
     ],
   },
@@ -79,6 +80,7 @@ const TEXTAREA_KEYS = new Set(["shipping.island_zip_ranges"]);
 // 사진 한 장을 올리는 칸
 const IMAGE_KEYS = new Set([
   "main.nutrition_image", "main.footer_image", "auth.login_image", "auth.signup_image",
+  "main.page_hero_reviews", "main.page_hero_notice",
 ]);
 // 사진 여러 장을 올리는 칸 (순서대로 번갈아 보인다)
 const IMAGE_LIST_KEYS = new Set(["main.hero_images"]);
@@ -89,6 +91,10 @@ const HINTS: Record<string, string> = {
     "메인 상단에 크게 도는 사진입니다. 여러 장 올리면 순서대로 번갈아 보입니다. 하나도 없으면 기본 사진이 나옵니다. 권장 가로형 1600x1200 이상.",
   "main.nutrition_image": "영양성분 띠의 배경 사진입니다. 가로로 넓은 사진(권장 1920x1080 이상)을 올려주세요.",
   "main.footer_image": "화면 맨 아래 배너에 들어가는 제품 사진입니다. 배경이 없는 누끼 사진이 잘 어울립니다.",
+  "main.page_hero_reviews":
+    "후기 페이지 맨 위 띠에 깔리는 사진입니다. 글자가 위에 얹히므로 가운데가 너무 복잡하지 않은 가로 사진(권장 1920x800 이상)이 좋습니다.",
+  "main.page_hero_notice":
+    "공지사항 페이지 맨 위 띠에 깔리는 사진입니다. 글자가 위에 얹히므로 가운데가 너무 복잡하지 않은 가로 사진(권장 1920x800 이상)이 좋습니다.",
   "order.cutoff_time": "24시간 형식으로 넣어주세요. 예: 14:00 (이 시각 이전 주문까지 당일 발송)",
   "sns.instagram": "전체 주소로 넣어주세요. 예: https://instagram.com/…",
   "sns.youtube": "전체 주소로 넣어주세요. 예: https://youtube.com/@…",

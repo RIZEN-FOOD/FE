@@ -54,7 +54,7 @@ export function MyPageContent() {
   return (
     <Container className="py-14">
       <SectionTag>My Page</SectionTag>
-        <h1 className="font-kr text-title font-bold tracking-tight text-ink">마이페이지</h1>
+        <h1 className="font-kr text-title font-bold text-ink">마이페이지</h1>
         <p className="mt-2 font-kr text-sm text-ink-soft">{me.name} 님, 안녕하세요.</p>
 
         {/* 탭 — 좁은 화면에서는 글자를 쪼개지 않고 가로로 넘긴다 (2026-09-18) */}
@@ -112,16 +112,16 @@ function MyOrders() {
   return (
     <ul className="flex flex-col gap-4">
       {data.items.map((o) => (
-        <li key={o.orderNo} className="rounded-[4px] border border-line bg-paper p-5">
+        <li key={o.orderNo} className="rounded-[12px] border border-line bg-paper p-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="rounded-full bg-cream-warm px-2.5 py-0.5 font-kr text-[11px] font-medium text-clay-deep">
+            <span className="rounded-full bg-cream-warm px-2.5 py-0.5 font-kr text-caption font-medium text-clay-deep">
               {ORDER_STATUS_LABEL[o.status] ?? o.status}
             </span>
-            <span className="font-kr text-xs text-ink-faint">{formatDateTime(o.orderedAt)}</span>
+            <span className="font-kr text-caption text-ink-faint">{formatDateTime(o.orderedAt)}</span>
           </div>
 
           <div className="mt-3 flex items-center gap-3">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
               {o.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={o.thumbnailUrl} alt="" className="h-full w-full object-cover" />
@@ -134,7 +134,7 @@ function MyOrders() {
               >
                 {o.title}
               </Link>
-              <p className="mt-0.5 font-numeric text-xs text-ink-faint">
+              <p className="mt-0.5 font-numeric text-caption text-ink-faint">
                 {o.orderNo} · {o.itemCount}건
               </p>
             </div>
@@ -184,19 +184,19 @@ function MyWishlist() {
   return (
     <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
       {items.map((w) => (
-        <li key={w.productId} className="rounded-[4px] border border-line bg-paper">
+        <li key={w.productId} className="rounded-[12px] border border-line bg-paper">
           <Link href={`/products/${w.slug}`} className="block">
-            <div className="relative aspect-square overflow-hidden rounded-t-[4px] bg-clay-soft/40">
+            <div className="relative aspect-square overflow-hidden rounded-t-[12px] bg-clay-soft/40">
               {w.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={w.thumbnailUrl} alt={w.name} className="h-full w-full object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center font-en text-xs text-ink-faint">
+                <div className="flex h-full w-full items-center justify-center font-en text-caption text-ink-faint">
                   준비 중
                 </div>
               )}
               {w.soldOut && (
-                <span className="absolute left-2 top-2 rounded-full bg-ink/80 px-2 py-0.5 font-kr text-[11px] text-cream-warm">
+                <span className="absolute left-2 top-2 rounded-full bg-ink/80 px-2 py-0.5 font-kr text-caption text-cream-warm">
                   품절
                 </span>
               )}
@@ -212,7 +212,7 @@ function MyWishlist() {
             <button
               type="button"
               onClick={() => remove(w.productId)}
-              className="mt-2 font-kr text-xs text-ink-faint underline-offset-2 hover:text-clay-deep hover:underline"
+              className="mt-2 font-kr text-caption text-ink-faint underline-offset-2 hover:text-clay-deep hover:underline"
             >
               찜 해제
             </button>
@@ -264,7 +264,7 @@ function MyReviews() {
   return (
     <ul className="flex flex-col gap-4">
       {data.items.map((r) => (
-        <li key={r.id} className="rounded-[4px] border border-line bg-paper p-5">
+        <li key={r.id} className="rounded-[12px] border border-line bg-paper p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <Link
@@ -273,7 +273,7 @@ function MyReviews() {
               >
                 {r.productName}
               </Link>
-              <p className="mt-1 font-numeric text-xs text-clay-deep">
+              <p className="mt-1 font-numeric text-caption text-clay-deep">
                 {"★".repeat(r.rating)}
                 <span className="text-line">{"★".repeat(5 - r.rating)}</span>
               </p>
@@ -281,7 +281,7 @@ function MyReviews() {
             <button
               type="button"
               onClick={() => remove(r.id)}
-              className="shrink-0 font-kr text-xs text-ink-faint transition hover:text-clay-deep"
+              className="shrink-0 font-kr text-caption text-ink-faint transition hover:text-clay-deep"
             >
               삭제
             </button>
@@ -295,12 +295,12 @@ function MyReviews() {
             <div className="mt-3 flex gap-2">
               {r.imageUrls.map((url, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={url} alt="" className="h-16 w-16 rounded-[3px] object-cover" />
+                <img key={i} src={url} alt="" className="h-16 w-16 rounded-[6px] object-cover" />
               ))}
             </div>
           )}
 
-          <p className="mt-3 font-kr text-xs text-ink-faint">{formatDateTime(r.createdAt)}</p>
+          <p className="mt-3 font-kr text-caption text-ink-faint">{formatDateTime(r.createdAt)}</p>
         </li>
       ))}
     </ul>
@@ -331,17 +331,17 @@ function MyInquiries() {
   return (
     <ul className="flex flex-col gap-4">
       {data.items.map((q) => (
-        <li key={q.id} className="rounded-[4px] border border-line bg-paper p-5">
+        <li key={q.id} className="rounded-[12px] border border-line bg-paper p-5">
           <div className="flex items-center gap-2">
             <span
               className={cn(
-                "rounded-full px-2.5 py-0.5 font-kr text-[11px] font-medium",
+                "rounded-full px-2.5 py-0.5 font-kr text-caption font-medium",
                 q.status === "ANSWERED" ? "bg-ink text-cream-warm" : "bg-cream-warm text-ink-soft",
               )}
             >
               {INQUIRY_STATUS_LABEL[q.status] ?? q.status}
             </span>
-            <span className="font-kr text-xs text-ink-faint">{formatDateTime(q.createdAt)}</span>
+            <span className="font-kr text-caption text-ink-faint">{formatDateTime(q.createdAt)}</span>
           </div>
 
           <p className="mt-3 whitespace-pre-line font-kr text-sm leading-relaxed text-ink">
@@ -349,8 +349,8 @@ function MyInquiries() {
           </p>
 
           {q.answer && (
-            <div className="mt-4 rounded-[3px] bg-cream-warm px-4 py-3">
-              <p className="font-kr text-xs font-semibold text-clay-deep">답변</p>
+            <div className="mt-4 rounded-[6px] bg-cream-warm px-4 py-3">
+              <p className="font-kr text-caption font-semibold text-clay-deep">답변</p>
               <p className="mt-1 whitespace-pre-line font-kr text-sm leading-relaxed text-ink-soft">
                 {q.answer}
               </p>
@@ -388,7 +388,7 @@ function MyAccount({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="max-w-md">
-      <dl className="rounded-[4px] border border-line bg-paper px-5 py-1">
+      <dl className="rounded-[12px] border border-line bg-paper px-5 py-1">
         {[
           { k: "이름", v: me.name },
           { k: "이메일", v: me.email },
@@ -405,7 +405,7 @@ function MyAccount({ onLogout }: { onLogout: () => void }) {
         <button
           type="button"
           onClick={onLogout}
-          className="rounded-[2px] border border-line px-4 py-2 font-kr text-sm text-ink transition hover:bg-clay-soft/40"
+          className="rounded-[6px] border border-line px-4 py-2 font-kr text-sm text-ink transition hover:bg-clay-soft/40"
         >
           로그아웃
         </button>
@@ -413,7 +413,7 @@ function MyAccount({ onLogout }: { onLogout: () => void }) {
           type="button"
           onClick={withdraw}
           disabled={busy}
-          className="rounded-[2px] px-4 py-2 font-kr text-sm text-ink-faint transition hover:text-clay-deep disabled:opacity-50"
+          className="rounded-[6px] px-4 py-2 font-kr text-sm text-ink-faint transition hover:text-clay-deep disabled:opacity-50"
         >
           회원 탈퇴
         </button>
@@ -432,7 +432,7 @@ function EmptyState({
   actionHref: string;
 }) {
   return (
-    <div className="rounded-[4px] border border-dashed border-line px-6 py-16 text-center">
+    <div className="rounded-[12px] border border-dashed border-line px-6 py-16 text-center">
       <p className="font-kr text-sm text-ink-soft">{message}</p>
       <Link
         href={actionHref}

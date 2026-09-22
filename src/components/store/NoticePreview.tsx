@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container, SectionTag } from "@/components/ui";
+import { Container } from "@/components/ui";
 import { formatDateTime } from "@/lib/datetime";
 import { NOTICE_CATEGORIES, type NoticePublicDetail } from "@/types/content";
 
@@ -19,9 +19,8 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
   return (
     <section className="bg-cream-warm py-20" aria-labelledby="notice-heading">
       <Container>
-        <SectionTag>Notice</SectionTag>
         <div className="flex items-end justify-between">
-          <h2 id="notice-heading" className="font-display text-section font-semibold tracking-[-0.01em] text-ink">
+          <h2 id="notice-heading" className="font-display text-section font-semibold text-ink">
             공지사항
           </h2>
           <Link href="/notice" className="font-kr text-sm text-ink-soft underline-offset-4 hover:underline">
@@ -33,13 +32,13 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
           {notices.map((n) => (
             <details key={n.id} className="group border-b border-line">
               <summary className="flex cursor-pointer list-none items-center gap-3 py-4 [&::-webkit-details-marker]:hidden">
-                <span className="shrink-0 rounded-[2px] bg-paper px-1.5 py-0.5 font-kr text-[10px] text-ink-soft">
+                <span className="shrink-0 rounded-[6px] bg-paper px-1.5 py-0.5 font-kr text-caption text-ink-soft">
                   {categoryLabel(n.category)}
                 </span>
                 <span className="min-w-0 flex-1 truncate font-kr text-sm font-medium text-ink group-open:whitespace-normal">
                   {n.title}
                 </span>
-                <span className="hidden shrink-0 font-kr text-xs text-ink-faint sm:inline">
+                <span className="hidden shrink-0 font-kr text-caption text-ink-faint sm:inline">
                   {formatDateTime(n.publishedAt)}
                 </span>
                 <span
@@ -48,7 +47,7 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
                 />
               </summary>
               <div className="pb-6 sm:pl-12">
-                <p className="font-kr text-xs text-ink-faint sm:hidden">{formatDateTime(n.publishedAt)}</p>
+                <p className="font-kr text-caption text-ink-faint sm:hidden">{formatDateTime(n.publishedAt)}</p>
                 <div
                   className="mt-2 max-h-[420px] overflow-y-auto font-kr text-sm leading-relaxed text-ink-soft [&_a]:text-clay-deep [&_a]:underline [&_h3]:mb-1 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-ink [&_img]:my-3 [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5"
                   data-lenis-prevent
@@ -56,7 +55,7 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
                 />
                 <Link
                   href={`/notice/${n.id}`}
-                  className="mt-4 inline-block font-kr text-xs font-medium text-ink underline-offset-4 hover:underline"
+                  className="mt-4 inline-block font-kr text-caption font-medium text-ink underline-offset-4 hover:underline"
                 >
                   자세히 보기 →
                 </Link>

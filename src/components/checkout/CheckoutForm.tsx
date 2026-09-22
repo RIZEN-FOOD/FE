@@ -12,6 +12,7 @@ import { formatPhone } from "@/lib/phone";
 import { hasSignedInHint } from "@/lib/auth/signedInHint";
 import type { MemberAddress } from "@/types/member";
 import { useCart } from "@/store/cart";
+import { CouponField, type AppliedCoupon } from "./CouponField";
 import type { CreateOrderRequest, OrderView } from "@/types/order";
 
 /**
@@ -29,6 +30,8 @@ export function CheckoutForm() {
   const cart = useCart((s) => s.cart);
   const loaded = useCart((s) => s.loaded);
   const refresh = useCart((s) => s.refresh);
+  // 적용된 할인코드. 금액은 서버가 계산해 준 값만 들고 있는다.
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
 
   const [form, setForm] = useState<CreateOrderRequest>({
     ordererName: "",
@@ -48,6 +51,12 @@ export function CheckoutForm() {
   const [islandFee, setIslandFee] = useState(0);
   /** 화면 표시용 도서산간 추가분. 빈 장바구니면 0 (서버 계산과 같은 규칙). */
   const islandExtra = cart && cart.itemsAmount > 0 ? islandFee : 0;
+  const itemsAmount = cart?.itemsAmount ?? 0;
+  // 상품 금액이 바뀌면 이미 받은 할인액이 어긋난다. 다시 적용받게 푼다.
+  useEffect(() => {
+    setCoupon(null);
+  }, [itemsAmount]);
+  const discount = Math.min(coupon?.discountAmount ?? 0, itemsAmount);
 
   // 도서산간 추가 배송비 미리보기. 실제 금액은 주문 생성 때 서버가 우편번호로 다시 계산한다.
   useEffect(() => {
@@ -160,9 +169,13 @@ export function CheckoutForm() {
     setFieldErrors({});
 
     // 받는 분이 주문자와 같으면 주문자 값으로 채운다.
-    const payload: CreateOrderRequest = sameAsOrderer
+    const base: CreateOrderRequest = sameAsOrderer
       ? { ...form, receiverName: form.ordererName, receiverPhone: form.ordererPhone }
       : form;
+    // 코드만 보낸다. 할인 금액은 서버가 다시 계산한다.
+    const payload: CreateOrderRequest = coupon
+      ? { ...base, couponCode: coupon.code }
+      : base;
 
     setBusy(true);
     let orderNo: string | null = null;
@@ -313,14 +326,14 @@ export function CheckoutForm() {
           {/* 저장해 둔 배송지 — 누르면 아래 칸이 채워진다. 매번 주소를 다시 검색하지 않게. */}
           {addresses.length > 0 && (
             <div className="mt-4">
-              <span className="block font-kr text-xs font-medium text-ink-soft">저장된 배송지</span>
+              <span className="block font-kr text-caption font-medium text-ink-soft">저장된 배송지</span>
               <div className="mt-2 flex flex-wrap gap-2">
                 {addresses.map((a) => (
                   <button
                     key={a.id}
                     type="button"
                     onClick={() => applyAddress(a)}
-                    className="rounded-full border border-line px-3.5 py-2 text-left font-kr text-xs text-ink-soft transition hover:border-ink hover:text-ink"
+                    className="rounded-full border border-line px-3.5 py-2 text-left font-kr text-caption text-ink-soft transition hover:border-ink hover:text-ink"
                   >
                     <b className="text-ink">{a.label?.trim() || a.receiverName}</b>
                     {a.isDefault && <span className="ml-1 text-clay-deep">기본</span>}
@@ -345,7 +358,7 @@ export function CheckoutForm() {
             )}
             {/* 우편번호·주소는 검색으로 채운다. 손으로 고치지 않게 읽기전용. */}
             <div className="sm:col-span-2">
-              <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">
+              <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">
                 우편번호 <span className="text-clay-deep">*</span>
               </span>
               <div className="flex gap-2">
@@ -353,7 +366,7 @@ export function CheckoutForm() {
                   value={form.zipcode}
                   readOnly
                   placeholder="주소 검색을 눌러주세요"
-                  className={`h-[50px] w-40 rounded-[3px] border bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint ${
+                  className={`h-[50px] w-40 rounded-[6px] border bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint ${
                     fieldErrors.zipcode ? "border-clay-deep" : "border-line"
                   }`}
                 />
@@ -361,11 +374,11 @@ export function CheckoutForm() {
                   onComplete={({ zonecode, address }) =>
                     setForm((f) => ({ ...f, zipcode: zonecode, addr1: address }))
                   }
-                  className="h-[50px] shrink-0 rounded-[3px] bg-ink px-5 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+                  className="h-[50px] shrink-0 rounded-[6px] bg-ink px-5 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
                 />
               </div>
               {fieldErrors.zipcode && (
-                <span className="mt-1 block font-kr text-xs text-clay-deep">{fieldErrors.zipcode}</span>
+                <span className="mt-1 block font-kr text-caption text-clay-deep">{fieldErrors.zipcode}</span>
               )}
             </div>
             <div className="sm:col-span-2">
@@ -388,7 +401,7 @@ export function CheckoutForm() {
           <ul className="mt-4 flex flex-col divide-y divide-line border-y border-line">
             {orderable.map((it) => (
               <li key={it.id} className="flex items-center gap-3 py-3">
-                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
                   {it.thumbnailUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={it.thumbnailUrl} alt={it.name} className="h-full w-full object-cover" />
@@ -396,8 +409,8 @@ export function CheckoutForm() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-kr text-sm text-ink">{it.name}</p>
-                  {it.optionName && <p className="font-kr text-xs text-ink-soft">{it.optionName}</p>}
-                  <p className="font-numeric text-xs text-ink-faint">수량 {it.quantity}</p>
+                  {it.optionName && <p className="font-kr text-caption text-ink-soft">{it.optionName}</p>}
+                  <p className="font-numeric text-caption text-ink-faint">수량 {it.quantity}</p>
                 </div>
                 <p className="font-numeric text-sm font-medium text-ink">{won(it.lineAmount)}원</p>
               </li>
@@ -407,7 +420,7 @@ export function CheckoutForm() {
       </div>
 
       {/* 결제 요약 */}
-      <aside className="rounded-[4px] border border-line bg-paper p-6 lg:sticky lg:top-24">
+      <aside className="rounded-[12px] border border-line bg-paper p-6 lg:sticky lg:top-24">
         <h2 className="font-kr text-lg font-bold text-ink">결제 금액</h2>
         <dl className="mt-5 flex flex-col gap-3 font-kr text-sm">
           <div className="flex justify-between">
@@ -419,17 +432,31 @@ export function CheckoutForm() {
             <dd className="text-right font-numeric text-ink">
               {cart.shippingFee + islandExtra === 0 ? "무료" : `${won(cart.shippingFee + islandExtra)}원`}
               {islandExtra > 0 && (
-                <span className="mt-0.5 block font-kr text-xs text-ink-faint">
+                <span className="mt-0.5 block font-kr text-caption text-ink-faint">
                   도서산간 {won(islandExtra)}원 포함
                 </span>
               )}
             </dd>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between">
+              <dt className="text-ink-soft">할인</dt>
+              <dd className="font-numeric text-clay-deep">−{won(discount)}원</dd>
+            </div>
+          )}
         </dl>
+
+        <CouponField
+          ordererPhone={form.ordererPhone}
+          applied={coupon}
+          onApply={setCoupon}
+          onClear={() => setCoupon(null)}
+        />
+
         <div className="mt-5 flex items-baseline justify-between border-t border-line pt-5">
           <span className="font-kr text-sm font-medium text-ink">최종 결제금액</span>
           <span className="font-numeric text-2xl font-bold text-ink">
-            {won(cart.totalAmount + islandExtra)}
+            {won(cart.totalAmount + islandExtra - discount)}
             <span className="ml-1 font-kr text-base font-medium">원</span>
           </span>
         </div>
@@ -438,7 +465,7 @@ export function CheckoutForm() {
           <fieldset className="mt-5">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
             {availableMethods.length === 0 && (
-              <p className="mt-2 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
+              <p className="mt-2 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
                 지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
               </p>
             )}
@@ -469,7 +496,7 @@ export function CheckoutForm() {
           <fieldset className="mt-5">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
             {niceMethods.length === 0 && (
-              <p className="mt-2 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
+              <p className="mt-2 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
                 지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
               </p>
             )}
@@ -497,13 +524,13 @@ export function CheckoutForm() {
             </div>
           </fieldset>
         ) : (
-          <p className="mt-4 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-ink-soft">
+          <p className="mt-4 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
             지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 결제사 키를 넣으면 열립니다.
           </p>
         )}
 
         {error && (
-          <p role="alert" className="mt-4 rounded-[2px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+          <p role="alert" className="mt-4 rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
             {error}
           </p>
         )}
@@ -541,16 +568,16 @@ function Field({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">{label}</span>
+      <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">{label}</span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`h-[50px] w-full rounded-[3px] border bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep ${
+        className={`h-[50px] w-full rounded-[6px] border bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep ${
           error ? "border-clay-deep" : "border-line"
         }`}
       />
-      {error && <span className="mt-1 block font-kr text-xs text-clay-deep">{error}</span>}
+      {error && <span className="mt-1 block font-kr text-caption text-clay-deep">{error}</span>}
     </label>
   );
 }

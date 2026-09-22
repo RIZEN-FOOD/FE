@@ -89,7 +89,7 @@ export function CheckoutComplete() {
       <p className="mt-2 font-kr text-sm font-medium text-danger" role="alert">
         {failure}
       </p>
-      <p className="mt-1 font-kr text-xs text-ink-soft">장바구니는 그대로 남아 있어요. 다시 시도해 주세요.</p>
+      <p className="mt-1 font-kr text-caption text-ink-soft">장바구니는 그대로 남아 있어요. 다시 시도해 주세요.</p>
       <div className="mt-6 flex justify-center gap-3">
         <Link
           href="/checkout"

@@ -44,7 +44,7 @@ export function GuestOrderLookup() {
   }
 
   const inputCls =
-    "h-[50px] w-full rounded-[3px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep";
+    "h-[50px] w-full rounded-[6px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep";
 
   return (
     <div className="mx-auto mt-10 w-full max-w-md">
@@ -55,7 +55,7 @@ export function GuestOrderLookup() {
 
       <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
         <label className="block">
-          <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">주문번호</span>
+          <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">주문번호</span>
           <input
             value={orderNo}
             onChange={(e) => setOrderNo(e.target.value)}
@@ -67,7 +67,7 @@ export function GuestOrderLookup() {
         </label>
 
         <label className="block">
-          <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">받는 분 연락처</span>
+          <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">받는 분 연락처</span>
           <input
             value={phone}
             onChange={(e) => setPhone(formatPhone(e.target.value))}
@@ -82,7 +82,7 @@ export function GuestOrderLookup() {
         </label>
 
         {error && (
-          <p role="alert" className="rounded-[2px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+          <p role="alert" className="rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
             {error}
           </p>
         )}
@@ -92,7 +92,7 @@ export function GuestOrderLookup() {
         </Button>
       </form>
 
-      <p className="mt-6 font-kr text-xs leading-relaxed text-ink-faint">
+      <p className="mt-6 font-kr text-caption leading-relaxed text-ink-faint">
         회원으로 주문하셨다면 로그인 후 <b>마이페이지 &gt; 주문 내역</b>에서 보실 수 있습니다.
         주문번호가 기억나지 않으시면 고객센터로 문의해 주세요.
       </p>

@@ -54,7 +54,7 @@ export function CartContent() {
       </ul>
 
       {/* 결제 요약 */}
-      <aside className="rounded-[4px] border border-line bg-paper p-6 lg:sticky lg:top-24">
+      <aside className="rounded-[12px] border border-line bg-paper p-6 lg:sticky lg:top-24">
         <h2 className="font-kr text-lg font-bold text-ink">결제 금액</h2>
 
         <dl className="mt-5 flex flex-col gap-3 font-kr text-sm">
@@ -71,7 +71,7 @@ export function CartContent() {
         </dl>
 
         {cart.freeShippingThreshold != null && cart.freeShippingRemaining > 0 && (
-          <p className="mt-3 rounded-[2px] bg-cream-warm px-3 py-2 font-kr text-xs text-clay-deep">
+          <p className="mt-3 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-clay-deep">
             {won(cart.freeShippingRemaining)}원 더 담으면 무료배송입니다.
           </p>
         )}
@@ -85,7 +85,7 @@ export function CartContent() {
         </div>
 
         {cart.hasUnavailable && (
-          <p className="mt-4 font-kr text-xs text-ink-faint">
+          <p className="mt-4 font-kr text-caption text-ink-faint">
             구매할 수 없는 상품은 결제 금액에서 제외됩니다.
           </p>
         )}
@@ -134,12 +134,12 @@ function CartRow({ item }: { item: CartItemView }) {
     <li className={`flex gap-4 py-5 ${item.available ? "" : "opacity-70"}`}>
       {/* 썸네일 */}
       <Link href={`/products/${item.slug}`} className="shrink-0">
-        <div className="h-20 w-20 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+        <div className="h-20 w-20 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
           {item.thumbnailUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={item.thumbnailUrl} alt={item.name} className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center font-en text-[10px] text-ink-faint">
+            <div className="flex h-full w-full items-center justify-center font-en text-caption text-ink-faint">
               RiZen
             </div>
           )}
@@ -152,26 +152,26 @@ function CartRow({ item }: { item: CartItemView }) {
           {item.name}
         </Link>
         {item.optionName && (
-          <p className="mt-0.5 font-kr text-xs text-ink-soft">{item.optionName}</p>
+          <p className="mt-0.5 font-kr text-caption text-ink-soft">{item.optionName}</p>
         )}
-        <p className="mt-1 font-numeric text-xs text-ink-faint">
+        <p className="mt-1 font-numeric text-caption text-ink-faint">
           개당 {won(item.unitPrice)}원
         </p>
 
         {!item.available && item.reason && (
-          <span className="mt-2 inline-block w-fit rounded-full bg-clay-soft/60 px-2 py-0.5 font-kr text-[11px] text-clay-deep">
+          <span className="mt-2 inline-block w-fit rounded-full bg-clay-soft/60 px-2 py-0.5 font-kr text-caption text-clay-deep">
             {item.reason}
           </span>
         )}
         {error && (
-          <span role="alert" className="mt-2 font-kr text-[11px] text-danger">
+          <span role="alert" className="mt-2 font-kr text-caption text-danger">
             {error}
           </span>
         )}
 
         {/* 수량 조절 + 삭제 */}
         <div className="mt-3 flex items-center gap-4">
-          <div className="flex items-center rounded-[2px] border border-line">
+          <div className="flex items-center rounded-[6px] border border-line">
             <button
               type="button"
               aria-label="수량 줄이기"
@@ -198,7 +198,7 @@ function CartRow({ item }: { item: CartItemView }) {
             type="button"
             onClick={() => run(() => remove(item.id))}
             disabled={busy}
-            className="font-kr text-xs text-ink-faint underline-offset-2 hover:text-ink hover:underline disabled:opacity-40"
+            className="font-kr text-caption text-ink-faint underline-offset-2 hover:text-ink hover:underline disabled:opacity-40"
           >
             삭제
           </button>

@@ -67,7 +67,7 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
       <div className="flex items-center justify-between">
         <div>
           <p className="font-numeric text-sm text-ink-soft">주문번호 {order.orderNo}</p>
-          <p className="mt-1 font-kr text-xs text-ink-faint">{formatDateTime(order.orderedAt)}</p>
+          <p className="mt-1 font-kr text-caption text-ink-faint">{formatDateTime(order.orderedAt)}</p>
         </div>
         <span className="rounded-full bg-cream-warm px-3 py-1 font-kr text-sm font-medium text-clay-deep">
           {ORDER_STATUS_LABEL[order.status] ?? order.status}
@@ -78,7 +78,7 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
       <ul className="mt-6 flex flex-col divide-y divide-line border-y border-line">
         {order.items.map((it, i) => (
           <li key={i} className="flex items-center gap-3 py-4">
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[3px] border border-line bg-cream-warm">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
               {it.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={it.thumbnailUrl} alt={it.name} className="h-full w-full object-cover" />
@@ -86,8 +86,8 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
             </div>
             <div className="min-w-0 flex-1">
               <p className="font-kr text-sm text-ink">{it.name}</p>
-              {it.optionName && <p className="font-kr text-xs text-ink-soft">{it.optionName}</p>}
-              <p className="font-numeric text-xs text-ink-faint">
+              {it.optionName && <p className="font-kr text-caption text-ink-soft">{it.optionName}</p>}
+              <p className="font-numeric text-caption text-ink-faint">
                 {won(it.unitPrice)}원 · 수량 {it.quantity}
               </p>
             </div>
@@ -115,7 +115,7 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
       </dl>
 
       {/* 배송지 */}
-      <div className="mt-8 rounded-[4px] border border-line bg-paper p-5">
+      <div className="mt-8 rounded-[12px] border border-line bg-paper p-5">
         <h2 className="font-kr text-sm font-bold text-ink">배송지</h2>
         <div className="mt-3 flex flex-col gap-1 font-kr text-sm text-ink-soft">
           <p>{order.receiverName} · {order.receiverPhoneMasked}</p>

@@ -119,7 +119,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
               <SectionTag tone="onDark">Features</SectionTag>
               <h2
                 id="features-heading"
-                className="font-display text-section font-semibold tracking-[-0.01em] text-cream-warm"
+                className="font-display text-section font-semibold text-cream-warm"
               >
                 RIZEN 쌀가루는 뭐가 다른가요?
               </h2>
@@ -136,14 +136,14 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
                     >
                       <div className="flex items-center gap-3">
                         <span
-                          className={`grid h-7 min-w-7 place-items-center rounded-[3px] px-1.5 font-numeric text-xs font-medium transition-colors duration-500 ${
+                          className={`grid h-7 min-w-7 place-items-center rounded-[6px] px-1.5 font-numeric text-caption font-medium transition-colors duration-500 ${
                             isActive ? "bg-cream-warm text-ink" : "bg-cream-warm/25 text-cream-warm"
                           }`}
                         >
                           {f.no}
                         </span>
                         <h3
-                          className={`font-kr font-bold leading-tight tracking-[-0.02em] text-cream-warm transition-all duration-500 ${
+                          className={`font-kr font-bold leading-[1.25] text-cream-warm transition-all duration-500 ${
                             isActive ? "text-lead" : "text-sub"
                           }`}
                         >
@@ -156,7 +156,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
                           isActive ? "mt-3 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                         }`}
                       >
-                        <p className="overflow-hidden font-kr text-[13.5px] leading-relaxed text-cream-warm/85 md:text-[15px]">
+                        <p className="overflow-hidden font-kr text-small leading-relaxed text-cream-warm/85 md:text-base">
                           {f.body}
                         </p>
                       </div>

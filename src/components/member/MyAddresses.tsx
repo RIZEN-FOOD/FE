@@ -135,7 +135,7 @@ export function MyAddresses() {
           <button
             type="button"
             onClick={openNew}
-            className="rounded-[2px] bg-ink px-4 py-2 font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep"
+            className="rounded-[6px] bg-ink px-4 py-2 font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep"
           >
             + 배송지 추가
           </button>
@@ -144,7 +144,7 @@ export function MyAddresses() {
 
       {/* 입력 폼 */}
       {form && (
-        <div className="mt-4 rounded-[4px] border border-line bg-paper p-5">
+        <div className="mt-4 rounded-[12px] border border-line bg-paper p-5">
           <h3 className="font-kr text-sm font-bold text-ink">
             {form.id == null ? "새 배송지" : "배송지 수정"}
           </h3>
@@ -156,15 +156,15 @@ export function MyAddresses() {
             <FormField label="받는 분 연락처 (선택)" value={form.receiverPhone}
               onChange={(v) => setForm({ ...form, receiverPhone: v })} placeholder="010-1234-5678" />
             <div className="sm:col-span-2">
-              <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">
+              <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">
                 우편번호 <span className="text-clay-deep">*</span>
               </span>
               <div className="flex gap-2">
                 <input value={form.zipcode} readOnly placeholder="주소 검색"
-                  className="h-[46px] w-32 rounded-[3px] border border-line bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint" />
+                  className="h-[46px] w-32 rounded-[6px] border border-line bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint" />
                 <PostcodeButton
                   onComplete={({ zonecode, address }) => setForm({ ...form, zipcode: zonecode, addr1: address })}
-                  className="h-[46px] shrink-0 rounded-[3px] bg-ink px-4 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+                  className="h-[46px] shrink-0 rounded-[6px] bg-ink px-4 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
                 />
               </div>
             </div>
@@ -185,15 +185,15 @@ export function MyAddresses() {
             <span className="font-kr text-sm text-ink">기본 배송지로 설정</span>
           </label>
 
-          {formError && <p className="mt-3 font-kr text-xs text-clay-deep">{formError}</p>}
+          {formError && <p className="mt-3 font-kr text-caption text-clay-deep">{formError}</p>}
 
           <div className="mt-5 flex gap-2">
             <button type="button" onClick={submit} disabled={saving}
-              className="rounded-[2px] bg-ink px-5 py-2 font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50">
+              className="rounded-[6px] bg-ink px-5 py-2 font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50">
               {saving ? "저장 중…" : "저장"}
             </button>
             <button type="button" onClick={() => setForm(null)}
-              className="rounded-[2px] border border-line px-5 py-2 font-kr text-sm text-ink transition hover:bg-clay-soft/40">
+              className="rounded-[6px] border border-line px-5 py-2 font-kr text-sm text-ink transition hover:bg-clay-soft/40">
               취소
             </button>
           </div>
@@ -202,7 +202,7 @@ export function MyAddresses() {
 
       {/* 목록 */}
       {items.length === 0 && !form ? (
-        <div className="mt-4 rounded-[4px] border border-dashed border-line px-6 py-16 text-center">
+        <div className="mt-4 rounded-[12px] border border-dashed border-line px-6 py-16 text-center">
           <p className="font-kr text-sm text-ink-soft">저장된 배송지가 없습니다.</p>
           <button type="button" onClick={openNew}
             className="mt-3 font-kr text-sm font-medium text-clay-deep underline underline-offset-4">
@@ -212,12 +212,12 @@ export function MyAddresses() {
       ) : (
         <ul className="mt-4 flex flex-col gap-3">
           {items.map((a) => (
-            <li key={a.id} className="rounded-[4px] border border-line bg-paper p-5">
+            <li key={a.id} className="rounded-[12px] border border-line bg-paper p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     {a.isDefault && (
-                      <span className="rounded-full bg-ink px-2 py-0.5 font-kr text-[11px] font-medium text-cream-warm">
+                      <span className="rounded-full bg-ink px-2 py-0.5 font-kr text-caption font-medium text-cream-warm">
                         기본
                       </span>
                     )}
@@ -235,16 +235,16 @@ export function MyAddresses() {
               <div className="mt-3 flex gap-3 border-t border-line pt-3">
                 {!a.isDefault && (
                   <button type="button" onClick={() => makeDefault(a.id)}
-                    className="font-kr text-xs text-ink-soft transition hover:text-ink">
+                    className="font-kr text-caption text-ink-soft transition hover:text-ink">
                     기본으로
                   </button>
                 )}
                 <button type="button" onClick={() => openEdit(a)}
-                  className="font-kr text-xs text-ink-soft transition hover:text-ink">
+                  className="font-kr text-caption text-ink-soft transition hover:text-ink">
                   수정
                 </button>
                 <button type="button" onClick={() => remove(a.id)}
-                  className="font-kr text-xs text-ink-faint transition hover:text-clay-deep">
+                  className="font-kr text-caption text-ink-faint transition hover:text-clay-deep">
                   삭제
                 </button>
               </div>
@@ -270,14 +270,14 @@ function FormField({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">
+      <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">
         {label} {required && <span className="text-clay-deep">*</span>}
       </span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[46px] w-full rounded-[3px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep read-only:bg-cream-warm/50"
+        className="h-[46px] w-full rounded-[6px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep read-only:bg-cream-warm/50"
       />
     </label>
   );

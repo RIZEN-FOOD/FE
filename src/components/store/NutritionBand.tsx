@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { Container, SectionTag } from "@/components/ui";
+import { Container } from "@/components/ui";
 import type { Nutrition } from "@/types/product";
 
 /**
@@ -57,10 +57,9 @@ export function NutritionBand({
 
       {/* 내용 · 하단 정렬 */}
       <Container className="relative flex min-h-[560px] flex-col justify-end py-14 md:min-h-[640px] md:py-16">
-        <SectionTag tone="onDark">Nutrition</SectionTag>
         <h2
           id="nutrition-band-heading"
-          className="font-display text-section font-semibold tracking-[-0.01em] text-cream-warm [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]"
+          className="font-display text-section font-semibold text-cream-warm [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]"
         >
           {productName}의 영양성분
         </h2>
@@ -81,7 +80,7 @@ export function NutritionBand({
         </dl>
 
         {nutrition.sugarG != null || nutrition.sodiumMg != null ? (
-          <p className="mt-7 font-kr text-xs text-cream-warm/65">
+          <p className="mt-7 font-kr text-caption text-cream-warm/65">
             {nutrition.sugarG != null && `당류 ${nutrition.sugarG}g`}
             {nutrition.sugarG != null && nutrition.sodiumMg != null && " · "}
             {nutrition.sodiumMg != null && `나트륨 ${nutrition.sodiumMg}mg`}

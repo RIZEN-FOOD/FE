@@ -12,7 +12,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-square items-center justify-center rounded-[4px] bg-clay-soft/40 font-en text-sm text-ink-faint">
+      <div className="flex aspect-square items-center justify-center rounded-[12px] bg-clay-soft/40 font-en text-sm text-ink-faint">
         이미지 준비 중
       </div>
     );
@@ -22,7 +22,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
 
   return (
     <div>
-      <div className="overflow-hidden rounded-[4px] bg-clay-soft/40">
+      <div className="overflow-hidden rounded-[12px] bg-clay-soft/40">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={current.url}
@@ -38,7 +38,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
               key={i}
               type="button"
               onClick={() => setActive(i)}
-              className={`h-16 w-16 shrink-0 overflow-hidden rounded-[3px] border transition ${
+              className={`h-16 w-16 shrink-0 overflow-hidden rounded-[6px] border transition ${
                 i === active ? "border-clay-deep" : "border-line opacity-70 hover:opacity-100"
               }`}
               aria-label={`이미지 ${i + 1} 보기`}

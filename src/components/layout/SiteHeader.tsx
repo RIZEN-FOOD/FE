@@ -15,8 +15,9 @@ import { CartBadge } from "@/components/store/CartBadge";
  * 스크롤해 히어로를 지나면 크림 배경 + 어두운 로고/메뉴로 바뀐다.
  * 그래야 어느 구간에서도 헤더가 읽힌다.
  *
- * 모바일(md 미만)은 히어로 위에서도 항상 크림 배경 + 어두운 로고다 (2026-09-17 요청).
- * 화면 폭으로 갈리는 부분은 CSS(max-md:)로 처리해 첫 화면부터 깜빡이지 않게 한다.
+ * 모바일도 데스크톱과 같게 움직인다 — 히어로 위에서는 투명, 지나면 크림이다
+ * (2026-09-17 에 모바일만 항상 크림으로 뒀다가 2026-09-22 되돌렸다).
+ * 로고와 아이콘 색은 배경에 맞춰 같이 뒤집는다.
  */
 export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
   const [solid, setSolid] = useState(forceSolid);
@@ -43,26 +44,18 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         solid
           ? "border-b border-line bg-cream-warm/95 backdrop-blur"
-          : "bg-transparent max-md:border-b max-md:border-line max-md:bg-cream-warm/95 max-md:backdrop-blur"
+          : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex w-full max-w-wrap items-center justify-between px-7 py-5">
         <Link href="/" aria-label="라이즌푸드 홈">
-          {light && (
-            // 데스크톱 히어로 위: 밝은 로고
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src="/assets/brand/logo-white.png"
-              alt="RiZen"
-              className="hidden h-7 w-auto select-none md:block"
-              draggable={false}
-            />
-          )}
+          {/* 히어로 위(투명)에서는 밝은 로고, 지나면 어두운 로고.
+              화면 폭과 상관없이 같은 규칙이다 — 모바일도 히어로 위에서는 투명이다. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets/brand/logo.png"
+            src={light ? "/assets/brand/logo-white.png" : "/assets/brand/logo.png"}
             alt="RiZen"
-            className={`h-7 w-auto select-none ${light ? "md:hidden" : ""}`}
+            className="h-7 w-auto select-none"
             draggable={false}
           />
         </Link>
@@ -91,8 +84,10 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
         </nav>
 
         {/* 모바일: 장바구니 + 햄버거 */}
-        <div className="flex items-center gap-4 text-ink md:hidden">
-          <CartBadge />
+        <div className={`flex items-center gap-4 md:hidden ${light ? "text-cream-warm" : "text-ink"}`}>
+          {/* CartBadge 는 제 색(text-ink)을 직접 들고 있어 부모 색이 먹지 않는다.
+              히어로 위에서는 데스크톱과 같은 방식으로 덮어쓴다. */}
+          <CartBadge className={light ? "!text-cream-warm hover:!text-cream-warm/70" : ""} />
           <MobileMenu />
         </div>
       </div>

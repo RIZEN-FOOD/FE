@@ -19,6 +19,7 @@ export const adminNav: NavItem[] = [
   { href: "/admin/features", label: "메인 FEATURES", ready: true },
   { href: "/admin/banners", label: "배너 관리", ready: true },
   { href: "/admin/popups", label: "팝업 관리", ready: true },
+  { href: "/admin/coupons", label: "할인코드", ready: true },
   { href: "/admin/notice", label: "공지사항", ready: true },
   { href: "/admin/reviews", label: "후기 관리", ready: true },
   { href: "/admin/inquiries", label: "문의함", ready: true },

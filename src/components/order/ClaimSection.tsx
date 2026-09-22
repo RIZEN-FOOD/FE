@@ -63,14 +63,14 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
   }
 
   return (
-    <section className="mt-8 rounded-[4px] border border-line bg-paper p-5">
+    <section className="mt-8 rounded-[12px] border border-line bg-paper p-5">
       <div className="flex items-center justify-between">
         <h2 className="font-kr text-sm font-bold text-ink">취소 · 반품 · 교환</h2>
         {available.length > 0 && !open && (
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="rounded-[2px] border border-line px-3 py-1.5 font-kr text-xs text-ink transition hover:bg-ink hover:text-cream-warm"
+            className="rounded-[6px] border border-line px-3 py-1.5 font-kr text-caption text-ink transition hover:bg-ink hover:text-cream-warm"
           >
             신청하기
           </button>
@@ -78,23 +78,23 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
       </div>
 
       {available.length === 0 && claims.length === 0 && (
-        <p className="mt-2 font-kr text-xs text-ink-faint">
+        <p className="mt-2 font-kr text-caption text-ink-faint">
           현재 상태에서는 신청할 수 없습니다. 문의가 필요하면 고객센터로 연락해 주세요.
         </p>
       )}
 
       {/* 신청 폼 */}
       {open && (
-        <div className="mt-4 flex flex-col gap-3 rounded-[3px] bg-cream-warm/50 p-4">
+        <div className="mt-4 flex flex-col gap-3 rounded-[6px] bg-cream-warm/50 p-4">
           <label className="block">
-            <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">종류</span>
+            <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">종류</span>
             <select
               value={type}
               onChange={(e) => {
                 setType(e.target.value as ClaimType);
                 setReasonCode("");
               }}
-              className="h-[42px] w-full rounded-[3px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none focus:border-clay-deep"
+              className="h-[42px] w-full rounded-[6px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none focus:border-clay-deep"
             >
               <option value="">선택</option>
               {available.map((t) => (
@@ -107,11 +107,11 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
 
           {type && (
             <label className="block">
-              <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">사유</span>
+              <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">사유</span>
               <select
                 value={reasonCode}
                 onChange={(e) => setReasonCode(e.target.value)}
-                className="h-[42px] w-full rounded-[3px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none focus:border-clay-deep"
+                className="h-[42px] w-full rounded-[6px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none focus:border-clay-deep"
               >
                 <option value="">선택</option>
                 {CLAIM_REASONS[type].map((r) => (
@@ -124,38 +124,38 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
           )}
 
           <label className="block">
-            <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">상세 내용 (선택)</span>
+            <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">상세 내용 (선택)</span>
             <textarea
               value={reasonText}
               onChange={(e) => setReasonText(e.target.value)}
               rows={3}
               maxLength={1000}
-              className="w-full rounded-[3px] border border-line bg-paper px-3 py-2 font-kr text-sm text-ink outline-none focus:border-clay-deep"
+              className="w-full rounded-[6px] border border-line bg-paper px-3 py-2 font-kr text-sm text-ink outline-none focus:border-clay-deep"
             />
           </label>
 
-          <p className="font-kr text-xs text-ink-faint">
+          <p className="font-kr text-caption text-ink-faint">
             식품 특성상 단순 변심 반품은 개봉·훼손 시 제한될 수 있습니다.{" "}
             <a href="/policy/shipping" className="text-clay-deep underline underline-offset-2">
               정책 보기
             </a>
           </p>
 
-          {error && <p className="font-kr text-xs text-clay-deep">{error}</p>}
+          {error && <p className="font-kr text-caption text-clay-deep">{error}</p>}
 
           <div className="flex gap-2">
             <button
               type="button"
               onClick={submit}
               disabled={busy}
-              className="rounded-[2px] bg-ink px-4 py-2 font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+              className="rounded-[6px] bg-ink px-4 py-2 font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
             >
               {busy ? "접수 중…" : "신청 접수"}
             </button>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-[2px] border border-line px-4 py-2 font-kr text-sm text-ink"
+              className="rounded-[6px] border border-line px-4 py-2 font-kr text-sm text-ink"
             >
               취소
             </button>
@@ -167,20 +167,20 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
       {claims.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {claims.map((c) => (
-            <li key={c.id} className="rounded-[3px] border border-line px-4 py-3">
+            <li key={c.id} className="rounded-[6px] border border-line px-4 py-3">
               <div className="flex items-center justify-between">
                 <span className="font-kr text-sm font-medium text-ink">
                   {CLAIM_TYPE_LABEL[c.type]}
                 </span>
-                <span className="rounded-full bg-cream-warm px-2 py-0.5 font-kr text-[11px] text-clay-deep">
+                <span className="rounded-full bg-cream-warm px-2 py-0.5 font-kr text-caption text-clay-deep">
                   {CLAIM_STATUS_LABEL[c.status]}
                 </span>
               </div>
-              <p className="mt-1 font-kr text-xs text-ink-faint">
+              <p className="mt-1 font-kr text-caption text-ink-faint">
                 {formatDateTime(c.requestedAt)} 접수
                 {c.processedAt ? ` · ${formatDateTime(c.processedAt)} 처리` : ""}
               </p>
-              {c.adminMemo && <p className="mt-1 font-kr text-xs text-ink-soft">{c.adminMemo}</p>}
+              {c.adminMemo && <p className="mt-1 font-kr text-caption text-ink-soft">{c.adminMemo}</p>}
             </li>
           ))}
         </ul>

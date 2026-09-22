@@ -40,12 +40,12 @@ export default async function NoticeDetailPage({
     <Container className="py-14">
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center gap-2">
-          <span className="rounded-[2px] bg-cream-warm px-2 py-0.5 font-kr text-xs text-ink-soft">
+          <span className="rounded-[6px] bg-cream-warm px-2 py-0.5 font-kr text-caption text-ink-soft">
             {categoryLabel(notice.category)}
           </span>
         </div>
         <h1 className="mt-3 font-kr text-title font-bold leading-snug text-ink">{notice.title}</h1>
-        <p className="mt-2 font-kr text-xs text-ink-faint">
+        <p className="mt-2 font-kr text-caption text-ink-faint">
           {formatDateTime(notice.publishedAt)} · 조회 {notice.viewCount}
         </p>
 

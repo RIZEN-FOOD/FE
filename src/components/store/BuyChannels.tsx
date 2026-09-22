@@ -18,7 +18,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
         <SectionTag>Where to Buy</SectionTag>
         <h2
           id="buy-heading"
-          className="font-display text-section font-semibold tracking-[-0.01em] text-ink"
+          className="font-display text-section font-semibold text-ink"
         >
           구매 안내
         </h2>
@@ -28,8 +28,8 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {/* 자사몰 — 주 채널이라 강조 */}
-          <div className="flex flex-col rounded-[4px] border border-ink bg-ink p-7">
-            <p className="font-en text-[11px] font-extrabold uppercase tracking-[0.2em] text-clay-soft">
+          <div className="flex flex-col rounded-[12px] border border-ink bg-ink p-7">
+            <p className="font-en text-[12px] font-extrabold uppercase tracking-[0.2em] text-clay-soft">
               Official
             </p>
             <h3 className="mt-3 font-kr text-lg font-bold text-cream-warm">공식몰</h3>
@@ -39,14 +39,14 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
             {primary ? (
               <Link
                 href={`/products/${primary.slug}`}
-                className="mt-6 rounded-[2px] bg-cream-warm px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-paper"
+                className="mt-6 rounded-[6px] bg-cream-warm px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-paper"
               >
                 바로 구매하기
               </Link>
             ) : (
               <Link
                 href="/products"
-                className="mt-6 rounded-[2px] bg-cream-warm px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-paper"
+                className="mt-6 rounded-[6px] bg-cream-warm px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-paper"
               >
                 상품 보러 가기
               </Link>
@@ -54,8 +54,8 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
           </div>
 
           {/* 외부 채널 — 상품별 구매 링크는 상세 페이지에 있다 */}
-          <div className="flex flex-col rounded-[4px] border border-line bg-paper p-7">
-            <p className="font-en text-[11px] font-extrabold uppercase tracking-[0.2em] text-clay-deep">
+          <div className="flex flex-col rounded-[12px] border border-line bg-paper p-7">
+            <p className="font-en text-[12px] font-extrabold uppercase tracking-[0.2em] text-clay-deep">
               Marketplace
             </p>
             <h3 className="mt-3 font-kr text-lg font-bold text-ink">입점 채널</h3>
@@ -64,15 +64,15 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
             </p>
             <Link
               href="/products"
-              className="mt-6 rounded-[2px] border border-ink px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-ink hover:text-cream-warm"
+              className="mt-6 rounded-[6px] border border-ink px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-ink hover:text-cream-warm"
             >
               상품 상세 보기
             </Link>
           </div>
 
           {/* B2B */}
-          <div className="flex flex-col rounded-[4px] border border-line bg-paper p-7">
-            <p className="font-en text-[11px] font-extrabold uppercase tracking-[0.2em] text-clay-deep">
+          <div className="flex flex-col rounded-[12px] border border-line bg-paper p-7">
+            <p className="font-en text-[12px] font-extrabold uppercase tracking-[0.2em] text-clay-deep">
               B2B
             </p>
             <h3 className="mt-3 font-kr text-lg font-bold text-ink">대량구매 · 제휴</h3>
@@ -81,7 +81,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
             </p>
             <Link
               href="/inquiry"
-              className="mt-6 rounded-[2px] border border-ink px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-ink hover:text-cream-warm"
+              className="mt-6 rounded-[6px] border border-ink px-5 py-2.5 text-center font-kr text-sm font-bold text-ink transition hover:bg-ink hover:text-cream-warm"
             >
               제휴 문의하기
             </Link>

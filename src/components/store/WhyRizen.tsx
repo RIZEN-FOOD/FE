@@ -41,22 +41,19 @@ export function WhyRizen() {
       <Container className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         {/* 좌 · 리드 */}
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="font-en text-[11px] font-medium uppercase tracking-[0.22em] text-clay-deep">
-            Why RiZen
-          </p>
           <h2
             id="why-heading"
-            className="mt-4 font-display text-section font-semibold leading-[1.2] tracking-[-0.01em] text-ink"
+            className="font-display text-section font-semibold leading-[1.2] text-ink"
           >
             Rice에 Risen을 더해,
             <br />
             <span className="italic text-clay-deep">RiZen</span>
           </h2>
-          <p className="mt-5 max-w-sm font-kr text-[15px] leading-relaxed text-ink-soft">
+          <p className="mt-5 max-w-sm font-kr text-base leading-relaxed text-ink-soft">
             해외 직구로만 구하던 크림 오브 라이스의 번거로움, 아쉬운 용량, 가격 부담. 이 셋을
             덜어내려고 시작했습니다.
           </p>
-          <p className="mt-3 max-w-sm font-kr text-[15px] leading-relaxed text-ink-soft">
+          <p className="mt-3 max-w-sm font-kr text-base leading-relaxed text-ink-soft">
             아침 대용으로, 운동 전후 탄수화물 보충으로, 필요한 때에 맞춰 드세요.
           </p>
         </div>
@@ -75,7 +72,7 @@ export function WhyRizen() {
                 <h3 className="font-display text-sub font-semibold text-ink">
                   {r.title}
                 </h3>
-                <p className="mt-2.5 max-w-md font-kr text-[15px] leading-relaxed text-ink-soft">
+                <p className="mt-2.5 max-w-md font-kr text-base leading-relaxed text-ink-soft">
                   {r.body}
                 </p>
               </div>

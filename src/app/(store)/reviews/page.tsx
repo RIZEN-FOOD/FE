@@ -36,14 +36,15 @@ export default async function ReviewsPage({
         eyebrow="Reviews"
         title="후기"
         description="크림오브라이스를 드셔본 분들의 이야기입니다."
-        image="/assets/hero/hero-b.jpg"
+        settingKey="main.page_hero_reviews"
+        fallbackImage="/assets/hero/hero-b.jpg"
       />
       <Container className="py-14">
 
       {items.length === 0 ? (
-        <div className="mt-12 rounded-[4px] border border-dashed border-line px-6 py-20 text-center">
+        <div className="mt-12 rounded-[12px] border border-dashed border-line px-6 py-20 text-center">
           <p className="font-kr text-sm text-ink-soft">첫 후기를 기다리고 있습니다.</p>
-          <p className="mt-1 font-kr text-xs text-ink-faint">
+          <p className="mt-1 font-kr text-caption text-ink-faint">
             로그인 후 상품 페이지에서 후기를 남길 수 있습니다.
           </p>
         </div>
@@ -64,7 +65,7 @@ export default async function ReviewsPage({
                   key={i}
                   href={`/reviews?page=${i}`}
                   aria-current={i === page ? "page" : undefined}
-                  className={`h-9 w-9 rounded-[3px] text-center font-numeric text-sm leading-9 transition ${
+                  className={`h-9 w-9 rounded-[6px] text-center font-numeric text-sm leading-9 transition ${
                     i === page ? "bg-ink text-cream-warm" : "text-ink-soft hover:bg-clay-soft/40"
                   }`}
                 >

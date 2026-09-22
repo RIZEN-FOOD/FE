@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function OrderLookupPage() {
   return (
     <Container className="py-12 md:py-16">
-      <h1 className="font-display text-title font-bold tracking-[-0.01em] text-ink">
+      <h1 className="font-display text-title font-bold text-ink">
         주문 조회
       </h1>
       <GuestOrderLookup />

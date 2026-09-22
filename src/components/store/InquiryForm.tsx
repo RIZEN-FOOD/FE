@@ -66,7 +66,7 @@ export function InquiryForm() {
   if (done) {
     return (
       <Container className="py-20">
-        <div className="mx-auto max-w-md rounded-[4px] border border-line bg-paper px-6 py-14 text-center">
+        <div className="mx-auto max-w-md rounded-[12px] border border-line bg-paper px-6 py-14 text-center">
           <p className="font-kr text-lg font-bold text-ink">문의가 접수되었습니다</p>
           <p className="mt-2 font-kr text-sm text-ink-soft">
             빠르게 확인하고 남겨주신 이메일로 답변드리겠습니다.
@@ -74,14 +74,14 @@ export function InquiryForm() {
           <div className="mt-6 flex justify-center gap-3">
             <Link
               href="/"
-              className="rounded-[2px] bg-ink px-5 py-2.5 font-kr text-sm font-bold text-cream-warm"
+              className="rounded-[6px] bg-ink px-5 py-2.5 font-kr text-sm font-bold text-cream-warm"
             >
               홈으로
             </Link>
             {me && (
               <Link
                 href="/mypage"
-                className="rounded-[2px] border border-line px-5 py-2.5 font-kr text-sm text-ink"
+                className="rounded-[6px] border border-line px-5 py-2.5 font-kr text-sm text-ink"
               >
                 문의 내역 보기
               </Link>
@@ -95,7 +95,7 @@ export function InquiryForm() {
   return (
     <Container className="py-14">
       <SectionTag>Contact</SectionTag>
-      <h1 className="font-display text-title font-semibold tracking-[-0.01em] text-ink">문의하기</h1>
+      <h1 className="font-display text-title font-semibold text-ink">문의하기</h1>
       <p className="mt-2 font-kr text-sm text-ink-soft">
         궁금한 점을 남겨주시면 이메일로 답변드립니다.
       </p>
@@ -103,11 +103,11 @@ export function InquiryForm() {
       <form onSubmit={handleSubmit} className="mt-10 max-w-lg" noValidate>
         <div className="flex flex-col gap-4">
           <label className="block">
-            <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">문의 유형</span>
+            <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">문의 유형</span>
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="h-[50px] w-full rounded-[3px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none focus:border-clay-deep"
+              className="h-[50px] w-full rounded-[6px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none focus:border-clay-deep"
             >
               {INQUIRY_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -124,22 +124,22 @@ export function InquiryForm() {
                  placeholder="010-0000-0000" />
 
           <label className="block">
-            <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">문의 내용</span>
+            <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">문의 내용</span>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={7}
               maxLength={2000}
               required
-              className="w-full rounded-[3px] border border-line bg-paper px-3 py-3 font-kr text-sm leading-relaxed text-ink outline-none focus:border-clay-deep"
+              className="w-full rounded-[6px] border border-line bg-paper px-3 py-3 font-kr text-sm leading-relaxed text-ink outline-none focus:border-clay-deep"
             />
-            <span className="mt-1 block text-right font-numeric text-xs text-ink-faint">
+            <span className="mt-1 block text-right font-numeric text-caption text-ink-faint">
               {message.length} / 2000
             </span>
           </label>
 
           {/* 개인정보 수집 동의 — 법적 의무 */}
-          <label className="flex items-start gap-2 rounded-[3px] bg-cream-warm px-4 py-3 font-kr text-xs text-ink-soft">
+          <label className="flex items-start gap-2 rounded-[6px] bg-cream-warm px-4 py-3 font-kr text-caption text-ink-soft">
             <input
               type="checkbox"
               checked={agreeConsent}
@@ -154,7 +154,7 @@ export function InquiryForm() {
           </label>
 
           {error && (
-            <p role="alert" className="rounded-[3px] bg-danger/10 px-3.5 py-2.5 font-kr text-xs text-danger">
+            <p role="alert" className="rounded-[6px] bg-danger/10 px-3.5 py-2.5 font-kr text-caption text-danger">
               {error}
             </p>
           )}
@@ -162,7 +162,7 @@ export function InquiryForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="h-[50px] w-full rounded-[2px] bg-ink font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+            className="h-[50px] w-full rounded-[6px] bg-ink font-kr text-sm font-bold text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
           >
             {submitting ? "접수 중…" : "문의 접수"}
           </button>
@@ -184,12 +184,12 @@ function Field({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">{label}</span>
+      <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">{label}</span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[50px] w-full rounded-[3px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep"
+        className="h-[50px] w-full rounded-[6px] border border-line bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep"
       />
     </label>
   );

@@ -48,7 +48,7 @@ function Block({ section, priority }: { section: DetailSection; priority: boolea
           className="block h-auto w-full"
         />
         {section.caption && (
-          <figcaption className="px-5 py-3 font-kr text-xs text-ink-faint">{section.caption}</figcaption>
+          <figcaption className="px-5 py-3 font-kr text-caption text-ink-faint">{section.caption}</figcaption>
         )}
       </figure>
     );
@@ -62,10 +62,10 @@ function Block({ section, priority }: { section: DetailSection; priority: boolea
     return (
       <div className="px-5 py-10">
         {section.heading && (
-          <h3 className="font-display text-xl font-semibold tracking-[-0.01em] text-ink">{section.heading}</h3>
+          <h3 className="font-display text-xl font-semibold text-ink">{section.heading}</h3>
         )}
         {section.body && (
-          <p className="mt-3 whitespace-pre-line font-kr text-[15px] leading-relaxed text-ink-soft">{section.body}</p>
+          <p className="mt-3 whitespace-pre-line font-kr text-base leading-relaxed text-ink-soft">{section.body}</p>
         )}
       </div>
     );
@@ -104,7 +104,7 @@ function VideoBlock({ section }: { section: DetailSection }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={poster} alt="" className="h-full w-full object-cover" />
             <span className="absolute inset-0 grid place-items-center bg-ink/25 transition group-hover:bg-ink/35">
-              <span className="grid h-16 w-16 place-items-center rounded-full bg-paper/90 shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
+              <span className="grid h-16 w-16 place-items-center rounded-full bg-paper/90 shadow-[0_8px_20px_rgba(34,30,28,0.3)]">
                 <svg width="22" height="24" viewBox="0 0 22 24" aria-hidden="true">
                   <path d="M2 2l18 10L2 22z" fill="#221E1C" />
                 </svg>
@@ -114,7 +114,7 @@ function VideoBlock({ section }: { section: DetailSection }) {
         )}
       </div>
       {section.caption && (
-        <figcaption className="px-5 py-3 font-kr text-xs text-ink-faint">{section.caption}</figcaption>
+        <figcaption className="px-5 py-3 font-kr text-caption text-ink-faint">{section.caption}</figcaption>
       )}
     </figure>
   );

@@ -29,7 +29,7 @@ function Stars({ rating }: { rating: number }) {
 function Badge({ tone, children }: { tone: "soft" | "ad"; children: React.ReactNode }) {
   return (
     <span
-      className={`rounded-full px-2 py-0.5 font-kr text-[10px] ${
+      className={`rounded-full px-2 py-0.5 font-kr text-caption ${
         tone === "ad" ? "bg-clay-soft text-clay-deep" : "bg-cream-warm text-ink-soft"
       }`}
     >
@@ -48,13 +48,21 @@ function Badge({ tone, children }: { tone: "soft" | "ad"; children: React.ReactN
 export function ReviewCard({
   review,
   clamp = false,
+  size = "md",
 }: {
   review: ReviewItem;
   /** 홈 미리보기처럼 높이를 맞춰야 할 때 본문을 줄인다. */
   clamp?: boolean;
+  /** 메인에서 첫 후기를 크게 보여줄 때. 여백과 본문 크기가 한 단계 커진다. */
+  size?: "md" | "lg";
 }) {
+  const lg = size === "lg";
   return (
-    <article className="group flex h-full flex-col rounded-[8px] border border-line bg-paper p-6 transition duration-300 hover:-translate-y-1 hover:border-clay-soft hover:shadow-[0_18px_44px_rgba(90,60,40,0.10)]">
+    <article
+      className={`group flex h-full flex-col rounded-[12px] border border-line bg-paper transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-out)] hover:-translate-y-1 hover:border-clay-soft hover:shadow-[0_24px_48px_-20px_rgba(90,60,40,0.25)] ${
+        lg ? "p-8 md:p-10" : "p-6"
+      }`}
+    >
       <div className="flex items-center justify-between">
         <Stars rating={review.rating} />
         <div className="flex gap-1.5">
@@ -72,9 +80,9 @@ export function ReviewCard({
       </span>
 
       <p
-        className={`mt-1 flex-1 whitespace-pre-line font-kr text-[15px] leading-[1.75] text-ink ${
-          clamp ? "line-clamp-5" : ""
-        }`}
+        className={`mt-1 flex-1 whitespace-pre-line font-kr leading-[1.8] text-ink ${
+          lg ? "text-lead" : "text-base"
+        } ${clamp ? "line-clamp-5" : lg ? "line-clamp-[9]" : ""}`}
       >
         {review.content}
       </p>
@@ -87,7 +95,7 @@ export function ReviewCard({
               key={i}
               src={url}
               alt=""
-              className="h-16 w-16 rounded-[4px] object-cover"
+              className="h-16 w-16 rounded-[12px] object-cover"
             />
           ))}
         </div>
@@ -98,12 +106,12 @@ export function ReviewCard({
           <p className="font-kr text-sm font-semibold text-ink">{review.authorName}</p>
           <Link
             href={`/products/${review.productSlug}`}
-            className="mt-0.5 block truncate font-kr text-xs text-ink-faint transition hover:text-clay-deep"
+            className="mt-0.5 block truncate font-kr text-caption text-ink-faint transition hover:text-clay-deep"
           >
             {review.productName}
           </Link>
         </div>
-        <time className="shrink-0 font-numeric text-xs text-ink-faint">
+        <time className="shrink-0 font-numeric text-caption text-ink-faint">
           {formatDate(review.createdAt)}
         </time>
       </div>

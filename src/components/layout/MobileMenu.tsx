@@ -33,7 +33,7 @@ const SUPPORT_LINKS: { href: string; label: string }[] = [
   { href: "/policy/terms", label: "이용약관" },
 ];
 
-const ITEM = "block rounded-[3px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream";
+const ITEM = "block rounded-[6px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -120,7 +120,7 @@ export function MobileMenu() {
               aria-expanded={supportOpen}
               aria-controls="mobile-menu-support"
               onClick={() => setSupportOpen((v) => !v)}
-              className="flex items-center justify-between rounded-[3px] px-4 py-3 text-left font-kr text-base font-medium text-ink transition hover:bg-cream"
+              className="flex items-center justify-between rounded-[6px] px-4 py-3 text-left font-kr text-base font-medium text-ink transition hover:bg-cream"
             >
               고객센터
               <svg
@@ -152,7 +152,7 @@ export function MobileMenu() {
                       onClick={close}
                       tabIndex={supportOpen ? undefined : -1}
                       aria-hidden={supportOpen ? undefined : true}
-                      className="block rounded-[3px] px-4 py-2.5 font-kr text-[15px] text-ink-soft transition hover:bg-cream hover:text-ink"
+                      className="block rounded-[6px] px-4 py-2.5 font-kr text-base text-ink-soft transition hover:bg-cream hover:text-ink"
                     >
                       {s.label}
                     </Link>

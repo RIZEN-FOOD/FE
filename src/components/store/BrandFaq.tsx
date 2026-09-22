@@ -1,4 +1,4 @@
-import { Container, SectionTag } from "@/components/ui";
+import { Container } from "@/components/ui";
 
 /**
  * "자주 묻는 질문" — 쌀가루 공통 Q&A 3개.
@@ -31,10 +31,9 @@ export function BrandFaq() {
     <section className="bg-paper py-24 md:py-28" aria-labelledby="faq-heading">
       <Container className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         <div>
-          <SectionTag>Q&amp;A</SectionTag>
           <h2
             id="faq-heading"
-            className="font-display text-section font-semibold leading-[1.2] tracking-[-0.01em] text-ink"
+            className="font-display text-section font-semibold leading-[1.2] text-ink"
           >
             궁금한 점만
             <br />
@@ -58,7 +57,7 @@ export function BrandFaq() {
                   className="relative h-3.5 w-3.5 shrink-0 before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:bg-ink before:content-[''] after:absolute after:left-1/2 after:top-0 after:h-full after:w-px after:bg-ink after:transition-transform after:content-[''] group-open:after:scale-y-0"
                 />
               </summary>
-              <p className="pb-6 pr-10 font-kr text-[15px] leading-relaxed text-ink-soft">{f.a}</p>
+              <p className="pb-6 pr-10 font-kr text-base leading-relaxed text-ink-soft">{f.a}</p>
             </details>
           ))}
         </div>

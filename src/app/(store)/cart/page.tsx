@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function CartPage() {
   return (
     <Container className="py-12 md:py-16">
-      <h1 className="font-kr text-title font-bold tracking-tight text-ink">장바구니</h1>
+      <h1 className="font-kr text-title font-bold text-ink">장바구니</h1>
       <CartContent />
     </Container>
   );

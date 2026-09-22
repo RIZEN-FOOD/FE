@@ -63,7 +63,7 @@ export function AddToCart({ product }: { product: ProductDetail }) {
 
   if (product.soldOut) {
     return (
-      <div className="rounded-[2px] bg-line py-3 text-center font-kr text-sm font-medium text-ink-soft">
+      <div className="rounded-[6px] bg-line py-3 text-center font-kr text-sm font-medium text-ink-soft">
         품절되었습니다
       </div>
     );
@@ -81,7 +81,7 @@ export function AddToCart({ product }: { product: ProductDetail }) {
               setAdded(false);
               setError(null);
             }}
-            className="w-full rounded-[2px] border border-line bg-paper px-3 py-2.5 font-kr text-sm text-ink focus:border-clay-deep focus:outline-none"
+            className="w-full rounded-[6px] border border-line bg-paper px-3 py-2.5 font-kr text-sm text-ink focus:border-clay-deep focus:outline-none"
           >
             <option value="">옵션을 선택해 주세요</option>
             {product.options.map((o) => (
@@ -97,7 +97,7 @@ export function AddToCart({ product }: { product: ProductDetail }) {
       {/* 수량 */}
       <div className="mb-5 flex items-center justify-between">
         <span className="font-kr text-sm font-medium text-ink">수량</span>
-        <div className="flex items-center rounded-[2px] border border-line">
+        <div className="flex items-center rounded-[6px] border border-line">
           <button
             type="button"
             aria-label="수량 줄이기"
@@ -136,7 +136,7 @@ export function AddToCart({ product }: { product: ProductDetail }) {
       </div>
 
       {error && (
-        <p role="alert" className="mb-3 rounded-[2px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+        <p role="alert" className="mb-3 rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
           {error}
         </p>
       )}

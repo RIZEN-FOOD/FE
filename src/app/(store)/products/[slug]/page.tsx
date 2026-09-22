@@ -67,24 +67,24 @@ export default async function ProductDetailPage({
   };
 
   return (
-    <Container className="py-10 pb-32 md:pb-16">
+    <Container className="py-10 pb-32 md:py-14 md:pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* 상단: 갤러리 + 구매 패널 */}
-      <div className="grid gap-8 md:grid-cols-2 md:gap-12">
+      <div className="grid gap-8 md:grid-cols-[1.1fr_0.9fr] md:items-start md:gap-14 lg:gap-20">
         <ProductGallery images={product.images} name={product.nameKo} />
         <PurchasePanel product={product} />
       </div>
 
       {/* 상세 설명 */}
       {product.descriptionHtml && (
-        <section className="mt-16 border-t border-line pt-10" aria-labelledby="desc-heading">
-          <h2 id="desc-heading" className="font-kr text-lg font-bold text-ink">상세 정보</h2>
+        <section className="mt-24 border-t border-line pt-14" aria-labelledby="desc-heading">
+          <h2 id="desc-heading" className="font-display text-section font-semibold text-ink">상세 정보</h2>
           <div
-            className="mt-4 font-kr text-sm leading-relaxed text-ink [&_h3]:mb-1 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-bold [&_img]:my-3 [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5 [&_a]:text-clay-deep [&_a]:underline"
+            className="mt-6 max-w-[68ch] font-kr text-base leading-[1.8] text-ink [&_h3]:mb-2 [&_h3]:mt-8 [&_h3]:text-sub [&_h3]:font-bold [&_img]:my-3 [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5 [&_a]:text-clay-deep [&_a]:underline"
             // 서버에서 이미 살균된 HTML 이다 (BE HtmlSanitizer). 여기서 또 만들지 않는다.
             dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
           />
@@ -95,7 +95,7 @@ export default async function ProductDetailPage({
       <ProductDetailSections sections={product.detailSections ?? []} />
 
       {/* 영양성분 · 원재료 — 텍스트 */}
-      <div className="mt-14 grid gap-10 border-t border-line pt-10 md:grid-cols-2">
+      <div className="mt-24 grid gap-14 border-t border-line pt-14 md:grid-cols-2 md:gap-16">
         {product.nutrition && <NutritionFacts nutrition={product.nutrition} />}
         {(product.ingredients.length > 0 || product.label) && (
           <IngredientList ingredients={product.ingredients} label={product.label} weightG={product.weightG} />

@@ -7,7 +7,7 @@ import type { ProductListItem } from "@/types/product";
 
 export const metadata: Metadata = {
   title: "상품",
-  description: "라이즌푸드 크림오브라이스 — 곱게 도정한 쌀로 만든 탄수화물 보충 식품.",
+  description: "라이즌푸드 크림오브라이스. 곱게 도정한 쌀로 만든 탄수화물 보충 식품.",
 };
 
 type ProductListResponse = {
@@ -46,7 +46,7 @@ export default async function ProductsPage({
   return (
     <Container className="py-14">
       <SectionTag>Products</SectionTag>
-      <h1 className="font-kr text-title font-bold tracking-tight text-ink">상품</h1>
+      <h1 className="font-kr text-title font-bold text-ink">상품</h1>
 
       {/* 정렬 — 상품이 늘면 필터를 추가한다. 지금은 정렬만 (기획서 §4.1) */}
       <div className="mt-6 flex flex-wrap gap-2 border-b border-line pb-4">
@@ -64,7 +64,7 @@ export default async function ProductsPage({
       </div>
 
       {items.length === 0 ? (
-        <div className="mt-16 rounded-[4px] border border-dashed border-line px-6 py-16 text-center">
+        <div className="mt-16 rounded-[12px] border border-dashed border-line px-6 py-16 text-center">
           <p className="font-kr text-sm text-ink-soft">등록된 상품이 아직 없습니다.</p>
         </div>
       ) : (
@@ -84,7 +84,7 @@ export default async function ProductsPage({
                   key={i}
                   href={`/products?sort=${sort}&page=${i}`}
                   aria-current={i === page ? "page" : undefined}
-                  className={`h-9 w-9 rounded-[3px] text-center font-numeric text-sm leading-9 transition ${
+                  className={`h-9 w-9 rounded-[6px] text-center font-numeric text-sm leading-9 transition ${
                     i === page ? "bg-ink text-cream-warm" : "text-ink-soft hover:bg-clay-soft/40"
                   }`}
                 >

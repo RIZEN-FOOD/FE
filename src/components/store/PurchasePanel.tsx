@@ -20,17 +20,17 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
   const links = product.purchaseLinks;
 
   return (
-    <div>
+    <div className="md:sticky md:top-28">
       {product.nameEn && (
-        <p className="font-en text-xs font-semibold uppercase tracking-widest text-clay-deep">
+        <p className="font-en text-[12px] font-semibold uppercase tracking-[0.22em] text-clay-deep">
           {product.nameEn}
         </p>
       )}
-      <h1 className="mt-1 font-display text-title font-semibold tracking-[-0.01em] text-ink">{product.nameKo}</h1>
-      {product.subtitle && <p className="mt-2 font-kr text-ink-soft">{product.subtitle}</p>}
+      <h1 className="mt-2 font-display text-title font-semibold text-ink">{product.nameKo}</h1>
+      {product.subtitle && <p className="mt-3 font-kr text-base leading-relaxed text-ink-soft">{product.subtitle}</p>}
 
-      <div className="mt-5 flex items-baseline gap-3">
-        <span className="font-numeric text-3xl font-bold text-ink">
+      <div className="mt-7 flex items-baseline gap-3">
+        <span className="font-numeric text-4xl font-bold text-ink">
           {product.effectivePrice.toLocaleString("ko-KR")}
           <span className="ml-1 font-kr text-lg font-medium">원</span>
         </span>
@@ -42,7 +42,7 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
       </div>
 
       {(product.weightG || product.servings) && (
-        <p className="mt-2 font-kr text-sm text-ink-soft">
+        <p className="mt-2 font-kr text-small text-ink-soft">
           {product.weightG && `${product.weightG}g`}
           {product.weightG && product.servings && " · "}
           {product.servings && `약 ${product.servings}회 제공`}
@@ -50,14 +50,14 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
       )}
 
       {/* 자사몰 구매 — 장바구니/바로구매 */}
-      <div className="mt-7">
+      <div className="mt-8">
         <AddToCart product={product} />
       </div>
 
       {/* 외부 판매 채널 — 보조 안내 */}
       {links.length > 0 && (
-        <div className="mt-6 border-t border-line pt-5">
-          <p className="mb-2 font-kr text-xs font-medium text-ink-faint">다른 곳에서 구매</p>
+        <div className="mt-8 border-t border-line pt-6">
+          <p className="mb-3 font-kr text-small font-medium text-ink-faint">다른 곳에서 구매</p>
           <div className="flex flex-wrap gap-2">
             {links.map((link, i) => (
               <a
@@ -65,7 +65,7 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
                 href={safeUrl(link.url) ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-[2px] border border-line px-3 py-1.5 font-kr text-xs text-ink-soft transition hover:border-ink hover:text-ink"
+                className="rounded-[6px] border border-line px-3.5 py-2 font-kr text-small text-ink-soft transition-colors duration-[var(--dur-fast)] hover:border-ink hover:text-ink"
               >
                 {link.label || CHANNEL_LABEL[link.channel] || "구매처"}
               </a>

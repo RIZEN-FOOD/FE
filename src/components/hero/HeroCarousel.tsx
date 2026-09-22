@@ -167,7 +167,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       {/* 상단 살짝 어둡게 — 투명 헤더 가독성 */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28"
-        style={{ background: `linear-gradient(to bottom, ${light ? "rgba(0,0,0,0.10)" : "rgba(0,0,0,0.22)"}, transparent)` }}
+        style={{ background: `linear-gradient(to bottom, ${light ? "rgba(0,0,0,0.10)" : "rgba(34,30,28,0.28)"}, transparent)` }}
       />
 
       {/* 떠다니는 재료 장식 — 현재 제품 것만, 넘어갈 때 함께 크로스페이드 */}
@@ -184,7 +184,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         }}
       />
       {/* 콘텐츠: 문구(좌) · 제품 스테이지(중앙) · 가격(우) — 레이아웃 고정 */}
-      <div className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_1fr] md:px-12 md:py-0">
+      <div className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_minmax(248px,auto)] md:px-12 md:py-0">
         {/* 문구 (내용만 크로스페이드) */}
         <div key={`t-${active}`} className="relative z-10 order-2 mt-8 text-center md:order-1 md:mt-0 md:text-left" style={{ animation: "rz-textin 600ms ease both" }}>
           <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em]" style={{ color: subInk }}>
@@ -192,11 +192,11 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           </p>
           {/* 페이지의 유일한 h1. 슬라이드가 바뀌어도 한 번에 한 장만 그려지므로 h1 도 하나다.
               (2026-09-22) 전에는 h2 라 메인에 h1 이 아예 없었다 — 검색·접근성 모두 불리했다. */}
-          <h1 className="mt-3 font-display text-display font-semibold leading-[1.08] tracking-[-0.02em] [word-break:keep-all]" style={{ color: ink }}>
+          <h1 className="mt-3 font-display text-display font-semibold leading-[1.15] [word-break:keep-all]" style={{ color: ink }}>
             {current.nameKo}
           </h1>
           {current.subtitle && (
-            <p className="mx-auto mt-4 max-w-xs font-kr text-[15px] leading-[1.7] [word-break:keep-all] md:mx-0" style={{ color: subInk }}>
+            <p className="mx-auto mt-4 max-w-xs font-kr text-base leading-[1.7] [word-break:keep-all] md:mx-0" style={{ color: subInk }}>
               {current.subtitle}
             </p>
           )}
@@ -237,7 +237,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.22)] ${ACCENT_POS[ai] ?? ""}`}
+                className={`pointer-events-none absolute z-[25] block select-none object-contain drop-shadow-[0_16px_30px_rgba(34,30,28,0.28)] ${ACCENT_POS[ai] ?? ""}`}
               />
             ) : null,
           )}
@@ -324,11 +324,13 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               </p>
             )}
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          {/* ★ flex-wrap 을 쓰지 않는다. 칸이 조금만 좁아져도 두 버튼이 세로로 쌓여
+              히어로가 무너진다 (2026-09-22). 가로 한 줄로 고정한다. */}
+          <div className="flex flex-nowrap items-center justify-center gap-3">
             {current.linkable ? (
               <Link
                 href={`/products/${current.slug}`}
-                className="inline-flex min-h-12 items-center rounded-[6px] px-6 py-3 font-kr text-[15px] font-bold shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:opacity-95"
+                className="inline-flex min-h-12 shrink-0 items-center whitespace-nowrap rounded-[6px] px-5 py-3 font-kr text-base font-bold shadow-[0_8px_20px_rgba(34,30,28,0.28)] transition hover:-translate-y-0.5 hover:opacity-95"
                 style={{ backgroundColor: ink, color: bg }}
               >
                 {current.soldOut ? "제품 보기" : "구매하기"}
@@ -337,7 +339,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               // 출시 예정(비공개) 상품 — 상세가 없으므로 링크하지 않는다.
               <span
                 aria-disabled="true"
-                className="inline-flex min-h-12 cursor-default items-center rounded-[6px] px-6 py-3 font-kr text-[15px] font-bold opacity-80"
+                className="inline-flex min-h-12 shrink-0 cursor-default items-center whitespace-nowrap rounded-[6px] px-5 py-3 font-kr text-base font-bold opacity-80"
                 style={{ backgroundColor: ink, color: bg }}
               >
                 출시 예정
@@ -345,7 +347,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             )}
             <Link
               href="/products"
-              className="inline-flex min-h-12 items-center rounded-[6px] border px-6 py-3 font-kr text-[15px] font-medium shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:opacity-90"
+              className="inline-flex min-h-12 shrink-0 items-center whitespace-nowrap rounded-[6px] border px-5 py-3 font-kr text-base font-medium shadow-[0_6px_16px_rgba(34,30,28,0.16)] transition hover:-translate-y-0.5 hover:opacity-90"
               style={{ borderColor: light ? "rgba(34,30,28,0.4)" : "rgba(250,247,241,0.5)", color: ink }}
             >
               전체 상품
@@ -432,13 +434,13 @@ function FlavorNav({
                 borderColor: on ? "transparent" : light ? "rgba(34,30,28,0.28)" : "rgba(250,247,241,0.4)",
                 backgroundColor: on ? ink : "transparent",
                 color: on ? bg : ink,
-                boxShadow: on ? "0 8px 18px rgba(0,0,0,0.22)" : "none",
+                boxShadow: on ? "0 8px 18px rgba(34,30,28,0.28)" : "none",
               }}
             >
               <FlavorIcon slug={s.slug} />
             </span>
             <span
-              className="font-kr text-[11px] font-medium transition"
+              className="font-kr text-caption font-medium transition"
               style={{ color: on ? ink : subInk, opacity: on ? 1 : 0.75 }}
             >
               {shortFlavorName(s.nameKo)}

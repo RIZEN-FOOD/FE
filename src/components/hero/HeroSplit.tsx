@@ -153,24 +153,24 @@ export function HeroSplit({
           </p>
           <h1
             id="hero-heading"
-            className="mt-4 font-display text-[clamp(3rem,10vw,6rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-cream-warm [word-break:keep-all] [text-shadow:0_2px_30px_rgba(0,0,0,0.4)]"
+            className="mt-4 font-display text-[clamp(3rem,10vw,6rem)] font-semibold leading-[1.02] text-cream-warm [word-break:keep-all] [text-shadow:0_2px_30px_rgba(0,0,0,0.4)]"
           >
             쌀, <em className="italic font-medium">그대로</em>
           </h1>
-          <p className="mx-auto mt-6 max-w-md font-kr text-[15px] leading-[1.7] text-cream-warm/85 [word-break:keep-all] [text-shadow:0_1px_12px_rgba(0,0,0,0.45)]">
+          <p className="mx-auto mt-6 max-w-md font-kr text-base leading-[1.7] text-cream-warm/85 [word-break:keep-all] [text-shadow:0_1px_12px_rgba(0,0,0,0.45)]">
             곱게 도정한 쌀 100%. 물이나 우유에 풀어 드세요.
             운동 후 탄수화물 보충에 좋은 담백한 한 끼입니다.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link
               href={buyHref}
-              className="inline-flex min-h-12 items-center rounded-[6px] bg-cream-warm px-6 py-3 font-kr text-[15px] font-bold text-ink shadow-[0_8px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:bg-paper"
+              className="inline-flex min-h-12 items-center rounded-[6px] bg-cream-warm px-6 py-3 font-kr text-base font-bold text-ink shadow-[0_8px_20px_rgba(34,30,28,0.28)] transition hover:-translate-y-0.5 hover:bg-paper"
             >
               구매하기
             </Link>
             <Link
               href="/products"
-              className="inline-flex min-h-12 items-center rounded-[6px] border border-cream-warm/50 px-6 py-3 font-kr text-[15px] font-medium text-cream-warm shadow-[0_6px_16px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 hover:bg-cream-warm/10"
+              className="inline-flex min-h-12 items-center rounded-[6px] border border-cream-warm/50 px-6 py-3 font-kr text-base font-medium text-cream-warm shadow-[0_6px_16px_rgba(34,30,28,0.16)] transition hover:-translate-y-0.5 hover:bg-cream-warm/10"
             >
               전체 상품 보기
             </Link>

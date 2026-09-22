@@ -172,20 +172,20 @@ export function AuthScreen({
 
       {/* ── 우측 폼 패널 ── */}
       <div className="relative z-10 flex min-h-svh items-center justify-center px-6 pb-16 pt-28 md:pt-24">
-        <div className="w-full max-w-[382px] rounded-2xl bg-paper/95 p-8 shadow-[0_24px_70px_rgba(34,30,28,0.2)] backdrop-blur md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+        <div className="w-full max-w-[382px] rounded-[12px] bg-paper/95 p-8 shadow-[0_24px_70px_rgba(34,30,28,0.2)] backdrop-blur md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
           {/* 컴포넌트 상단 브랜드 로고 */}
           <div className="mb-7 flex justify-center md:justify-start">
             <BrandLogo className="h-8" />
           </div>
 
           {/* 토글 */}
-          <div className="mb-8 flex gap-1 rounded-2xl bg-cream-warm p-1 md:bg-clay-soft/25">
+          <div className="mb-8 flex gap-1 rounded-[12px] bg-cream-warm p-1 md:bg-clay-soft/25">
             {(["login", "signup"] as Mode[]).map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => switchMode(m)}
-                className={`flex-1 rounded-xl py-2.5 font-kr text-sm font-semibold transition ${
+                className={`flex-1 rounded-[12px] py-2.5 font-kr text-sm font-semibold transition ${
                   mode === m ? "bg-ink text-cream-warm shadow-sm" : "text-ink-faint"
                 }`}
               >
@@ -232,7 +232,7 @@ export function AuthScreen({
                 onBlur={isLogin ? undefined : checkEmail}
               />
               {!isLogin && emailAvailable !== null && (
-                <p className={`mt-1 font-kr text-xs ${emailAvailable ? "text-ink-soft" : "text-clay-deep"}`}>
+                <p className={`mt-1 font-kr text-caption ${emailAvailable ? "text-ink-soft" : "text-clay-deep"}`}>
                   {emailAvailable ? "사용할 수 있는 이메일입니다." : "이미 가입된 이메일입니다."}
                 </p>
               )}
@@ -267,17 +267,17 @@ export function AuthScreen({
 
             {isLogin ? (
               <div className="flex items-center justify-between pt-0.5">
-                <label className="flex items-center gap-1.5 font-kr text-xs text-ink-soft">
+                <label className="flex items-center gap-1.5 font-kr text-caption text-ink-soft">
                   <input type="checkbox" className="h-3.5 w-3.5 rounded accent-ink" />
                   로그인 유지
                 </label>
-                <Link href="/auth/find" className="font-kr text-xs text-ink-soft underline-offset-2 hover:underline">
+                <Link href="/auth/find" className="font-kr text-caption text-ink-soft underline-offset-2 hover:underline">
                   아이디·비밀번호 찾기
                 </Link>
               </div>
             ) : (
               <div className="flex flex-col gap-2 pt-0.5">
-                <label className="flex items-start gap-2 font-kr text-xs text-ink-soft">
+                <label className="flex items-start gap-2 font-kr text-caption text-ink-soft">
                   <input
                     type="checkbox"
                     className="mt-0.5 h-3.5 w-3.5 rounded accent-ink"
@@ -290,7 +290,7 @@ export function AuthScreen({
                     <Link href="/policy/privacy" className="underline">개인정보처리방침</Link>에 동의합니다.
                   </span>
                 </label>
-                <label className="flex items-start gap-2 font-kr text-xs text-ink-soft">
+                <label className="flex items-start gap-2 font-kr text-caption text-ink-soft">
                   <input
                     type="checkbox"
                     className="mt-0.5 h-3.5 w-3.5 rounded accent-ink"
@@ -303,7 +303,7 @@ export function AuthScreen({
             )}
 
             {error && (
-              <p role="alert" className="rounded-xl bg-danger/10 px-3.5 py-2.5 font-kr text-xs font-medium text-danger">
+              <p role="alert" className="rounded-[12px] bg-danger/10 px-3.5 py-2.5 font-kr text-caption font-medium text-danger">
                 {error}
               </p>
             )}
@@ -322,7 +322,7 @@ export function AuthScreen({
             <div className="mt-6">
               <div className="flex items-center gap-3">
                 <span className="h-px flex-1 bg-line" />
-                <span className="font-kr text-xs text-ink-faint">또는 간편하게</span>
+                <span className="font-kr text-caption text-ink-faint">또는 간편하게</span>
                 <span className="h-px flex-1 bg-line" />
               </div>
               <div className="mt-4 flex flex-col gap-2.5">
@@ -330,14 +330,14 @@ export function AuthScreen({
                   <SocialButton key={p} provider={p} next={redirectTo} />
                 ))}
               </div>
-              <p className="mt-2.5 text-center font-kr text-[11px] leading-relaxed text-ink-faint">
+              <p className="mt-2.5 text-center font-kr text-caption leading-relaxed text-ink-faint">
                 처음이시면 약관 동의 후 바로 가입됩니다.
               </p>
             </div>
           )}
 
           {/* 하단 전환 링크 */}
-          <p className="mt-7 text-center font-kr text-xs text-ink-soft">
+          <p className="mt-7 text-center font-kr text-caption text-ink-soft">
             {isLogin ? "아직 계정이 없으신가요? " : "이미 계정이 있으신가요? "}
             <button
               type="button"
@@ -350,7 +350,7 @@ export function AuthScreen({
 
           {/* 비회원으로 주문하신 분 — 로그인하지 않고도 주문을 찾을 수 있게 */}
           {isLogin && (
-            <p className="mt-3 text-center font-kr text-xs text-ink-faint">
+            <p className="mt-3 text-center font-kr text-caption text-ink-faint">
               비회원으로 주문하셨나요?{" "}
               <Link href="/orders/lookup" className="font-medium text-ink underline underline-offset-2">
                 주문 조회
@@ -377,12 +377,12 @@ function Field({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="mb-1 block font-kr text-xs font-medium text-ink-soft">{label}</span>
+      <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">{label}</span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[50px] w-full rounded-2xl border border-transparent bg-cream-warm px-4 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep focus:bg-paper"
+        className="h-[50px] w-full rounded-[12px] border border-transparent bg-cream-warm px-4 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep focus:bg-paper"
       />
     </label>
   );

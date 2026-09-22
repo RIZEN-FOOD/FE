@@ -11,9 +11,9 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group block rounded-[4px] border border-line bg-paper transition hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(90,60,40,0.09)]"
+      className="group block rounded-[12px] border border-line bg-paper transition hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(90,60,40,0.09)]"
     >
-      <div className="relative aspect-square overflow-hidden rounded-t-[4px] bg-clay-soft/40">
+      <div className="relative aspect-square overflow-hidden rounded-t-[12px] bg-clay-soft/40">
         {product.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -27,7 +27,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           </div>
         )}
         {product.soldOut && (
-          <span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2.5 py-1 font-kr text-xs text-cream-warm">
+          <span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2.5 py-1 font-kr text-caption text-cream-warm">
             품절
           </span>
         )}
@@ -39,15 +39,15 @@ export function ProductCard({ product }: { product: ProductListItem }) {
       <div className="px-4 py-4">
         <h3 className="truncate font-kr text-base font-semibold text-ink">{product.nameKo}</h3>
         {product.subtitle && (
-          <p className="mt-0.5 truncate font-kr text-xs text-ink-faint">{product.subtitle}</p>
+          <p className="mt-0.5 truncate font-kr text-caption text-ink-faint">{product.subtitle}</p>
         )}
         <div className="mt-2 flex items-baseline gap-2">
           <span className="font-numeric text-lg font-bold text-ink">
             {product.effectivePrice.toLocaleString("ko-KR")}
-            <span className="ml-0.5 font-kr text-xs font-medium">원</span>
+            <span className="ml-0.5 font-kr text-caption font-medium">원</span>
           </span>
           {hasDiscount && (
-            <span className="font-numeric text-xs text-ink-faint line-through">
+            <span className="font-numeric text-caption text-ink-faint line-through">
               {product.price.toLocaleString("ko-KR")}
             </span>
           )}

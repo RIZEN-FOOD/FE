@@ -64,7 +64,7 @@ export function MemberNavLink({
 
   const linkClass =
     variant === "mobile"
-      ? "block rounded-[3px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream"
+      ? "block rounded-[6px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream"
       : "underline-offset-4 hover:underline";
 
   if (!loggedIn) {
@@ -103,7 +103,7 @@ export function MemberNavLink({
       disabled={leaving}
       className={
         variant === "mobile"
-          ? "block w-full rounded-[3px] px-4 py-3 text-left font-kr text-base font-medium text-ink-soft transition hover:bg-cream disabled:opacity-50"
+          ? "block w-full rounded-[6px] px-4 py-3 text-left font-kr text-base font-medium text-ink-soft transition hover:bg-cream disabled:opacity-50"
           : "underline-offset-4 opacity-80 hover:underline hover:opacity-100 disabled:opacity-50"
       }
     >
