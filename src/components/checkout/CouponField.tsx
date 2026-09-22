@@ -16,6 +16,12 @@ export type AppliedCoupon = {
   code: string;
   name: string;
   discountAmount: number;
+  /**
+   * 할인을 뺀 금액으로 다시 계산한 배송비 (도서산간 추가분 제외).
+   * 무료배송 기준 위였던 주문이 할인 뒤에 기준 아래로 내려가면 여기에 배송비가 잡힌다.
+   * 화면이 스스로 계산하지 않고 서버가 준 값을 그대로 쓴다.
+   */
+  shippingFee: number;
 };
 
 export function CouponField({
@@ -47,8 +53,14 @@ export function CouponField({
         code: string;
         name: string;
         discountAmount: number;
+        shippingFee: number;
       }>("/api/orders/coupon-preview", { code: trimmed, ordererPhone: ordererPhone || undefined });
-      onApply({ code: res.code, name: res.name, discountAmount: res.discountAmount });
+      onApply({
+        code: res.code,
+        name: res.name,
+        discountAmount: res.discountAmount,
+        shippingFee: res.shippingFee,
+      });
       setCode("");
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "확인하지 못했습니다. 잠시 후 다시 시도해 주세요.");

@@ -58,6 +58,15 @@ export function CheckoutForm() {
   }, [itemsAmount]);
   const discount = Math.min(coupon?.discountAmount ?? 0, itemsAmount);
 
+  /* 금액은 한 곳에서만 만든다. 전에는 요약과 버튼이 각자 더해서, 버튼에만 할인이 빠져 있었다.
+     배송비는 할인코드가 붙으면 서버가 «할인 뒤 금액» 으로 다시 계산해 준 값을 쓴다 —
+     5만원어치를 담아도 5천원을 깎으면 무료배송 기준 아래라 배송비가 붙는다. */
+  const baseShipping = coupon ? coupon.shippingFee : (cart?.shippingFee ?? 0);
+  const shippingTotal = baseShipping + islandExtra;
+  const payAmount = itemsAmount + shippingTotal - discount;
+  /** 할인코드를 쓰기 전에 냈을 금액. 버튼에서 취소선으로 옆에 둔다. */
+  const beforeCoupon = (cart?.totalAmount ?? 0) + islandExtra;
+
   // 도서산간 추가 배송비 미리보기. 실제 금액은 주문 생성 때 서버가 우편번호로 다시 계산한다.
   useEffect(() => {
     if (!/^\d{5}$/.test(form.zipcode)) {
@@ -430,7 +439,7 @@ export function CheckoutForm() {
           <div className="flex justify-between">
             <dt className="text-ink-soft">배송비</dt>
             <dd className="text-right font-numeric text-ink">
-              {cart.shippingFee + islandExtra === 0 ? "무료" : `${won(cart.shippingFee + islandExtra)}원`}
+              {shippingTotal === 0 ? "무료" : `${won(shippingTotal)}원`}
               {islandExtra > 0 && (
                 <span className="mt-0.5 block font-kr text-caption text-ink-faint">
                   도서산간 {won(islandExtra)}원 포함
@@ -456,7 +465,7 @@ export function CheckoutForm() {
         <div className="mt-5 flex items-baseline justify-between border-t border-line pt-5">
           <span className="font-kr text-sm font-medium text-ink">최종 결제금액</span>
           <span className="font-numeric text-2xl font-bold text-ink">
-            {won(cart.totalAmount + islandExtra - discount)}
+            {won(payAmount)}
             <span className="ml-1 font-kr text-base font-medium">원</span>
           </span>
         </div>
@@ -541,7 +550,20 @@ export function CheckoutForm() {
             (payConfig.provider === "portone" && availableMethods.length === 0) ||
             (payConfig.provider === "nicepay" && niceMethods.length === 0)
           }>
-          {busy ? "처리 중…" : `${won(cart.totalAmount + islandExtra)}원 결제하기`}
+          {busy ? (
+            "처리 중…"
+          ) : discount > 0 && beforeCoupon > payAmount ? (
+            /* 할인코드가 붙으면 원래 금액을 취소선으로 남겨 얼마가 깎였는지 버튼에서 바로 보인다.
+               취소선만으로는 화면을 못 보는 분에게 전달되지 않아 sr-only 로 한 번 더 읽어준다. */
+            <>
+              <s className="font-numeric text-small font-medium text-cream-warm/55">{won(beforeCoupon)}원</s>
+              <span className="sr-only">에서 할인된</span>
+              <span className="font-numeric">{won(payAmount)}원</span>
+              <span>결제하기</span>
+            </>
+          ) : (
+            `${won(payAmount)}원 결제하기`
+          )}
         </Button>
         <Link
           href="/cart"
