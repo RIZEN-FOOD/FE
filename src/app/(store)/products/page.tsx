@@ -46,7 +46,7 @@ export default async function ProductsPage({
   return (
     <Container className="py-14">
       <SectionTag>Products</SectionTag>
-      <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">상품</h1>
+      <h1 className="font-kr text-title font-bold tracking-tight text-ink">상품</h1>
 
       {/* 정렬 — 상품이 늘면 필터를 추가한다. 지금은 정렬만 (기획서 §4.1) */}
       <div className="mt-6 flex flex-wrap gap-2 border-b border-line pb-4">

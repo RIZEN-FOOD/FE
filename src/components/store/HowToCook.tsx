@@ -83,12 +83,12 @@ const steps: Step[] = [
 
 export function HowToCook() {
   return (
-    <section className="bg-paper py-24 md:py-32" aria-labelledby="howto-heading">
+    <section className="bg-cream-warm py-24 md:py-32" aria-labelledby="howto-heading">
       <Container>
         <SectionTag>How to Cook</SectionTag>
         <h2
           id="howto-heading"
-          className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink md:text-4xl"
+          className="font-display text-section font-semibold tracking-[-0.01em] text-ink"
         >
           전자레인지로 끝나는 간단한 조리법
         </h2>
@@ -106,7 +106,7 @@ export function HowToCook() {
                 {s.no}
               </span>
               <span className="mt-6 text-clay-deep">{s.icon}</span>
-              <h3 className="mt-4 font-kr text-lg font-bold text-ink">{s.title}</h3>
+              <h3 className="mt-4 font-kr text-sub font-bold text-ink">{s.title}</h3>
               <p className="mt-2 font-kr text-sm leading-relaxed text-ink-soft">{s.body}</p>
             </li>
           ))}

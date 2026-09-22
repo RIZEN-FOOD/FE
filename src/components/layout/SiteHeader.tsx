@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { storeNav } from "./storeNav";
 import { MemberNavLink } from "./MemberNavLink";
-import { MobileNav } from "./MobileNav";
+import { MobileMenu } from "./MobileMenu";
 import { CartBadge } from "@/components/store/CartBadge";
 
 /**
@@ -93,7 +93,7 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
         {/* 모바일: 장바구니 + 햄버거 */}
         <div className="flex items-center gap-4 text-ink md:hidden">
           <CartBadge />
-          <MobileNav />
+          <MobileMenu />
         </div>
       </div>
     </header>

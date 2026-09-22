@@ -37,7 +37,7 @@ const reasons: { no: string; title: string; body: string }[] = [
 
 export function WhyRizen() {
   return (
-    <section className="bg-cream py-24 md:py-32" aria-labelledby="why-heading">
+    <section className="bg-paper py-24 md:py-32" aria-labelledby="why-heading">
       <Container className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         {/* 좌 · 리드 */}
         <div className="lg:sticky lg:top-28 lg:self-start">
@@ -46,7 +46,7 @@ export function WhyRizen() {
           </p>
           <h2
             id="why-heading"
-            className="mt-4 font-display text-[2rem] font-semibold leading-[1.2] tracking-[-0.01em] text-ink md:text-[2.4rem]"
+            className="mt-4 font-display text-section font-semibold leading-[1.2] tracking-[-0.01em] text-ink"
           >
             Rice에 Risen을 더해,
             <br />
@@ -72,7 +72,7 @@ export function WhyRizen() {
                 {r.no}
               </span>
               <div>
-                <h3 className="font-display text-xl font-semibold text-ink md:text-[1.4rem]">
+                <h3 className="font-display text-sub font-semibold text-ink">
                   {r.title}
                 </h3>
                 <p className="mt-2.5 max-w-md font-kr text-[15px] leading-relaxed text-ink-soft">

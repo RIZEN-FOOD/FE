@@ -347,6 +347,16 @@ export function AuthScreen({
               {isLogin ? "회원가입" : "로그인"}
             </button>
           </p>
+
+          {/* 비회원으로 주문하신 분 — 로그인하지 않고도 주문을 찾을 수 있게 */}
+          {isLogin && (
+            <p className="mt-3 text-center font-kr text-xs text-ink-faint">
+              비회원으로 주문하셨나요?{" "}
+              <Link href="/orders/lookup" className="font-medium text-ink underline underline-offset-2">
+                주문 조회
+              </Link>
+            </p>
+          )}
         </div>
       </div>
       </main>

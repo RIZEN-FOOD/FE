@@ -8,6 +8,9 @@ import { Button } from "@/components/ui";
 import { PostcodeButton } from "@/components/checkout/PostcodeButton";
 import { api, ApiError } from "@/lib/api/client";
 import { loadNicePaySdk } from "@/lib/payment/nicepay";
+import { formatPhone } from "@/lib/phone";
+import { hasSignedInHint } from "@/lib/auth/signedInHint";
+import type { MemberAddress } from "@/types/member";
 import { useCart } from "@/store/cart";
 import type { CreateOrderRequest, OrderView } from "@/types/order";
 
@@ -94,12 +97,37 @@ export function CheckoutForm() {
   const [payMethod, setPayMethod] = useState<PayMethodKey>("CARD");
   /** 나이스페이 결제수단(나이스 method 값 그대로). 포트원 키와 체계가 달라 따로 둔다. */
   const [niceMethod, setNiceMethod] = useState<string>("");
+  /** 저장된 배송지. 로그인한 사람에게만 불러온다(비회원은 요청 자체를 보내지 않는다). */
+  const [addresses, setAddresses] = useState<MemberAddress[]>([]);
   const availableMethods = PAY_METHODS.filter((m) => Boolean(payConfig?.channels?.[m.key]));
   const niceMethods = payConfig?.methods ?? [];
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  // 저장해 둔 배송지를 눌러서 채울 수 있게 한다. 로그인하지 않았으면 부르지 않는다
+  // (401 이 콘솔에 쌓이고, 비회원에게는 보여줄 것도 없다).
+  useEffect(() => {
+    if (!hasSignedInHint()) return;
+    api
+      .get<MemberAddress[]>("/api/member/addresses")
+      .then(setAddresses)
+      .catch(() => setAddresses([]));
+  }, []);
+
+  /** 저장된 배송지를 주문서에 채운다. 받는 분 정보가 들어가므로 '주문자와 동일'은 해제한다. */
+  function applyAddress(a: MemberAddress) {
+    setSameAsOrderer(false);
+    setForm((f) => ({
+      ...f,
+      receiverName: a.receiverName,
+      receiverPhone: formatPhone(a.receiverPhone ?? ""),
+      zipcode: a.zipcode,
+      addr1: a.addr1,
+      addr2: a.addr2 ?? "",
+    }));
+  }
 
   useEffect(() => {
     api
@@ -118,6 +146,9 @@ export function CheckoutForm() {
 
   const set = (k: keyof CreateOrderRequest) => (v: string) =>
     setForm((f) => ({ ...f, [k]: v }));
+  /** 연락처는 누르는 동안 하이픈을 끼워 준다. 띄어쓰기·점을 섞어 넣어도 숫자만 남는다. */
+  const setPhone = (k: keyof CreateOrderRequest) => (v: string) =>
+    setForm((f) => ({ ...f, [k]: formatPhone(v) }));
   const won = (n: number) => n.toLocaleString("ko-KR");
   const orderNameOf = (o: OrderView) =>
     o.items.length > 1
@@ -259,8 +290,9 @@ export function CheckoutForm() {
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="이름" value={form.ordererName} onChange={set("ordererName")}
               error={fieldErrors.ordererName} required />
-            <Field label="연락처" value={form.ordererPhone} onChange={set("ordererPhone")}
-              placeholder="010-1234-5678" error={fieldErrors.ordererPhone} required />
+            <Field label="연락처" value={form.ordererPhone} onChange={setPhone("ordererPhone")}
+              placeholder="010-1234-5678" error={fieldErrors.ordererPhone} required
+              type="tel" inputMode="numeric" autoComplete="tel" maxLength={13} />
             <div className="sm:col-span-2">
               <Field label="이메일 (선택)" type="email" value={form.ordererEmail ?? ""}
                 onChange={set("ordererEmail")} error={fieldErrors.ordererEmail}
@@ -278,13 +310,37 @@ export function CheckoutForm() {
               주문자와 동일
             </label>
           </div>
+          {/* 저장해 둔 배송지 — 누르면 아래 칸이 채워진다. 매번 주소를 다시 검색하지 않게. */}
+          {addresses.length > 0 && (
+            <div className="mt-4">
+              <span className="block font-kr text-xs font-medium text-ink-soft">저장된 배송지</span>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {addresses.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => applyAddress(a)}
+                    className="rounded-full border border-line px-3.5 py-2 text-left font-kr text-xs text-ink-soft transition hover:border-ink hover:text-ink"
+                  >
+                    <b className="text-ink">{a.label?.trim() || a.receiverName}</b>
+                    {a.isDefault && <span className="ml-1 text-clay-deep">기본</span>}
+                    <span className="ml-2 text-ink-faint">
+                      [{a.zipcode}] {a.addr1}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {!sameAsOrderer && (
               <>
                 <Field label="받는 분" value={form.receiverName} onChange={set("receiverName")}
                   error={fieldErrors.receiverName} required />
-                <Field label="받는 분 연락처" value={form.receiverPhone} onChange={set("receiverPhone")}
-                  placeholder="010-1234-5678" error={fieldErrors.receiverPhone} required />
+                <Field label="받는 분 연락처" value={form.receiverPhone} onChange={setPhone("receiverPhone")}
+                  placeholder="010-1234-5678" error={fieldErrors.receiverPhone} required
+                  type="tel" inputMode="numeric" autoComplete="tel" maxLength={13} />
               </>
             )}
             {/* 우편번호·주소는 검색으로 채운다. 손으로 고치지 않게 읽기전용. */}

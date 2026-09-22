@@ -21,7 +21,7 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
       <Container>
         <SectionTag>Notice</SectionTag>
         <div className="flex items-end justify-between">
-          <h2 id="notice-heading" className="font-display text-[1.7rem] font-semibold tracking-[-0.01em] text-ink">
+          <h2 id="notice-heading" className="font-display text-section font-semibold tracking-[-0.01em] text-ink">
             공지사항
           </h2>
           <Link href="/notice" className="font-kr text-sm text-ink-soft underline-offset-4 hover:underline">

@@ -55,7 +55,7 @@ export async function StoreFooter() {
             <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em] text-ink-soft">
               Cream of Rice
             </p>
-            <h2 className="mt-3 font-display text-[clamp(1.9rem,4.5vw,3rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-ink [word-break:keep-all]">
+            <h2 className="mt-3 font-display text-section font-semibold leading-[1.12] tracking-[-0.02em] text-ink [word-break:keep-all]">
               곱게 도정한 쌀 100%,<br className="hidden sm:block" /> 크림오브라이스
             </h2>
             <p className="mx-auto mt-4 max-w-md font-kr text-[15px] leading-[1.7] text-ink-soft [word-break:keep-all] md:mx-0">
@@ -149,6 +149,8 @@ export async function StoreFooter() {
               배송·교환·환불 안내
             </Link>
             <Link href="/inquiry" className="underline-offset-4 hover:underline">문의하기</Link>
+            {/* 비회원도 스스로 주문을 찾을 수 있게 — 링크를 잃으면 볼 방법이 없었다 */}
+            <Link href="/orders/lookup" className="underline-offset-4 hover:underline">주문 조회</Link>
           </nav>
 
           {/* 아래 여백은 떠 있는 문의 버튼이 정책 링크를 가리지 않게 하려는 것이다(모바일). */}

@@ -37,12 +37,12 @@ export function ProductCard({ product }: { product: ProductListItem }) {
       </div>
 
       <div className="px-4 py-4">
-        <h3 className="truncate font-kr text-sm font-medium text-ink">{product.nameKo}</h3>
+        <h3 className="truncate font-kr text-base font-semibold text-ink">{product.nameKo}</h3>
         {product.subtitle && (
           <p className="mt-0.5 truncate font-kr text-xs text-ink-faint">{product.subtitle}</p>
         )}
         <div className="mt-2 flex items-baseline gap-2">
-          <span className="font-numeric text-base font-bold text-ink">
+          <span className="font-numeric text-lg font-bold text-ink">
             {product.effectivePrice.toLocaleString("ko-KR")}
             <span className="ml-0.5 font-kr text-xs font-medium">원</span>
           </span>

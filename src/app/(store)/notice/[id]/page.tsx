@@ -44,7 +44,7 @@ export default async function NoticeDetailPage({
             {categoryLabel(notice.category)}
           </span>
         </div>
-        <h1 className="mt-3 font-kr text-2xl font-bold leading-snug text-ink">{notice.title}</h1>
+        <h1 className="mt-3 font-kr text-title font-bold leading-snug text-ink">{notice.title}</h1>
         <p className="mt-2 font-kr text-xs text-ink-faint">
           {formatDateTime(notice.publishedAt)} · 조회 {notice.viewCount}
         </p>

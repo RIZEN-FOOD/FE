@@ -10,8 +10,12 @@ import { useMemberAuth } from "@/store/memberAuth";
 /**
  * 헤더의 회원 메뉴.
  *
- *   로그인 전: 로그인
+ *   로그인 전: 주문 조회 · 로그인
  *   로그인 후: 마이페이지 · 로그아웃
+ *
+ * 비회원에게는 마이페이지가 없어서 주문을 확인할 길이 헤더에 없었다.
+ * 그래서 로그인 전에만 "주문 조회"(/orders/lookup)를 같이 보여준다.
+ * 로그인하면 마이페이지 > 주문 내역으로 들어가므로 중복해서 두지 않는다.
  *
  * 헤더 전체를 클라이언트로 만들지 않기 위해 이 조각만 분리했다.
  * 확인 전에는 "로그인"을 보여준다 — 서버 렌더 결과와 같아서 깜빡이지 않는다.
@@ -22,7 +26,14 @@ import { useMemberAuth } from "@/store/memberAuth";
  */
 const MEMBER_ONLY_PATHS = ["/mypage"];
 
-export function MemberNavLink({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {
+export function MemberNavLink({
+  variant = "desktop",
+  onNavigate,
+}: {
+  variant?: "desktop" | "mobile";
+  /** 모바일 드롭다운에서 항목을 누르면 판을 닫는다. */
+  onNavigate?: () => void;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const { me, ready, checkAuth, logout } = useMemberAuth();
@@ -36,6 +47,7 @@ export function MemberNavLink({ variant = "desktop" }: { variant?: "desktop" | "
   const loggedIn = Boolean(ready && me);
 
   async function handleLogout() {
+    onNavigate?.();
     setLeaving(true);
     try {
       await logout();
@@ -56,10 +68,31 @@ export function MemberNavLink({ variant = "desktop" }: { variant?: "desktop" | "
       : "underline-offset-4 hover:underline";
 
   if (!loggedIn) {
-    return (
-      <Link href="/auth/login" className={linkClass}>
+    const lookupLink = (
+      <Link href="/orders/lookup" onClick={onNavigate} className={linkClass}>
+        주문 조회
+      </Link>
+    );
+    const loginLink = (
+      <Link href="/auth/login" onClick={onNavigate} className={linkClass}>
         로그인
       </Link>
+    );
+
+    if (variant === "mobile") {
+      return (
+        <>
+          {lookupLink}
+          {loginLink}
+        </>
+      );
+    }
+
+    return (
+      <span className="flex items-center gap-6">
+        {lookupLink}
+        {loginLink}
+      </span>
     );
   }
 
@@ -81,7 +114,7 @@ export function MemberNavLink({ variant = "desktop" }: { variant?: "desktop" | "
   if (variant === "mobile") {
     return (
       <>
-        <Link href="/mypage" className={linkClass}>
+        <Link href="/mypage" onClick={onNavigate} className={linkClass}>
           마이페이지
         </Link>
         {logoutButton}
@@ -91,7 +124,7 @@ export function MemberNavLink({ variant = "desktop" }: { variant?: "desktop" | "
 
   return (
     <span className="flex items-center gap-6">
-      <Link href="/mypage" className={linkClass}>
+      <Link href="/mypage" onClick={onNavigate} className={linkClass}>
         마이페이지
       </Link>
       {logoutButton}

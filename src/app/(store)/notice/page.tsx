@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container, SectionTag } from "@/components/ui";
+import { Container } from "@/components/ui";
+import { PageHero } from "@/components/store/PageHero";
 import { serverApi } from "@/lib/server/api";
 import { formatDateTime } from "@/lib/datetime";
 import { NOTICE_CATEGORIES, type NoticePublicPage } from "@/types/content";
@@ -33,9 +34,14 @@ export default async function NoticeListPage({
   const totalPages = data?.totalPages ?? 0;
 
   return (
-    <Container className="py-14">
-      <SectionTag>Notice</SectionTag>
-      <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">공지사항</h1>
+    <>
+      <PageHero
+        eyebrow="Notice"
+        title="공지사항"
+        description="배송·주문과 관련한 안내를 올립니다."
+        image="/assets/sections/nutrition.jpg"
+      />
+      <Container className="py-14">
 
       {/* 검색 */}
       <form action="/notice" method="get" className="mt-6 flex gap-2 border-b border-line pb-4">
@@ -95,6 +101,7 @@ export default async function NoticeListPage({
           ))}
         </nav>
       )}
-    </Container>
+      </Container>
+    </>
   );
 }

@@ -190,9 +190,11 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em]" style={{ color: subInk }}>
             Cream of Rice
           </p>
-          <h2 className="mt-3 font-display text-[clamp(2.2rem,6vw,3.6rem)] font-semibold leading-[1.08] tracking-[-0.02em] [word-break:keep-all]" style={{ color: ink }}>
+          {/* 페이지의 유일한 h1. 슬라이드가 바뀌어도 한 번에 한 장만 그려지므로 h1 도 하나다.
+              (2026-09-22) 전에는 h2 라 메인에 h1 이 아예 없었다 — 검색·접근성 모두 불리했다. */}
+          <h1 className="mt-3 font-display text-display font-semibold leading-[1.08] tracking-[-0.02em] [word-break:keep-all]" style={{ color: ink }}>
             {current.nameKo}
-          </h2>
+          </h1>
           {current.subtitle && (
             <p className="mx-auto mt-4 max-w-xs font-kr text-[15px] leading-[1.7] [word-break:keep-all] md:mx-0" style={{ color: subInk }}>
               {current.subtitle}

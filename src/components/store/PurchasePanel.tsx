@@ -26,7 +26,7 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
           {product.nameEn}
         </p>
       )}
-      <h1 className="mt-1 font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">{product.nameKo}</h1>
+      <h1 className="mt-1 font-display text-title font-semibold tracking-[-0.01em] text-ink">{product.nameKo}</h1>
       {product.subtitle && <p className="mt-2 font-kr text-ink-soft">{product.subtitle}</p>}
 
       <div className="mt-5 flex items-baseline gap-3">

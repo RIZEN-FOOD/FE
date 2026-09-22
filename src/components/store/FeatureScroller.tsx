@@ -119,7 +119,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
               <SectionTag tone="onDark">Features</SectionTag>
               <h2
                 id="features-heading"
-                className="font-display text-[clamp(1.6rem,5.5vw,2.75rem)] font-semibold tracking-[-0.01em] text-cream-warm"
+                className="font-display text-section font-semibold tracking-[-0.01em] text-cream-warm"
               >
                 RIZEN 쌀가루는 뭐가 다른가요?
               </h2>
@@ -144,7 +144,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
                         </span>
                         <h3
                           className={`font-kr font-bold leading-tight tracking-[-0.02em] text-cream-warm transition-all duration-500 ${
-                            isActive ? "text-[clamp(1.15rem,4.4vw,2rem)]" : "text-[clamp(0.95rem,3.6vw,1.35rem)]"
+                            isActive ? "text-lead" : "text-sub"
                           }`}
                         >
                           {f.title}
@@ -171,7 +171,7 @@ export function FeatureScroller({ items }: { items: FeatureItem[] }) {
         {/* 스크롤 구간 — 고정 화면 위에 겹쳐 두고, 각 칸이 지나갈 때 위 문구·배경이 바뀐다 */}
         <div className="relative -mt-[100svh] [margin-top:-100lvh]" aria-hidden="true">
           {items.map((f) => (
-            <div key={f.no} data-feature-block className="h-svh [height:100lvh]" />
+            <div key={f.no} data-feature-block className="h-[65svh] [height:65lvh]" />
           ))}
         </div>
       </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container, SectionTag } from "@/components/ui";
+import { Container } from "@/components/ui";
+import { PageHero } from "@/components/store/PageHero";
 import { ReviewCard } from "@/components/store/ReviewCard";
 import { serverApi } from "@/lib/server/api";
 import type { ReviewPage } from "@/types/member";
@@ -30,12 +31,14 @@ export default async function ReviewsPage({
   const totalPages = data?.totalPages ?? 0;
 
   return (
-    <Container className="py-14">
-      <SectionTag>Reviews</SectionTag>
-      <h1 className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink">후기</h1>
-      <p className="mt-2 font-kr text-sm text-ink-soft">
-        크림오브라이스를 드셔본 분들의 이야기입니다.
-      </p>
+    <>
+      <PageHero
+        eyebrow="Reviews"
+        title="후기"
+        description="크림오브라이스를 드셔본 분들의 이야기입니다."
+        image="/assets/hero/hero-b.jpg"
+      />
+      <Container className="py-14">
 
       {items.length === 0 ? (
         <div className="mt-12 rounded-[4px] border border-dashed border-line px-6 py-20 text-center">
@@ -72,6 +75,7 @@ export default async function ReviewsPage({
           )}
         </>
       )}
-    </Container>
+      </Container>
+    </>
   );
 }

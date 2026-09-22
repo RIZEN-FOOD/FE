@@ -28,7 +28,7 @@ export function PolicyPage({
   return (
     <Container className="py-12 md:py-16">
       <div className="mx-auto max-w-3xl">
-        <h1 className="font-kr text-2xl font-bold tracking-tight text-ink md:text-3xl">{title}</h1>
+        <h1 className="font-kr text-title font-bold tracking-tight text-ink">{title}</h1>
         <p className="mt-2 font-kr text-xs text-ink-faint">시행일 {effectiveDate}</p>
 
         {/* 정책 문서 간 이동 */}

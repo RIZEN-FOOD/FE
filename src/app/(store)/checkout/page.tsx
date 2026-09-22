@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function CheckoutPage() {
   return (
     <Container className="py-12 md:py-16">
-      <h1 className="font-kr text-2xl font-bold tracking-tight text-ink md:text-3xl">주문서</h1>
+      <h1 className="font-kr text-title font-bold tracking-tight text-ink">주문서</h1>
       <CheckoutForm />
     </Container>
   );

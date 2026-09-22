@@ -54,7 +54,7 @@ export function MyPageContent() {
   return (
     <Container className="py-14">
       <SectionTag>My Page</SectionTag>
-        <h1 className="font-kr text-3xl font-bold tracking-tight text-ink">마이페이지</h1>
+        <h1 className="font-kr text-title font-bold tracking-tight text-ink">마이페이지</h1>
         <p className="mt-2 font-kr text-sm text-ink-soft">{me.name} 님, 안녕하세요.</p>
 
         {/* 탭 — 좁은 화면에서는 글자를 쪼개지 않고 가로로 넘긴다 (2026-09-18) */}

@@ -15,13 +15,13 @@ export function ReviewPreview({ reviews }: { reviews: ReviewItem[] }) {
   if (reviews.length === 0) return null;
 
   return (
-    <section className="bg-cream py-24 md:py-28" aria-labelledby="review-preview-heading">
+    <section className="bg-clay-soft/45 py-24 md:py-28" aria-labelledby="review-preview-heading">
       <Container>
         <SectionTag>Reviews</SectionTag>
         <div className="flex items-end justify-between">
           <h2
             id="review-preview-heading"
-            className="font-display text-[2rem] font-semibold tracking-[-0.01em] text-ink md:text-[30px]"
+            className="font-display text-section font-semibold tracking-[-0.01em] text-ink"
           >
             먼저 경험한 분들의 이야기
           </h2>

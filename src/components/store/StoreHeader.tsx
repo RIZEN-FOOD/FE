@@ -2,14 +2,14 @@ import Link from "next/link";
 import { BrandLogo, Container } from "@/components/ui";
 import { storeNav } from "@/components/layout/storeNav";
 import { MemberNavLink } from "@/components/layout/MemberNavLink";
-import { MobileNav } from "@/components/layout/MobileNav";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 import { CartBadge } from "@/components/store/CartBadge";
 
 /**
  * 공개 페이지(상품·공지 등) 공용 헤더.
  *
  * 로고는 왼쪽, 메뉴는 오른쪽으로 몰아 정렬한다.
- * 데스크톱은 항목을 펼치고, 모바일(md 미만)은 장바구니 + 햄버거(사이드 메뉴)만 둔다.
+ * 데스크톱은 항목을 펼치고, 모바일(md 미만)은 장바구니 + 햄버거(헤더 드롭다운)만 둔다.
  */
 export function StoreHeader() {
   return (
@@ -38,10 +38,10 @@ export function StoreHeader() {
           </ul>
         </nav>
 
-        {/* 모바일: 장바구니 + 햄버거 */}
+        {/* 모바일: 장바구니 + 햄버거(드롭다운은 헤더 아래로 펼쳐진다) */}
         <div className="flex items-center gap-4 md:hidden">
           <CartBadge />
-          <MobileNav />
+          <MobileMenu />
         </div>
       </Container>
     </header>
