@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 import type { DetailSection } from "@/types/product";
@@ -24,8 +23,11 @@ export function ProductDetailSections({ sections }: { sections: DetailSection[] 
         상품 상세 안내
       </h2>
 
-      {/* 사진이 이어 붙도록 블록 사이 간격을 두지 않는다 */}
-      <div className="mx-auto max-w-3xl">
+      {/* 사진이 이어 붙도록 블록 사이 간격을 두지 않는다.
+          ★ 폭 (2026-09-23): 모바일은 화면 양 끝까지 꽉 채운다 — Container 의 좌우 여백(px-5)을
+            음수 마진으로 상쇄한다. PC 는 본문 폭(1,180px 컨테이너 안쪽)을 다 쓴다. 전에는
+            768px 로 묶어 양옆이 비어 보였고, 상세 이미지는 1,720px 이라 키워도 선명하다. */}
+      <div className="-mx-5 md:mx-0">
         {sections.map((s, i) => (
           <Block key={i} section={s} priority={i === 0} />
         ))}
@@ -38,13 +40,17 @@ function Block({ section, priority }: { section: DetailSection; priority: boolea
   if (section.type === "IMAGE" && section.imageUrl) {
     return (
       <figure className="m-0">
-        <Image
+        {/* ★ next/image 를 태우지 않는다 (2026-09-23).
+            업로드 상세 이미지는 서버가 이미 WebP(가로 1,720px)로 만들어 둔 것이다. 그런데 next/image 가
+            이걸 다시 828~1080px 로 줄이고 품질 75 로 재압축해 내보내서, 글자가 많은 상세 이미지가
+            운영에서 뿌옇게 보였다. 원본 WebP 를 그대로 받아 브라우저가 한 번만 줄이게 한다.
+            (next.config 의 "제품 이미지는 next/image 로 다시 최적화하지 않는다" 원칙과도 맞는다) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={section.imageUrl}
           alt={section.altText?.trim() || ""}
-          width={1200}
-          height={1600}
-          sizes="(min-width: 768px) 768px, 100vw"
-          priority={priority}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
           className="block h-auto w-full"
         />
         {section.caption && (
