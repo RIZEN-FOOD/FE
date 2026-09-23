@@ -25,12 +25,21 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
   // 다른 화면으로 이동하면 펼친 메뉴를 접는다
   useEffect(() => setOpen(false), [pathname]);
 
+  // 히어로(data-hero)가 화면에서 완전히 나가면 나타난다. 헤더와 같은 방식 (2026-09-23).
+  // 스크롤 이벤트마다 재는 대신 교차가 바뀔 때만 한 번 부른다. 히어로가 없으면 그냥 보인다.
   useEffect(() => {
     if (!revealAfterHero) return;
-    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.85);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const hero = document.querySelector<HTMLElement>("[data-hero]");
+    if (!hero || typeof IntersectionObserver === "undefined") {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setShown(!entry.isIntersecting), {
+      rootMargin: "-72px 0px 0px 0px",
+      threshold: 0,
+    });
+    io.observe(hero);
+    return () => io.disconnect();
   }, [revealAfterHero]);
 
   const items: { label: string; href?: string; onClick?: () => void }[] = [
@@ -85,8 +94,27 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
         aria-label="문의 메뉴"
         className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream-warm shadow-[0_10px_28px_rgba(34,30,28,0.28)] transition hover:bg-slate-deep"
       >
-        <span className={`text-xl transition-transform duration-300 ${open ? "rotate-45" : ""}`}>
-          {open ? "+" : "?"}
+        {/* 닫힘: 로고의 R 한 글자 (2026-09-23, 물음표 대신). 열림: + 를 45도 돌린 닫기 표시.
+            둘 다 같은 자리에서 페이드로 바뀐다. 이미지는 로고 원본에서 R 만 따서 크림색으로 만든 것. */}
+        <span className="relative block h-7 w-7">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/brand/logo-r-white.png"
+            alt=""
+            aria-hidden="true"
+            className={`absolute inset-0 m-auto h-[26px] w-auto select-none transition-[opacity,transform] duration-[var(--dur-base)] ease-[var(--ease-out)] ${
+              open ? "scale-75 opacity-0" : "scale-100 opacity-100"
+            }`}
+            draggable={false}
+          />
+          <span
+            aria-hidden="true"
+            className={`absolute inset-0 flex items-center justify-center text-2xl leading-none transition-[opacity,transform] duration-[var(--dur-base)] ease-[var(--ease-out)] ${
+              open ? "rotate-45 opacity-100" : "rotate-0 opacity-0"
+            }`}
+          >
+            +
+          </span>
         </span>
       </button>
     </div>
