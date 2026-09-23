@@ -256,6 +256,10 @@ export type HeroSlide = {
   slug: string;
   nameKo: string;
   subtitle: string | null;
+  /** 정가. 할인 중이면 취소선을 긋고 옆에 effectivePrice 를 둔다. */
+  price: number;
+  /** 할인가. 없으면 null. */
+  discountPrice: number | null;
   effectivePrice: number;
   soldOut: boolean;
   heroColor: string | null;   // #RRGGBB, 없으면 프론트 기본색

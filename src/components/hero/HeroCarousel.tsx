@@ -314,9 +314,17 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 )}
               </>
             ) : current.effectivePrice > 0 ? (
-              <p className="font-numeric text-[clamp(1.8rem,4vw,2.4rem)] font-bold" style={{ color: ink }}>
-                {current.effectivePrice.toLocaleString("ko-KR")}
-                <span className="ml-1 font-kr text-base font-medium">원</span>
+              // 할인 중이면 정가에 취소선, 그 옆에 할인가 (2026-09-23). 정가는 작고 옅게, 할인가가 주인공이다.
+              <p className="flex flex-wrap items-baseline justify-center gap-x-3 md:justify-end" style={{ color: ink }}>
+                {current.discountPrice != null && current.discountPrice < current.price && (
+                  <s className="font-numeric text-lg font-medium opacity-60" style={{ color: subInk }}>
+                    {current.price.toLocaleString("ko-KR")}원
+                  </s>
+                )}
+                <span className="font-numeric text-[clamp(1.8rem,4vw,2.4rem)] font-bold">
+                  {current.effectivePrice.toLocaleString("ko-KR")}
+                  <span className="ml-1 font-kr text-base font-medium">원</span>
+                </span>
               </p>
             ) : (
               // 가격을 아직 못 읽었거나(백엔드 미연결) 예정 제품
