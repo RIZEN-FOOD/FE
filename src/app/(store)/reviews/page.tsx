@@ -50,9 +50,10 @@ export default async function ReviewsPage({
         </div>
       ) : (
         <>
-          <ul className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {/* 카드 없이 두 단으로. 항목 사이는 hairline 하나 (2026-09-23). */}
+          <ul className="mt-10 grid sm:grid-cols-2 sm:gap-x-14 lg:gap-x-20">
             {items.map((r) => (
-              <li key={r.id}>
+              <li key={r.id} className="border-t border-line py-8 md:py-10">
                 <ReviewCard review={r} />
               </li>
             ))}

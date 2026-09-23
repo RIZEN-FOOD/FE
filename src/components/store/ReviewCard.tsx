@@ -10,8 +10,8 @@ function Stars({ rating }: { rating: number }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
           key={i}
-          width="15"
-          height="15"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill={i < rating ? "currentColor" : "none"}
           stroke="currentColor"
@@ -26,24 +26,13 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-function Badge({ tone, children }: { tone: "soft" | "ad"; children: React.ReactNode }) {
-  return (
-    <span
-      className={`rounded-full px-2 py-0.5 font-kr text-caption ${
-        tone === "ad" ? "bg-clay-soft text-clay-deep" : "bg-cream-warm text-ink-soft"
-      }`}
-    >
-      {children}
-    </span>
-  );
-}
-
 /**
- * 후기 카드. 홈 미리보기와 후기 모아보기가 공유한다.
+ * 후기 한 편. 홈 미리보기와 후기 모아보기가 공유한다.
  *
- * 별점 · 내용 · 후기자 · 날짜를 담은 직사각형 카드.
- * 앞머리에 세리프 따옴표를 두어 편집 감성을 준다.
- * 협찬 후기는 광고 표시(법적 의무), 구매 확인 배지도 노출한다.
+ * 2026-09-23. 카드를 걷어냈다. 후기는 «사람이 한 말»이라 상자보다 인용문이 맞다.
+ *   테두리·배경 없이 지면 위에 별점 → 본문 → 이름·상품·날짜 순으로 놓인다.
+ *   여럿을 나란히 둘 때의 구분은 감싸는 쪽(ReviewPreview·목록)이 hairline 으로 한다.
+ *   협찬 후기의 «광고» 표시는 법적 의무라 그대로 둔다. 배지 모양 대신 글자로 적는다.
  */
 export function ReviewCard({
   review,
@@ -53,60 +42,48 @@ export function ReviewCard({
   review: ReviewItem;
   /** 홈 미리보기처럼 높이를 맞춰야 할 때 본문을 줄인다. */
   clamp?: boolean;
-  /** 메인에서 첫 후기를 크게 보여줄 때. 여백과 본문 크기가 한 단계 커진다. */
+  /** 메인에서 첫 후기를 크게 보여줄 때. 본문이 인용문 크기로 커진다. */
   size?: "md" | "lg";
 }) {
   const lg = size === "lg";
   return (
-    <article
-      className={`group flex h-full flex-col rounded-[12px] border border-line bg-paper transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-out)] hover:-translate-y-1 hover:border-clay-soft hover:shadow-[0_24px_48px_-20px_rgba(90,60,40,0.25)] ${
-        lg ? "p-8 md:p-10" : "p-6"
-      }`}
-    >
-      <div className="flex items-center justify-between">
+    <article className="flex h-full flex-col">
+      <div className="flex items-center gap-3">
         <Stars rating={review.rating} />
-        <div className="flex gap-1.5">
-          {review.verifiedPurchase && <Badge tone="soft">구매 확인</Badge>}
-          {review.sponsored && <Badge tone="ad">광고</Badge>}
-        </div>
+        {(review.verifiedPurchase || review.sponsored) && (
+          <span className="font-kr text-caption text-ink-faint">
+            {review.verifiedPurchase && "구매 확인"}
+            {review.verifiedPurchase && review.sponsored && " · "}
+            {review.sponsored && <span className="font-medium text-clay-deep">광고</span>}
+          </span>
+        )}
       </div>
 
-      {/* 세리프 따옴표 장식 */}
-      <span
-        aria-hidden="true"
-        className="mt-3 block font-display text-4xl italic leading-none text-clay/40"
-      >
-        &ldquo;
-      </span>
-
-      <p
-        className={`mt-1 flex-1 whitespace-pre-line font-kr leading-[1.8] text-ink ${
-          lg ? "text-lead" : "text-base"
-        } ${clamp ? "line-clamp-5" : lg ? "line-clamp-[9]" : ""}`}
+      <blockquote
+        className={`mt-4 flex-1 whitespace-pre-line font-kr text-ink ${
+          lg
+            ? "font-display text-lead font-semibold leading-[1.55]"
+            : "text-base leading-[1.8]"
+        } ${clamp ? (lg ? "line-clamp-[7]" : "line-clamp-5") : ""}`}
       >
         {review.content}
-      </p>
+      </blockquote>
 
       {review.imageUrls.length > 0 && (
         <div className="mt-4 flex gap-2">
           {review.imageUrls.slice(0, 3).map((url, i) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={i}
-              src={url}
-              alt=""
-              className="h-16 w-16 rounded-[12px] object-cover"
-            />
+            <img key={i} src={url} alt="" className="h-16 w-16 rounded-[12px] object-cover" />
           ))}
         </div>
       )}
 
-      <div className="mt-5 flex items-end justify-between border-t border-line pt-4">
+      <footer className="mt-5 flex items-end justify-between gap-4">
         <div className="min-w-0">
           <p className="font-kr text-sm font-semibold text-ink">{review.authorName}</p>
           <Link
             href={`/products/${review.productSlug}`}
-            className="mt-0.5 block truncate font-kr text-caption text-ink-faint transition hover:text-clay-deep"
+            className="mt-0.5 block truncate font-kr text-caption text-ink-faint transition-colors duration-[var(--dur-base)] hover:text-clay-deep"
           >
             {review.productName}
           </Link>
@@ -114,7 +91,7 @@ export function ReviewCard({
         <time className="shrink-0 font-numeric text-caption text-ink-faint">
           {formatDate(review.createdAt)}
         </time>
-      </div>
+      </footer>
     </article>
   );
 }

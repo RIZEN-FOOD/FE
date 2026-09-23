@@ -38,15 +38,25 @@ export function ReviewPreview({ reviews }: { reviews: ReviewItem[] }) {
           </div>
         </Reveal>
 
-        <div className={`mt-12 grid gap-5 ${rest.length === 0 ? "" : rest.length === 1 ? "md:grid-cols-2" : "md:grid-cols-3 md:grid-rows-2"}`}>
-          <Reveal className={rest.length >= 2 ? "md:col-span-2 md:row-span-2" : ""}>
+        {/* 카드 없이 지면 위에 놓는다 (2026-09-23). 큰 인용문 하나, 오른쪽에 작은 인용 둘.
+            구분은 hairline 뿐이다 — 세로선 하나(md 이상), 오른쪽 둘 사이에 가로선 하나. */}
+        <div
+          className={`mt-12 grid gap-10 border-t border-line pt-10 ${
+            rest.length === 0 ? "" : "md:grid-cols-[1.35fr_1fr] md:gap-14 lg:gap-20"
+          }`}
+        >
+          <Reveal>
             <ReviewCard review={first} size="lg" />
           </Reveal>
-          {rest.slice(0, 2).map((r, i) => (
-            <Reveal key={r.id} delay={100 + i * 80}>
-              <ReviewCard review={r} clamp />
-            </Reveal>
-          ))}
+          {rest.length > 0 && (
+            <div className="flex flex-col gap-8 md:border-l md:border-line md:pl-14 lg:pl-20">
+              {rest.slice(0, 2).map((r, i) => (
+                <Reveal key={r.id} delay={100 + i * 80} className={i > 0 ? "border-t border-line pt-8" : ""}>
+                  <ReviewCard review={r} clamp />
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </Container>
     </section>
