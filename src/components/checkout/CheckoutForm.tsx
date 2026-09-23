@@ -13,7 +13,8 @@ import { hasSignedInHint } from "@/lib/auth/signedInHint";
 import type { MemberAddress } from "@/types/member";
 import { useCart } from "@/store/cart";
 import { CouponField, type AppliedCoupon } from "./CouponField";
-import type { CreateOrderRequest, OrderView } from "@/types/order";
+import type { CartView } from "@/types/cart";
+import type { CreateOrderRequest, DirectItem, OrderView } from "@/types/order";
 
 /**
  * 주문서. 배송 정보를 입력하고 결제까지 진행한다.
@@ -25,11 +26,45 @@ import type { CreateOrderRequest, OrderView } from "@/types/order";
  *   결제 방식은 서버 설정(/api/payment/config)을 따른다 — mock 이면 테스트 결제로 바로 확정.
  *   결제창을 닫거나 실패하면 cancel-pending 으로 재고를 풀고 장바구니는 그대로 둔다.
  */
-export function CheckoutForm() {
+export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) {
   const router = useRouter();
-  const cart = useCart((s) => s.cart);
-  const loaded = useCart((s) => s.loaded);
+  const storeCart = useCart((s) => s.cart);
+  const storeLoaded = useCart((s) => s.loaded);
   const refresh = useCart((s) => s.refresh);
+
+  /* «바로 구매» 모드 — 장바구니 대신 서버 견적(quote)을 주문서 내용으로 쓴다 (2026-09-23).
+     모양이 장바구니(CartView)와 같아서 아래 화면 코드는 어느 쪽인지 몰라도 된다.
+     견적은 안내용이다. 확정 금액은 주문 생성에서 서버가 다시 계산한다. */
+  const items: DirectItem[] | undefined = direct ? [direct] : undefined;
+  const [quote, setQuote] = useState<CartView | null>(null);
+  const [quoteLoaded, setQuoteLoaded] = useState(false);
+  // 객체가 아니라 값으로 의존한다 — 부모가 다시 그려 새 객체를 줘도 같은 상품이면 다시 묻지 않게.
+  const directProductId = direct?.productId ?? null;
+  const directOptionId = direct?.optionId ?? null;
+  const directQuantity = direct?.quantity ?? 0;
+  useEffect(() => {
+    if (directProductId == null) return;
+    let alive = true;
+    api
+      .post<CartView>("/api/orders/quote", {
+        items: [{ productId: directProductId, optionId: directOptionId, quantity: directQuantity }],
+      })
+      .then((q) => {
+        if (alive) setQuote(q);
+      })
+      .catch(() => {
+        if (alive) setQuote(null);
+      })
+      .finally(() => {
+        if (alive) setQuoteLoaded(true);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [directProductId, directOptionId, directQuantity]);
+
+  const cart = direct ? quote : storeCart;
+  const loaded = direct ? quoteLoaded : storeLoaded;
   // 적용된 할인코드. 금액은 서버가 계산해 준 값만 들고 있는다.
   const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
 
@@ -182,9 +217,12 @@ export function CheckoutForm() {
       ? { ...form, receiverName: form.ordererName, receiverPhone: form.ordererPhone }
       : form;
     // 코드만 보낸다. 할인 금액은 서버가 다시 계산한다.
-    const payload: CreateOrderRequest = coupon
-      ? { ...base, couponCode: coupon.code }
-      : base;
+    // 바로구매면 «무엇을 몇 개»만 함께 보낸다. 가격은 보내지 않는다.
+    const payload: CreateOrderRequest = {
+      ...base,
+      ...(coupon ? { couponCode: coupon.code } : {}),
+      ...(items ? { items } : {}),
+    };
 
     setBusy(true);
     let orderNo: string | null = null;
@@ -292,10 +330,16 @@ export function CheckoutForm() {
 
   const orderable = cart?.items.filter((i) => i.available) ?? [];
   if (!cart || orderable.length === 0) {
+    // 바로구매인데 그 상품을 살 수 없으면(품절·판매중지) 서버가 준 사유를 그대로 보여준다.
+    const unavailableReason = direct ? cart?.items.find((i) => !i.available)?.reason : null;
     return (
       <div className="mt-16 flex flex-col items-center py-16 text-center">
-        <p className="font-kr text-lg font-medium text-ink">주문할 상품이 없습니다.</p>
-        <p className="mt-2 font-kr text-sm text-ink-soft">장바구니에 상품을 담아 주세요.</p>
+        <p className="font-kr text-lg font-medium text-ink">
+          {direct ? "지금은 주문할 수 없는 상품입니다." : "주문할 상품이 없습니다."}
+        </p>
+        <p className="mt-2 font-kr text-sm text-ink-soft">
+          {unavailableReason ?? (direct ? "상품 정보를 다시 확인해 주세요." : "장바구니에 상품을 담아 주세요.")}
+        </p>
         <Button href="/products" variant="dark" className="mt-6">
           상품 보러 가기
         </Button>
@@ -457,6 +501,7 @@ export function CheckoutForm() {
 
         <CouponField
           ordererPhone={form.ordererPhone}
+          items={items}
           applied={coupon}
           onApply={setCoupon}
           onClear={() => setCoupon(null)}
@@ -566,10 +611,10 @@ export function CheckoutForm() {
           )}
         </Button>
         <Link
-          href="/cart"
+          href={direct && cart.items[0]?.slug ? `/products/${cart.items[0].slug}` : "/cart"}
           className="mt-3 block text-center font-kr text-sm text-ink-soft underline-offset-4 hover:underline"
         >
-          장바구니로 돌아가기
+          {direct ? "상품으로 돌아가기" : "장바구니로 돌아가기"}
         </Link>
       </aside>
     </div>

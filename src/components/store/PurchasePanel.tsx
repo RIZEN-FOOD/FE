@@ -1,6 +1,7 @@
 import { AddToCart } from "@/components/store/AddToCart";
 import { safeUrl } from "@/lib/safeUrl";
 import type { ProductDetail } from "@/types/product";
+import type { ShippingPolicy } from "@/types/shipping";
 
 const CHANNEL_LABEL: Record<string, string> = {
   NAVER: "네이버 스토어",
@@ -14,10 +15,20 @@ const CHANNEL_LABEL: Record<string, string> = {
  *
  * ★ 자사몰이 주 채널이다 (2026-08-27 확정). 장바구니·바로구매를 1급으로 두고,
  *   외부 판매 채널(네이버·쿠팡)은 그 아래 보조로 안내한다.
+ *
+ * 2026-09-23. 가격 바로 아래에 배송비를 적는다. 전에는 주문서까지 가야 배송비를 알 수 있었다.
+ *   숫자는 shipping_policy 에서 온다 — 여기에 적어두지 않는다 (CLAUDE.md 규칙 5).
  */
-export function PurchasePanel({ product }: { product: ProductDetail }) {
+export function PurchasePanel({
+  product,
+  shipping,
+}: {
+  product: ProductDetail;
+  shipping?: ShippingPolicy | null;
+}) {
   const hasDiscount = product.discountPrice != null && product.discountPrice < product.price;
   const links = product.purchaseLinks;
+  const won = (n: number) => n.toLocaleString("ko-KR");
 
   return (
     <div className="md:sticky md:top-28">
@@ -49,9 +60,27 @@ export function PurchasePanel({ product }: { product: ProductDetail }) {
         </p>
       )}
 
+      {/* 배송비 — 가격 바로 아래. 사기 전에 알아야 하는 금액이다. */}
+      {typeof shipping?.baseFee === "number" && (
+        <dl className="mt-6 flex gap-4 border-t border-line pt-5 font-kr text-small">
+          <dt className="shrink-0 text-ink-soft">배송비</dt>
+          <dd className="text-ink">
+            {won(shipping.baseFee)}원
+            {typeof shipping.freeThreshold === "number" && (
+              <> · {won(shipping.freeThreshold)}원 이상 무료</>
+            )}
+            {typeof shipping.islandExtraFee === "number" && shipping.islandExtraFee > 0 && (
+              <span className="mt-0.5 block text-caption text-ink-faint">
+                제주·도서산간 {won(shipping.islandExtraFee)}원 추가
+              </span>
+            )}
+          </dd>
+        </dl>
+      )}
+
       {/* 자사몰 구매 — 장바구니/바로구매 */}
       <div className="mt-8">
-        <AddToCart product={product} />
+        <AddToCart product={product} shipping={shipping} />
       </div>
 
       {/* 외부 판매 채널 — 보조 안내 */}

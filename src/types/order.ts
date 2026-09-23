@@ -71,6 +71,18 @@ export type CreateOrderRequest = {
   deliveryMemo?: string;
   /** 할인코드. 금액은 보내지 않는다 — 서버가 코드로 다시 계산한다. */
   couponCode?: string;
+  /**
+   * «바로 구매» 줄들. 있으면 장바구니 대신 이 줄로만 주문한다.
+   * 가격은 없다 — 무엇을 몇 개까지만 보내고 서버가 상품 테이블에서 다시 읽는다.
+   */
+  items?: DirectItem[];
+};
+
+/** 상품 페이지에서 바로 구매로 넘어올 때의 한 줄. */
+export type DirectItem = {
+  productId: number;
+  optionId?: number | null;
+  quantity: number;
 };
 
 export type OrderSummary = {

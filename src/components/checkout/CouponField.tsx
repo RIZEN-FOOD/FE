@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { api, ApiError } from "@/lib/api/client";
+import type { DirectItem } from "@/types/order";
 
 /**
  * 결제 화면의 할인코드 칸.
@@ -26,12 +27,15 @@ export type AppliedCoupon = {
 
 export function CouponField({
   ordererPhone,
+  items,
   applied,
   onApply,
   onClear,
 }: {
   /** 비회원의 "1인 n회"를 결제 전에 알려주려고 함께 보낸다. 없으면 서버가 그 검사만 건너뛴다. */
   ordererPhone?: string;
+  /** «바로 구매» 줄들. 있으면 서버가 장바구니 대신 이 줄로 금액을 본다. */
+  items?: DirectItem[];
   applied: AppliedCoupon | null;
   onApply: (c: AppliedCoupon) => void;
   onClear: () => void;
@@ -54,7 +58,11 @@ export function CouponField({
         name: string;
         discountAmount: number;
         shippingFee: number;
-      }>("/api/orders/coupon-preview", { code: trimmed, ordererPhone: ordererPhone || undefined });
+      }>("/api/orders/coupon-preview", {
+        code: trimmed,
+        ordererPhone: ordererPhone || undefined,
+        items: items && items.length > 0 ? items : undefined,
+      });
       onApply({
         code: res.code,
         name: res.name,

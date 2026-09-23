@@ -8,9 +8,19 @@ import { NutritionFacts, IngredientList } from "@/components/store/NutritionTabl
 import { serverApi } from "@/lib/server/api";
 import { absoluteUrl } from "@/lib/site";
 import type { ProductDetail } from "@/types/product";
+import type { ShippingPolicy } from "@/types/shipping";
 
 async function loadProduct(slug: string): Promise<ProductDetail | null> {
   return serverApi.getJson<ProductDetail>(`/api/products/${encodeURIComponent(slug)}`);
+}
+
+/**
+ * 배송비 정책. 상품 페이지에서 "얼마 더 담으면 무료배송" 을 보여주는 데 쓴다.
+ * ★ 금액을 코드에 적지 않는다 — shipping_policy 에서 읽는다 (CLAUDE.md 규칙 5).
+ *   못 읽어도 상품 페이지는 떠야 하므로 null 이면 안내만 빠진다.
+ */
+async function loadShipping(): Promise<ShippingPolicy | null> {
+  return serverApi.getJson<ShippingPolicy>("/api/shipping-policy");
 }
 
 export async function generateMetadata({
@@ -46,7 +56,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await loadProduct(slug);
+  const [product, shipping] = await Promise.all([loadProduct(slug), loadShipping()]);
   if (!product) notFound();
 
   // 검색엔진용 구조화 데이터. 화면에는 안 보이고 크롤러만 읽는다.
@@ -76,7 +86,7 @@ export default async function ProductDetailPage({
       {/* 상단: 갤러리 + 구매 패널 */}
       <div className="grid gap-8 md:grid-cols-[1.1fr_0.9fr] md:items-start md:gap-14 lg:gap-20">
         <ProductGallery images={product.images} name={product.nameKo} />
-        <PurchasePanel product={product} />
+        <PurchasePanel product={product} shipping={shipping} />
       </div>
 
       {/* 상세 설명 */}
