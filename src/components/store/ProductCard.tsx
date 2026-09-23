@@ -11,7 +11,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group block rounded-[12px] border border-line bg-paper transition hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(90,60,40,0.09)]"
+      className="group block rounded-[12px] border border-line bg-paper transition-[transform,box-shadow] duration-[var(--dur-base)] ease-[var(--ease-out)] hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(90,60,40,0.09)]"
     >
       <div className="relative aspect-square overflow-hidden rounded-t-[12px] bg-clay-soft/40">
         {product.thumbnailUrl ? (
@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           <img
             src={product.thumbnailUrl}
             alt={product.nameKo}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-[var(--dur-slow)] ease-[var(--ease-out)] group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center font-en text-sm text-ink-faint">

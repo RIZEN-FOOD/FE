@@ -1,4 +1,4 @@
-import { Container } from "@/components/ui";
+import { Container, Reveal } from "@/components/ui";
 
 /**
  * "왜 RiZen 인가" — 브랜드 이야기 + 제품 특징 4가지.
@@ -40,7 +40,7 @@ export function WhyRizen() {
     <section className="bg-paper py-24 md:py-32" aria-labelledby="why-heading">
       <Container className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         {/* 좌 · 리드 */}
-        <div className="lg:sticky lg:top-28 lg:self-start">
+        <Reveal className="lg:sticky lg:top-28 lg:self-start">
           <h2
             id="why-heading"
             className="font-display text-section font-semibold leading-[1.2] text-ink"
@@ -56,13 +56,15 @@ export function WhyRizen() {
           <p className="mt-3 max-w-sm font-kr text-base leading-relaxed text-ink-soft">
             아침 대용으로, 운동 전후 탄수화물 보충으로, 필요한 때에 맞춰 드세요.
           </p>
-        </div>
+        </Reveal>
 
-        {/* 우 · 편집형 목록 */}
+        {/* 우 · 편집형 목록. 한 항목씩 80ms 간격으로 — 번호 순서대로 읽히게. */}
         <ul className="flex flex-col">
-          {reasons.map((r) => (
-            <li
+          {reasons.map((r, i) => (
+            <Reveal
               key={r.no}
+              as="li"
+              delay={i * 80}
               className="grid grid-cols-[auto_1fr] gap-x-6 border-t border-line py-8 first:border-t-0 first:pt-0 md:gap-x-10 md:py-10"
             >
               <span className="font-display text-4xl font-normal italic leading-none text-clay/70 md:text-5xl">
@@ -76,7 +78,7 @@ export function WhyRizen() {
                   {r.body}
                 </p>
               </div>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </Container>

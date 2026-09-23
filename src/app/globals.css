@@ -165,3 +165,14 @@
   }
 }
 
+/* 장바구니 배지가 늘어날 때 한 번 튄다. transform 만 쓴다.
+   모션 최소화 설정이면 위 @media 가 animation-duration 을 0 으로 만들어 그냥 숫자만 바뀐다. */
+@keyframes badge-bump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+.animate-badge-bump {
+  animation: badge-bump 360ms var(--ease-out);
+}
+

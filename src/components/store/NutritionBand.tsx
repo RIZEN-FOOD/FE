@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { Container } from "@/components/ui";
+import { Container, Reveal } from "@/components/ui";
 import type { Nutrition } from "@/types/product";
 
 /**
@@ -67,15 +67,16 @@ export function NutritionBand({
           <p className="mt-2 font-kr text-sm text-cream-warm/75">1회 제공량 {serving}g 기준</p>
         )}
 
+        {/* 수치 네 개가 왼쪽부터 차례로 뜬다. 법정 표시 수치라 눈이 한 번씩 머물게 한다. */}
         <dl className="mt-9 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label}>
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={i * 90}>
               <dd className="font-numeric text-[40px] font-bold leading-none text-cream-warm [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
                 {s.value!.toLocaleString("ko-KR")}
                 <span className="ml-0.5 text-xl font-medium text-cream-warm/80">{s.unit}</span>
               </dd>
               <dt className="mt-2 font-kr text-sm text-cream-warm/75">{s.label}</dt>
-            </div>
+            </Reveal>
           ))}
         </dl>
 

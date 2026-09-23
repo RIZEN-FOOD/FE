@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui";
+import { Container, Reveal } from "@/components/ui";
 import { formatDateTime } from "@/lib/datetime";
 import { NOTICE_CATEGORIES, type NoticePublicDetail } from "@/types/content";
 
@@ -19,16 +19,16 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
   return (
     <section className="bg-cream-warm py-20" aria-labelledby="notice-heading">
       <Container>
-        <div className="flex items-end justify-between">
+        <Reveal className="flex items-end justify-between">
           <h2 id="notice-heading" className="font-display text-section font-semibold text-ink">
             공지사항
           </h2>
           <Link href="/notice" className="font-kr text-sm text-ink-soft underline-offset-4 hover:underline">
             전체 보기
           </Link>
-        </div>
+        </Reveal>
 
-        <div className="mt-6 border-t border-line">
+        <Reveal delay={100} className="mt-6 border-t border-line">
           {notices.map((n) => (
             <details key={n.id} className="group border-b border-line">
               <summary className="flex cursor-pointer list-none items-center gap-3 py-4 [&::-webkit-details-marker]:hidden">
@@ -62,7 +62,7 @@ export function NoticePreview({ notices }: { notices: NoticePublicDetail[] }) {
               </div>
             </details>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

@@ -28,13 +28,21 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
       setSolid(true);
       return;
     }
-    const onScroll = () => {
-      // 히어로(대략 한 화면)를 거의 지났을 때 크림 배경으로 전환한다.
-      setSolid(window.scrollY > window.innerHeight * 0.8);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    // 히어로(data-hero)가 헤더 아래로 완전히 지나가는 순간에 바뀐다 (2026-09-23).
+    // 전에는 스크롤 이벤트마다 «화면 높이의 0.8배»를 재봤다 — 매 프레임 계산인 데다
+    // 히어로 높이와 무관한 어림이었다. IntersectionObserver 는 교차가 바뀔 때만 한 번 부른다.
+    // rootMargin 위쪽을 헤더 높이만큼 당겨, 히어로 바닥이 헤더 밑을 지날 때 정확히 전환한다.
+    const hero = document.querySelector<HTMLElement>("[data-hero]");
+    if (!hero || typeof IntersectionObserver === "undefined") {
+      setSolid(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => setSolid(!entry.isIntersecting),
+      { rootMargin: "-72px 0px 0px 0px", threshold: 0 },
+    );
+    io.observe(hero);
+    return () => io.disconnect();
   }, [forceSolid]);
 
   const light = !solid; // 히어로 위 = 밝은 텍스트

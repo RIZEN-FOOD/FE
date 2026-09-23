@@ -87,6 +87,7 @@ export function HeroSplit({
 
   return (
     <section
+      data-hero
       className="relative min-h-svh w-full overflow-hidden bg-clay"
       aria-labelledby="hero-heading"
     >

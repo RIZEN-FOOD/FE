@@ -138,6 +138,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section
+      data-hero
       className="relative min-h-svh w-full overflow-hidden"
       aria-roledescription="carousel"
       aria-label="대표 상품"

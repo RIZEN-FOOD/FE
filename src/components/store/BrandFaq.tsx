@@ -1,4 +1,4 @@
-import { Container } from "@/components/ui";
+import { Container, Reveal } from "@/components/ui";
 
 /**
  * "자주 묻는 질문" — 쌀가루 공통 Q&A 3개.
@@ -30,7 +30,7 @@ export function BrandFaq() {
   return (
     <section className="bg-paper py-24 md:py-28" aria-labelledby="faq-heading">
       <Container className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-        <div>
+        <Reveal>
           <h2
             id="faq-heading"
             className="font-display text-section font-semibold leading-[1.2] text-ink"
@@ -42,9 +42,10 @@ export function BrandFaq() {
           <p className="mt-3 max-w-sm font-kr text-sm text-ink-soft">
             알고 먹으면 더 즐거운 쌀가루, 자주 받는 질문입니다.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="border-t border-line">
+        {/* 질문 목록은 한 덩어리로 뜬다. 아코디언은 순서보다 «여기 있다»가 중요하다. */}
+        <Reveal delay={100} className="border-t border-line">
           {faqs.map((f) => (
             <details key={f.q} className="group border-b border-line">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-kr text-base font-bold text-ink md:text-lg [&::-webkit-details-marker]:hidden">
@@ -60,7 +61,7 @@ export function BrandFaq() {
               <p className="pb-6 pr-10 font-kr text-base leading-relaxed text-ink-soft">{f.a}</p>
             </details>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

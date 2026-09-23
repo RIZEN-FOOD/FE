@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useCart } from "@/store/cart";
 
@@ -12,17 +12,34 @@ import { useCart } from "@/store/cart";
  * 로그인 여부와 무관하게 담긴 수량을 보여줄 수 있다.
  *
  * 담기/수정/삭제는 useCart 를 거치므로, 어느 화면에서 바뀌어도 이 배지가 함께 갱신된다.
+ *
+ * 수량이 «늘어날 때만» 배지가 한 번 튄다 (2026-09-23). 숫자만 바뀌면 담긴 줄 모르는 분이 있다.
+ * 줄어들 때(삭제)는 튀지 않는다 — 그건 손님이 직접 한 일이라 확인이 필요 없다.
+ * 첫 동기화(0 → n)도 튀지 않는다. 방금 담은 게 아니라 원래 있던 것이다.
  */
 export function CartBadge({ className }: { className?: string }) {
   const count = useCart((s) => s.cart?.totalQuantity ?? 0);
   const loaded = useCart((s) => s.loaded);
   const refresh = useCart((s) => s.refresh);
+  const prev = useRef<number | null>(null);
+  const [bump, setBump] = useState(false);
 
   useEffect(() => {
     if (!loaded) {
       void refresh();
     }
   }, [loaded, refresh]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    if (prev.current != null && count > prev.current) {
+      setBump(true);
+      const t = window.setTimeout(() => setBump(false), 360);
+      prev.current = count;
+      return () => window.clearTimeout(t);
+    }
+    prev.current = count;
+  }, [count, loaded]);
 
   return (
     <Link
@@ -46,7 +63,11 @@ export function CartBadge({ className }: { className?: string }) {
         <path d="M16 10a4 4 0 0 1-8 0" />
       </svg>
       {count > 0 && (
-        <span className="absolute -right-2 -top-2 flex min-w-[18px] items-center justify-center rounded-full bg-clay-deep px-1 font-numeric text-[12px] font-bold leading-[18px] text-paper">
+        <span
+          className={`absolute -right-2 -top-2 flex min-w-[18px] items-center justify-center rounded-full bg-clay-deep px-1 font-numeric text-[12px] font-bold leading-[18px] text-paper ${
+            bump ? "animate-badge-bump" : ""
+          }`}
+        >
           {count > 99 ? "99+" : count}
         </span>
       )}
