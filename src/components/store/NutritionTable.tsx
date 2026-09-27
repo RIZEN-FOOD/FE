@@ -40,8 +40,10 @@ export function NutritionFacts({ nutrition }: { nutrition: Nutrition }) {
               }`}
             >
               <dt className={`font-kr text-small ${i === 0 ? "text-cream-warm/75" : "text-ink-soft"}`}>{r.label}</dt>
-              <dd className="mt-2 flex items-baseline gap-1">
-                <span className="font-numeric text-3xl font-bold leading-none md:text-4xl">
+              {/* 좁은 화면(카드 폭 ~100px)에서 "140 kcal" 이 글자 중간에서 꺾여 "14 / 0 kca / l" 로 보였다 (2026-09-23).
+                  숫자는 절대 쪼개지 않고(nowrap), 단위만 필요하면 다음 줄로 내려간다. 모바일은 숫자를 한 단계 줄인다. */}
+              <dd className="mt-2 flex flex-wrap items-baseline gap-x-1">
+                <span className="whitespace-nowrap font-numeric text-2xl font-bold leading-none sm:text-3xl md:text-4xl">
                   {r.value!.toLocaleString("ko-KR")}
                 </span>
                 <span className={`font-kr text-small ${i === 0 ? "text-cream-warm/75" : "text-ink-faint"}`}>{r.unit}</span>

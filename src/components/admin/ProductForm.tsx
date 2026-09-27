@@ -6,8 +6,6 @@ import { api, ApiError } from "@/lib/api/client";
 import type { ProductDetail, ProductSaveRequest } from "@/types/product";
 import { DetailSectionEditor } from "./DetailSectionEditor";
 import { ImageUploader } from "./ImageUploader";
-import { RichTextEditor } from "./RichTextEditor";
-import { SafeHtml } from "./SafeHtml";
 import { cn } from "@/lib/cn";
 
 /**
@@ -507,10 +505,8 @@ export function ProductForm({
             </div>
           </Section>
 
-          {/* ── 상세 설명 ── */}
-          <Section title="상세 설명">
-            <RichTextEditor value={form.descriptionHtml} onChange={(html) => set("descriptionHtml", html)} />
-          </Section>
+          {/* '상세 설명' 에디터는 뺐다 (2026-09-28). 상세는 아래 '사진형 상세페이지' 블록이 전담한다.
+              descriptionHtml 은 기존 값을 그대로 보내 데이터는 건드리지 않는다. */}
 
           {/* ── 구매 링크 ── */}
           <Section title="구매 링크" note="외부 판매 채널로 연결합니다.">
@@ -689,13 +685,6 @@ function PreviewCard({ form }: { form: FormState }) {
           </p>
         </div>
       </div>
-
-      {form.descriptionHtml && (
-        <SafeHtml
-          html={form.descriptionHtml}
-          className="mt-6 border-t border-line pt-4 font-kr text-sm leading-relaxed text-ink [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-bold [&_ul]:list-disc [&_ul]:pl-5"
-        />
-      )}
 
       <p className="mt-6 font-kr text-xs text-ink-faint">
         이 화면은 미리보기입니다. 저장해야 실제로 반영됩니다.

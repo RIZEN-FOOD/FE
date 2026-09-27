@@ -89,28 +89,37 @@ export default async function ProductDetailPage({
         <PurchasePanel product={product} shipping={shipping} />
       </div>
 
-      {/* 상세 설명 */}
-      {product.descriptionHtml && (
-        <section className="mt-24 border-t border-line pt-14" aria-labelledby="desc-heading">
-          <h2 id="desc-heading" className="font-display text-section font-semibold text-ink">상세 정보</h2>
-          <div
-            className="mt-6 max-w-[68ch] font-kr text-base leading-[1.8] text-ink [&_h3]:mb-2 [&_h3]:mt-8 [&_h3]:text-sub [&_h3]:font-bold [&_img]:my-3 [&_img]:max-w-full [&_ul]:list-disc [&_ul]:pl-5 [&_a]:text-clay-deep [&_a]:underline"
-            // 서버에서 이미 살균된 HTML 이다 (BE HtmlSanitizer). 여기서 또 만들지 않는다.
-            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-          />
-        </section>
-      )}
+      {/* 에디터로 쓰던 '상세 설명' 칸은 뺐다 (2026-09-28). 상세는 아래 사진형 블록이 전담한다.
+          descriptionHtml 값은 API 에 남아 있지만 화면에는 그리지 않는다. */}
 
       {/* 사진형 상세페이지 — 관리자가 쌓은 사진·영상·글이 틈 없이 이어진다 */}
       <ProductDetailSections sections={product.detailSections ?? []} />
 
-      {/* 영양성분 · 원재료 — 텍스트 */}
-      <div className="mt-24 grid gap-14 border-t border-line pt-14 md:grid-cols-2 md:gap-16">
-        {product.nutrition && <NutritionFacts nutrition={product.nutrition} />}
-        {(product.ingredients.length > 0 || product.label) && (
-          <IngredientList ingredients={product.ingredients} label={product.label} weightG={product.weightG} />
-        )}
-      </div>
+      {/* 영양성분 · 원재료 · 표시사항 — 텍스트.
+          ★ 법정 표시사항은 이미지가 아니라 DOM 텍스트로 둔다 (CLAUDE.md 규칙 2). 상세 이미지에 같은 내용이
+            있어도 검색·스크린리더·법적 확인은 이 텍스트가 한다.
+          ★ 접어 둔다 (2026-09-28): 상세 이미지와 겹쳐 보여 기본은 닫힘. 네이티브 <details> 라 스크립트 없이
+            키보드·스크린리더로 열리고, 닫혀 있어도 텍스트는 DOM 에 그대로 있다. */}
+      {(product.nutrition || product.ingredients.length > 0 || product.label) && (
+        <details className="group mt-16 border-y border-line">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-kr text-base font-bold text-ink md:text-lg [&::-webkit-details-marker]:hidden">
+            <span>
+              영양성분 · 상품정보 표시사항
+              <span className="ml-3 font-normal text-ink-faint">펼쳐보기</span>
+            </span>
+            <span
+              aria-hidden="true"
+              className="relative h-3.5 w-3.5 shrink-0 before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:bg-ink before:content-[''] after:absolute after:left-1/2 after:top-0 after:h-full after:w-px after:bg-ink after:transition-transform after:content-[''] group-open:after:scale-y-0"
+            />
+          </summary>
+          <div className="grid gap-14 pb-14 pt-4 md:grid-cols-2 md:gap-16">
+            {product.nutrition && <NutritionFacts nutrition={product.nutrition} />}
+            {(product.ingredients.length > 0 || product.label) && (
+              <IngredientList ingredients={product.ingredients} label={product.label} weightG={product.weightG} />
+            )}
+          </div>
+        </details>
+      )}
     </Container>
   );
 }
