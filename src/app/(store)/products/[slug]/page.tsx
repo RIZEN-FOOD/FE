@@ -30,7 +30,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = await loadProduct(slug);
-  if (!product) return { title: "상품을 찾을 수 없습니다" };
+  // ★ 여기서 notFound() 를 불러야 응답이 404 가 된다 (2026-09-28). 본문에서 부르면 loading.tsx 가
+  //   먼저 200 으로 흘러나간 뒤라 '없는 상품' 화면이 200 으로 나갔다(검색엔진에 soft-404).
+  if (!product) notFound();
 
   const description = product.subtitle ?? "곱게 도정한 쌀로 만든 탄수화물 보충 식품.";
   return {

@@ -193,7 +193,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           </p>
           {/* 페이지의 유일한 h1. 슬라이드가 바뀌어도 한 번에 한 장만 그려지므로 h1 도 하나다.
               (2026-09-22) 전에는 h2 라 메인에 h1 이 아예 없었다 — 검색·접근성 모두 불리했다. */}
-          <h1 className="mt-3 font-display text-display font-semibold leading-[1.15] [word-break:keep-all]" style={{ color: ink }}>
+          {/* ★ 제목 크기는 글자 수에 따라 자동으로 줄인다 (2026-09-28).
+              PC 에서 문구 칸이 330px 안팎인데 「크림오브라이스」(7자)를 기본 크기로 놓으면 칸을 넘쳐
+              body 의 overflow-wrap:anywhere 때문에 「크림오브라 / 이스」처럼 글자 중간에서 꺾였다.
+              5자까지는 기본 크기, 6~7자는 한 단계, 8자 이상은 두 단계 줄이고, 단어 중간 꺾임은 막는다. */}
+          <h1
+            className={`mt-3 font-display font-semibold leading-[1.15] [word-break:keep-all] [overflow-wrap:normal] ${heroTitleSize(current.nameKo)}`}
+            style={{ color: ink }}
+          >
             {current.nameKo}
           </h1>
           {current.subtitle && (
@@ -462,6 +469,14 @@ function FlavorNav({
 }
 
 /** 슬러그로 맛 종류를 가려 짧은 이름을 만든다. "크림오브라이스" 접두는 뗀다. */
+/** 제목 글자 수(공백 제외한 가장 긴 덩어리)에 맞는 글자 크기. 5자까지는 기본 크기다. */
+function heroTitleSize(nameKo: string): string {
+  const longest = Math.max(...nameKo.trim().split(/\s+/).map((w) => w.length), 0);
+  if (longest <= 5) return "text-display";
+  if (longest <= 7) return "text-[clamp(2.25rem,3.4vw,3rem)]";
+  return "text-[clamp(1.9rem,2.8vw,2.5rem)]";
+}
+
 function shortFlavorName(nameKo: string): string {
   const s = nameKo.replace("크림오브라이스", "").trim();
   return s.length > 0 ? s : "플레인";
