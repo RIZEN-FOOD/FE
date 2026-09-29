@@ -38,6 +38,7 @@ export async function generateMetadata({
   return {
     title: product.nameKo,
     description,
+    alternates: { canonical: `/products/${slug}` },
     openGraph: {
       title: product.nameKo,
       description,
@@ -62,16 +63,22 @@ export default async function ProductDetailPage({
   if (!product) notFound();
 
   // 검색엔진용 구조화 데이터. 화면에는 안 보이고 크롤러만 읽는다.
+  // ★ 주소는 반드시 절대 주소여야 한다 (2026-09-29). "/uploads/..." 로 내보내던 동안
+  //   구글·네이버가 사진을 읽지 못해 상품 리치 결과가 잡히지 않았다.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.nameKo,
     description: product.subtitle ?? undefined,
-    image: product.images.map((i) => i.url),
+    image: product.images.map((i) => absoluteUrl(i.url)),
+    sku: product.slug,
+    brand: { "@type": "Brand", name: "라이즌푸드" },
     offers: {
       "@type": "Offer",
+      url: absoluteUrl(`/products/${product.slug}`),
       priceCurrency: "KRW",
       price: product.effectivePrice,
+      itemCondition: "https://schema.org/NewCondition",
       availability: product.soldOut
         ? "https://schema.org/OutOfStock"
         : "https://schema.org/InStock",

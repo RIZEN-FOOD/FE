@@ -9,6 +9,7 @@ import type { ReviewPage } from "@/types/member";
 export const metadata: Metadata = {
   title: "후기",
   description: "크림오브라이스를 드셔본 분들의 후기.",
+  alternates: { canonical: "/reviews" },
 };
 
 /**

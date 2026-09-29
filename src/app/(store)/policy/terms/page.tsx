@@ -6,6 +6,7 @@ import { serverApi } from "@/lib/server/api";
 export const metadata: Metadata = {
   title: "이용약관",
   description: "라이즌푸드 자사몰 이용약관입니다.",
+  alternates: { canonical: "/policy/terms" },
 };
 
 const EFFECTIVE = "2026년 9월 2일";

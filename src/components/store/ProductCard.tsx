@@ -39,9 +39,9 @@ export function ProductCard({ product }: { product: ProductListItem }) {
       </div>
 
       <div className="pt-3.5">
-        <h3 className="truncate font-kr text-base font-semibold text-ink transition-colors duration-[var(--dur-base)] group-hover:text-clay-deep">
+        <h2 className="truncate font-kr text-base font-semibold text-ink transition-colors duration-[var(--dur-base)] group-hover:text-clay-deep">
           {product.nameKo}
-        </h3>
+        </h2>
         {product.subtitle && (
           <p className="mt-0.5 truncate font-kr text-caption text-ink-faint">{product.subtitle}</p>
         )}

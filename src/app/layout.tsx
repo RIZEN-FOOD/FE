@@ -39,11 +39,18 @@ export const metadata: Metadata = {
     template: "%s | 라이즌푸드",
   },
   description: "크림오브라이스 — 곱게 도정한 쌀로 만든 탄수화물 보충 식품.",
+  // ★ 여기에 alternates.canonical 을 두지 마라 (2026-09-29). 루트 metadata 의 canonical 은
+  //   자기 주소를 정하지 않은 모든 하위 페이지로 상속돼, 장바구니·주문조회·공지 상세까지
+  //   전부 "대표 주소는 홈"이라고 선언한다. 대표 주소는 페이지마다 따로 단다.
   openGraph: {
     type: "website",
     siteName: "라이즌푸드",
     locale: "ko_KR",
+    // 카카오톡·네이버·슬랙에 링크를 붙였을 때 뜨는 기본 썸네일 (2026-09-29).
+    // 상품 상세는 각자 제품 사진으로 덮어쓴다. 없으면 회색 네모로 나온다.
+    images: [{ url: "/assets/brand/og-default.jpg", width: 1200, height: 630, alt: "라이즌푸드 크림오브라이스" }],
   },
+  twitter: { card: "summary_large_image", images: ["/assets/brand/og-default.jpg"] },
 };
 
 export default function RootLayout({

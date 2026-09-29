@@ -22,7 +22,7 @@ export async function generateMetadata({
   const notice = await loadNotice(id);
   // ★ 없는 글은 여기서 404 로 끝낸다 (2026-09-28). 본문의 notFound() 는 스트리밍 뒤라 200 으로 나갔다.
   if (!notice) notFound();
-  return { title: notice.title };
+  return { title: notice.title, alternates: { canonical: `/notice/${id}` } };
 }
 
 /**

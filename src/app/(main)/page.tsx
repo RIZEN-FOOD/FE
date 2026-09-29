@@ -17,6 +17,11 @@ import type { NoticePublicDetail } from "@/types/content";
 import type { ReviewPage } from "@/types/member";
 import type { PopupPublic } from "@/types/popup";
 
+import type { Metadata } from "next";
+
+/** 메인의 대표 주소. 루트 레이아웃에 두면 하위 페이지로 상속돼 잘못 가리킨다. */
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
 /**
  * 메인 페이지. 서버에서 실데이터를 가져와 SSR 한다.
  *

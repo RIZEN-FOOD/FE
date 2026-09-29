@@ -8,6 +8,8 @@ import type { ProductListItem } from "@/types/product";
 export const metadata: Metadata = {
   title: "상품",
   description: "라이즌푸드 크림오브라이스. 곱게 도정한 쌀로 만든 탄수화물 보충 식품.",
+  // ?sort=... 가 붙어도 내용이 같다. 대표 주소를 알려 색인이 갈라지지 않게 한다 (2026-09-29).
+  alternates: { canonical: "/products" },
 };
 
 type ProductListResponse = {

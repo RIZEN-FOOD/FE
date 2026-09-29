@@ -9,6 +9,7 @@ import { NOTICE_CATEGORIES, type NoticePublicPage } from "@/types/content";
 export const metadata: Metadata = {
   title: "공지사항",
   description: "라이즌푸드 공지사항·이벤트·안내.",
+  alternates: { canonical: "/notice" },
 };
 
 const categoryLabel = (v: string) => NOTICE_CATEGORIES.find((c) => c.value === v)?.label ?? v;
@@ -51,6 +52,7 @@ export default async function NoticeListPage({
           name="keyword"
           defaultValue={keyword}
           placeholder="제목 검색"
+          aria-label="공지 제목 검색"
           className="w-full max-w-xs rounded-[6px] border border-line bg-paper px-3 py-2 font-kr text-sm outline-none focus:border-clay-deep"
         />
         <button type="submit" className="rounded-[6px] bg-ink px-4 py-2 font-kr text-sm font-medium text-cream-warm">

@@ -6,6 +6,7 @@ import { serverApi } from "@/lib/server/api";
 export const metadata: Metadata = {
   title: "배송·교환·환불 안내",
   description: "라이즌푸드 배송비, 배송 기간, 청약철회·교환·반품·환불 안내입니다.",
+  alternates: { canonical: "/policy/shipping" },
 };
 
 const EFFECTIVE = "2026년 9월 2일";

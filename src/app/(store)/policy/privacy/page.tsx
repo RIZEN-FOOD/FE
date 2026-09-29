@@ -6,6 +6,7 @@ import { serverApi } from "@/lib/server/api";
 export const metadata: Metadata = {
   title: "개인정보처리방침",
   description: "라이즌푸드 개인정보 수집·이용·보관·파기에 관한 처리방침입니다.",
+  alternates: { canonical: "/policy/privacy" },
 };
 
 const EFFECTIVE = "2026년 9월 2일";
