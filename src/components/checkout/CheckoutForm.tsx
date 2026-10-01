@@ -316,7 +316,9 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
           returnUrl: `${window.location.origin}/api/payment/nicepay/return`,
           buyerName: payload.ordererName,
           buyerTel: payload.ordererPhone.replace(/\D/g, ""),
-          buyerEmail: payload.ordererEmail || undefined,
+          // 이메일이 비면 키 자체를 뺀다. undefined 를 넣으면 SDK 가 "undefined" 라는 글자로 보내
+          // 나이스 거래 기록에 구매자 이메일이 "undefined" 로 남았다 (2026-09-26 콘솔 로그).
+          ...(payload.ordererEmail ? { buyerEmail: payload.ordererEmail } : {}),
           fnError: async (res: { errorMsg?: string }) => {
             // 결제창을 닫았거나 인증에 실패했다 — 잡아둔 재고를 풀고 장바구니는 그대로 둔다.
             await api.post(`/api/orders/${order.orderNo}/cancel-pending`).catch(() => undefined);

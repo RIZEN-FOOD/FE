@@ -54,6 +54,8 @@ export type AdminOrderDetail = {
     method: string | null;
     amount: number;
     approvedAt: string | null;
+    /** 실패·취소된 결제의 이유. 나이스 거절이면 거절 코드와 문구가 들어 있다. */
+    failReason: string | null;
   } | null;
   delivery: {
     status: string;

@@ -165,6 +165,10 @@ export default function AdminOrderDetailPage({
             {order.payment.approvedAt ? ` · ${formatDateTime(order.payment.approvedAt)}` : ""}
           </p>
         )}
+        {/* 실패 사유 (2026-10-01). 전에는 FAILED 만 보여서 왜 실패했는지 나이스 콘솔을 뒤져야 했다. */}
+        {order.payment?.failReason && (
+          <p className="mt-1 font-kr text-xs text-danger">실패 사유: {order.payment.failReason}</p>
+        )}
       </section>
 
       {/* 배송지 · 주문자 (PII) */}
