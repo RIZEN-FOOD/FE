@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui";
 import { PostcodeButton } from "@/components/checkout/PostcodeButton";
@@ -10,7 +10,7 @@ import { api, ApiError } from "@/lib/api/client";
 import { loadNicePaySdk } from "@/lib/payment/nicepay";
 import { formatPhone } from "@/lib/phone";
 import { hasSignedInHint } from "@/lib/auth/signedInHint";
-import type { MemberAddress } from "@/types/member";
+import type { MemberAddress, MemberAddressSaveRequest } from "@/types/member";
 import { useCart } from "@/store/cart";
 import { CouponField, type AppliedCoupon } from "./CouponField";
 import type { CartView } from "@/types/cart";
@@ -152,6 +152,22 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
   const [niceMethod, setNiceMethod] = useState<string>("");
   /** 저장된 배송지. 로그인한 사람에게만 불러온다(비회원은 요청 자체를 보내지 않는다). */
   const [addresses, setAddresses] = useState<MemberAddress[]>([]);
+  /**
+   * 서버가 회원으로 확인해 준 사람인가. 배송지 목록 요청이 성공했으면 회원이다.
+   * ★ 로그인 흔적(hasSignedInHint)만 보고 정하지 않는다. 세션이 만료됐는데 흔적만 남으면
+   *   서버는 비회원 주문으로 받는데 화면은 회원으로 보고 개인정보 동의를 건너뛰게 된다.
+   */
+  const [isMember, setIsMember] = useState(false);
+  /** 주문하면서 입력한 배송지를 주소록에 저장할지. 주소록이 비어 있으면 기본으로 켠다. */
+  const [saveAddress, setSaveAddress] = useState(false);
+  /**
+   * 구매 동의 (2026-09-29). 전자상거래법상 결제 전에 주문 내용·금액을 확인받는다.
+   * 비회원은 가입 때 받은 동의가 없으니 개인정보 수집·이용 동의를 따로 받는다.
+   */
+  const [agreePurchase, setAgreePurchase] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const purchaseRef = useRef<HTMLInputElement>(null);
+  const privacyRef = useRef<HTMLInputElement>(null);
   const availableMethods = PAY_METHODS.filter((m) => Boolean(payConfig?.channels?.[m.key]));
   const niceMethods = payConfig?.methods ?? [];
 
@@ -165,8 +181,16 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
     if (!hasSignedInHint()) return;
     api
       .get<MemberAddress[]>("/api/member/addresses")
-      .then(setAddresses)
-      .catch(() => setAddresses([]));
+      .then((list) => {
+        setAddresses(list);
+        setIsMember(true);
+        // 첫 주문이면 주소록이 비어 있다. 이때는 저장을 기본으로 켜 둔다 — 다음 주문부터 바로 쓰게.
+        if (list.length === 0) setSaveAddress(true);
+      })
+      .catch(() => {
+        setAddresses([]);
+        setIsMember(false);
+      });
   }, []);
 
   /** 저장된 배송지를 주문서에 채운다. 받는 분 정보가 들어가므로 '주문자와 동일'은 해제한다. */
@@ -208,9 +232,51 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
       ? `${o.items[0].name} 외 ${o.items.length - 1}건`
       : (o.items[0]?.name ?? "라이즌푸드 주문");
 
+  /** 공백만 다른 같은 주소를 두 번 저장하지 않게, 비교 전에 공백을 정리한다. */
+  const tidy = (v?: string | null) => (v ?? "").replace(/\s+/g, " ").trim();
+
+  /**
+   * 주문서에 입력한 배송지를 주소록에 저장한다. 실패해도 주문은 막지 않는다 — 주문이 우선이다.
+   * ★ 결제창을 열기 전에 저장한다. 나이스페이는 결제창이 뜨면 브라우저가 떠나서
+   *   결제가 끝난 뒤 이 화면으로 돌아와 저장할 기회가 없다.
+   */
+  async function saveAddressQuietly(b: CreateOrderRequest) {
+    if (!isMember || !saveAddress) return;
+    const same = addresses.some(
+      (a) =>
+        a.zipcode === b.zipcode &&
+        tidy(a.addr1) === tidy(b.addr1) &&
+        tidy(a.addr2) === tidy(b.addr2) &&
+        tidy(a.receiverName) === tidy(b.receiverName),
+    );
+    if (same) return;
+    const body: MemberAddressSaveRequest = {
+      receiverName: b.receiverName,
+      receiverPhone: b.receiverPhone || undefined,
+      zipcode: b.zipcode,
+      addr1: b.addr1,
+      addr2: b.addr2 || undefined,
+      // 처음 저장하는 주소는 기본 배송지로 — 다음 주문서에서 맨 앞에 온다.
+      makeDefault: addresses.length === 0,
+    };
+    await api.post("/api/member/addresses", body).catch(() => undefined);
+  }
+
   async function submit() {
     setError(null);
     setFieldErrors({});
+
+    // 동의를 먼저 본다. 버튼을 막아 두면 왜 안 눌리는지 모르므로, 누르면 이유를 알려준다.
+    if (!agreePurchase) {
+      setError("주문 내용 확인 및 구매 동의에 체크해 주세요.");
+      purchaseRef.current?.focus();
+      return;
+    }
+    if (!isMember && !agreePrivacy) {
+      setError("비회원 주문을 위한 개인정보 수집·이용에 동의해 주세요.");
+      privacyRef.current?.focus();
+      return;
+    }
 
     // 받는 분이 주문자와 같으면 주문자 값으로 채운다.
     const base: CreateOrderRequest = sameAsOrderer
@@ -230,6 +296,8 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
       // 1) 주문 생성 — 서버가 장바구니를 읽어 금액을 확정하고 재고를 잡아둔다.
       const order = await api.post<OrderView>("/api/orders", payload);
       orderNo = order.orderNo;
+      // 주문이 서버 검증을 통과한 주소만 저장한다(주문에 실패한 잘못된 주소는 남기지 않는다).
+      await saveAddressQuietly(base);
 
       // 2-나) 나이스페이 — 결제창을 연다. 결과는 나이스가 우리 서버로 POST 하고(returnUrl),
       //      서버가 서명·금액을 검증한 뒤 승인까지 마친 다음 브라우저를 결과 화면으로 돌려보낸다.
@@ -447,6 +515,28 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
                 onChange={set("deliveryMemo")} placeholder="부재 시 경비실에 맡겨주세요" />
             </div>
           </div>
+
+          {/* 주소록 저장 (2026-09-29). 전에는 주문서에서 입력한 주소를 저장할 길이 없어,
+              처음 주문한 회원은 주소록이 있는 줄도 몰랐다(저장된 게 없으면 목록 칸도 숨는다). */}
+          {isMember && (
+            <label className="mt-4 flex items-start gap-2.5 font-kr text-sm text-ink">
+              <input
+                type="checkbox"
+                checked={saveAddress}
+                onChange={(e) => setSaveAddress(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-ink"
+              />
+              <span>
+                이 배송지 저장
+                <span className="mt-0.5 block text-caption text-ink-faint">
+                  {addresses.length === 0
+                    ? "기본 배송지로 저장해 다음 주문부터 바로 불러옵니다."
+                    : "다음 주문 때 눌러서 불러올 수 있습니다."}{" "}
+                  마이페이지 배송지에서 고칠 수 있습니다.
+                </span>
+              </span>
+            </label>
+          )}
         </section>
 
         <section>
@@ -582,6 +672,69 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
             지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 결제사 키를 넣으면 열립니다.
           </p>
         )}
+
+        {/* 구매 동의 (2026-09-29). 결제 전에 주문 내용·금액 확인을 받는다(전자상거래법).
+            비회원은 개인정보 수집·이용 동의를 따로 받는다 — 회원은 가입 때 이미 동의했다.
+            항목·목적·보유기간은 개인정보처리방침과 같은 내용이어야 한다. 한쪽을 고치면 둘 다 고친다. */}
+        <div className="mt-5 flex flex-col gap-3 border-t border-line pt-5">
+          <label className="flex items-start gap-2.5 font-kr text-sm text-ink">
+            <input
+              ref={purchaseRef}
+              type="checkbox"
+              checked={agreePurchase}
+              onChange={(e) => setAgreePurchase(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-ink"
+            />
+            <span>
+              <b className="font-semibold">(필수)</b> 주문 상품과 결제 금액을 확인했으며 구매에 동의합니다.
+            </span>
+          </label>
+
+          {!isMember && (
+            <div>
+              <label className="flex items-start gap-2.5 font-kr text-sm text-ink">
+                <input
+                  ref={privacyRef}
+                  type="checkbox"
+                  checked={agreePrivacy}
+                  onChange={(e) => setAgreePrivacy(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-ink"
+                />
+                <span>
+                  <b className="font-semibold">(필수)</b> 비회원 주문을 위한 개인정보 수집·이용에 동의합니다.
+                </span>
+              </label>
+              <details className="group mt-2 pl-[26px]">
+                <summary className="cursor-pointer list-none font-kr text-caption text-ink-soft underline-offset-4 hover:underline [&::-webkit-details-marker]:hidden">
+                  <span className="group-open:hidden">내용 보기</span>
+                  <span className="hidden group-open:inline">내용 접기</span>
+                </summary>
+                <dl className="mt-2 grid grid-cols-[4.5rem_1fr] gap-x-3 gap-y-1.5 font-kr text-caption leading-relaxed">
+                  <dt className="text-ink-faint">수집 항목</dt>
+                  <dd className="text-ink-soft">주문자·받는 분 이름, 연락처, 이메일(선택), 배송지 주소</dd>
+                  <dt className="text-ink-faint">이용 목적</dt>
+                  <dd className="text-ink-soft">상품 주문·결제·배송, 주문 확인과 문의 응대</dd>
+                  <dt className="text-ink-faint">보유 기간</dt>
+                  <dd className="text-ink-soft">주문·결제 기록은 전자상거래법에 따라 5년 보관 후 파기</dd>
+                </dl>
+                <p className="mt-2 font-kr text-caption text-ink-faint">
+                  동의하지 않으실 수 있으나, 이 경우 비회원으로 주문하실 수 없습니다.
+                </p>
+              </details>
+            </div>
+          )}
+
+          <p className="font-kr text-caption text-ink-faint">
+            {/* 새 창으로 연다 — 같은 창이면 입력한 주문서가 사라진다. */}
+            <Link href="/policy/terms" target="_blank" rel="noopener" className="underline underline-offset-4 hover:text-ink">
+              이용약관
+            </Link>
+            <span className="mx-1.5">·</span>
+            <Link href="/policy/privacy" target="_blank" rel="noopener" className="underline underline-offset-4 hover:text-ink">
+              개인정보처리방침
+            </Link>
+          </p>
+        </div>
 
         {error && (
           <p role="alert" className="mt-4 rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">

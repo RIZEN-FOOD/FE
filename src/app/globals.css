@@ -176,3 +176,9 @@
   animation: badge-bump 360ms var(--ease-out);
 }
 
+/* 쿠키 안내가 아래에서 살짝 올라온다. transform·opacity 만 쓴다. */
+@keyframes rz-cookie-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+

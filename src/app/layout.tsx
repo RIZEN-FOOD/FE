@@ -5,6 +5,7 @@ import { SITE_URL } from "@/lib/site";
 // 본문 한글: Pretendard(동적 서브셋 — 필요한 글자만 로드). Noto Sans 보다 부드럽다.
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
+import { CookieNotice } from "@/components/layout/CookieNotice";
 
 /**
  * 서체 (2026-09-18 정리).
@@ -84,6 +85,8 @@ export default function RootLayout({
         </a>
         <SmoothScroll />
         {children}
+        {/* 첫 방문 쿠키 안내. 메인·스토어 모두에 뜨도록 루트에 둔다(주문서·장바구니·관리자에서는 스스로 숨는다). */}
+        <CookieNotice />
       </body>
     </html>
   );
