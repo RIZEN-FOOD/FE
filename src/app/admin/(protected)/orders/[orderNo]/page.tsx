@@ -6,6 +6,7 @@ import { use, useCallback, useEffect, useState } from "react";
 import { api, ApiError } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/datetime";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
+import { salesChannelLabel } from "@/lib/salesChannel";
 import { ADMIN_ORDER_STATUSES, type AdminOrderDetail } from "@/types/adminOrder";
 
 /**
@@ -80,6 +81,16 @@ export default function AdminOrderDetailPage({
         <div>
           <h1 className="font-numeric text-xl font-bold text-ink">{order.orderNo}</h1>
           <p className="mt-1 font-kr text-xs text-ink-faint">{formatDateTime(order.orderedAt)}</p>
+          {salesChannelLabel(order.channel) && (
+            <p className="mt-1.5 font-kr text-xs text-ink-soft">
+              <span className="mr-1.5 inline-block rounded-[3px] border border-line px-1.5 py-px align-[1px] font-kr text-[11px] font-bold text-ink">{salesChannelLabel(order.channel)}</span>
+              {order.externalOrderNo && (
+                <>
+                  주문번호 <span className="font-numeric text-ink">{order.externalOrderNo}</span>
+                </>
+              )}
+            </p>
+          )}
         </div>
         <OrderStatusBadge status={order.status} />
       </div>

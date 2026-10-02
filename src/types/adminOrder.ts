@@ -20,6 +20,8 @@ export type AdminOrderSummary = {
   paymentStatus: string | null;
   orderedAt: string;
   paidAt: string | null;
+  /** 판매 경로. MALL 이면 자사몰. */
+  channel: string;
 };
 
 export type AdminOrderPage = {
@@ -57,6 +59,9 @@ export type AdminOrderDetail = {
     /** 실패·취소된 결제의 이유. 나이스 거절이면 거절 코드와 문구가 들어 있다. */
     failReason: string | null;
   } | null;
+  /** 판매 경로와 바깥 서비스 주문번호. 자사몰이면 MALL·null. */
+  channel: string;
+  externalOrderNo: string | null;
   delivery: {
     status: string;
     carrier: string | null;

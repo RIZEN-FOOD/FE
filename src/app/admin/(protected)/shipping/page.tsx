@@ -18,6 +18,9 @@ type Policy = {
   baseFee: number;
   freeThreshold: number | null;
   islandExtraFee: number;
+  /** 단순 변심 반품(편도)·교환(왕복) 배송비. null 이면 아직 정하지 않음. */
+  returnFee: number | null;
+  exchangeFee: number | null;
 };
 
 export default function AdminShippingPage() {
@@ -29,6 +32,8 @@ export default function AdminShippingPage() {
   const [baseFee, setBaseFee] = useState("");
   const [freeThreshold, setFreeThreshold] = useState("");
   const [islandExtraFee, setIslandExtraFee] = useState("");
+  const [returnFee, setReturnFee] = useState("");
+  const [exchangeFee, setExchangeFee] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -38,6 +43,8 @@ export default function AdminShippingPage() {
       setBaseFee(String(p.baseFee));
       setFreeThreshold(p.freeThreshold == null ? "" : String(p.freeThreshold));
       setIslandExtraFee(String(p.islandExtraFee));
+      setReturnFee(p.returnFee == null ? "" : String(p.returnFee));
+      setExchangeFee(p.exchangeFee == null ? "" : String(p.exchangeFee));
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "배송비 정책을 불러오지 못했습니다.");
     } finally {
@@ -64,7 +71,11 @@ export default function AdminShippingPage() {
     const base = Number(baseFee || 0);
     const free = freeThreshold.trim() === "" ? null : Number(freeThreshold);
     const island = Number(islandExtraFee || 0);
-    if ([base, island].some((v) => !Number.isFinite(v) || v < 0) || (free != null && (!Number.isFinite(free) || free < 0))) {
+    // 반품·교환 배송비는 비워 두면 '아직 정하지 않음'으로 저장한다(0원과 다르다).
+    const ret = returnFee.trim() === "" ? null : Number(returnFee);
+    const exc = exchangeFee.trim() === "" ? null : Number(exchangeFee);
+    const badOptional = [free, ret, exc].some((v) => v != null && (!Number.isFinite(v) || v < 0));
+    if ([base, island].some((v) => !Number.isFinite(v) || v < 0) || badOptional) {
       flash("금액은 0원 이상 숫자로 입력해 주세요.");
       return;
     }
@@ -74,6 +85,8 @@ export default function AdminShippingPage() {
         baseFee: base,
         freeThreshold: free,
         islandExtraFee: island,
+        returnFee: ret,
+        exchangeFee: exc,
       });
       flash("저장되었습니다.");
     } catch (e) {
@@ -164,6 +177,29 @@ export default function AdminShippingPage() {
           hint="제주·도서 지역에 더 받는 금액입니다. 없으면 0."
           value={islandExtraFee}
           onChange={setIslandExtraFee}
+        />
+      </div>
+
+      {/* 반품·교환 배송비 (2026-10-02). 네이버페이 주문형이 상품정보에 숫자로 요구한다. */}
+      <h2 className="mt-8 font-kr text-base font-bold text-ink">반품·교환 배송비</h2>
+      <p className="mt-1 font-kr text-sm text-ink-soft">
+        단순 변심으로 반품·교환할 때 손님이 내는 금액입니다. 상품 하자·오배송이면 받지 않습니다.
+        네이버페이·톡체크아웃 주문에도 그대로 전달됩니다.
+      </p>
+      <div className="mt-4 flex flex-col gap-5 rounded-[4px] border border-line bg-paper px-5 py-5">
+        <NumberField
+          label="반품 배송비 (원, 편도)"
+          hint="돌려보내는 한 번의 배송비입니다. 아직 정하지 않았으면 비워 두세요."
+          value={returnFee}
+          onChange={setReturnFee}
+          placeholder="예: 3500"
+        />
+        <NumberField
+          label="교환 배송비 (원, 왕복)"
+          hint="돌려보내고 새 상품을 다시 보내는 왕복 배송비입니다. 아직 정하지 않았으면 비워 두세요."
+          value={exchangeFee}
+          onChange={setExchangeFee}
+          placeholder="예: 7000"
         />
       </div>
     </div>

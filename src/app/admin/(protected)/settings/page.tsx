@@ -44,7 +44,7 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     title: "배송·출고",
     note: "배송·교환·환불 안내 페이지에 표시됩니다. 배송비 금액은 왼쪽 '배송비' 메뉴에서 바꿉니다.",
     keys: [
-      "shipping.carrier", "shipping.return_address", "shipping.tracking_url",
+      "shipping.carrier", "shipping.return_address", "shipping.return_zipcode", "shipping.tracking_url",
       "shipping.auto_complete_days", "shipping.island_zip_ranges",
     ],
   },
@@ -110,6 +110,7 @@ const HINTS: Record<string, string> = {
   "company.mail_order_no": "예: 2026-서울강남-01234",
   "shipping.carrier": "예: 롯데택배",
   "shipping.return_address": "반품 상품을 받을 주소입니다. 출고 대행사 창고라면 업체명도 함께 넣어주세요.",
+  "shipping.return_zipcode": "위 반품지 주소의 우편번호입니다. 숫자 5자리. 네이버페이·톡체크아웃에 반품지로 전달됩니다.",
   "shipping.island_zip_ranges":
     "도서산간 추가 배송비를 받을 우편번호입니다. 비워 두면 기본 목록(제주·울릉·옹진·신안·완도 등)을 씁니다. 택배사 목록이 다를 때만 쉼표로 나눠 넣고, 범위는 '-'로 이어주세요.",
   "auth.login_image":
@@ -120,6 +121,7 @@ const HINTS: Record<string, string> = {
 
 const PLACEHOLDERS: Record<string, string> = {
   "shipping.island_zip_ranges": "63000-63644, 40200-40240, 54000",
+  "shipping.return_zipcode": "예: 12345",
 };
 
 export default function AdminSettingsPage() {

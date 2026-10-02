@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/datetime";
 import { cn } from "@/lib/cn";
+import { salesChannelLabel } from "@/lib/salesChannel";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { TrackingUpload } from "@/components/admin/TrackingUpload";
 import { ADMIN_ORDER_STATUSES, type AdminOrderPage, type AdminOrderSummary } from "@/types/adminOrder";
@@ -144,7 +145,13 @@ export default function AdminOrdersPage() {
                     </Link>
                   </td>
                   <td className="py-3 pr-3 font-kr text-ink">{o.ordererName}</td>
-                  <td className="py-3 pr-3 font-kr text-ink-soft">{o.title}</td>
+                  <td className="py-3 pr-3 font-kr text-ink-soft">
+                    {/* 바깥 판매 경로(네이버페이·톡체크아웃)만 표시한다. 송장·취소·반품을 그 서비스 규칙대로 처리해야 한다. */}
+                    {salesChannelLabel(o.channel) && (
+                      <span className="mr-1.5 inline-block rounded-[3px] border border-line px-1.5 py-px align-[1px] font-kr text-[11px] font-bold text-ink">{salesChannelLabel(o.channel)}</span>
+                    )}
+                    {o.title}
+                  </td>
                   <td className="py-3 pr-3 text-right font-numeric text-ink">{won(o.totalAmount)}원</td>
                   <td className="py-3 pr-3">
                     <OrderStatusBadge status={o.status} />
