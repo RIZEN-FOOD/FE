@@ -15,7 +15,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
 
   return (
     <Link href={`/products/${product.slug}`} className="group block">
-      <div className="relative aspect-square overflow-hidden rounded-[12px] bg-clay-soft/40">
+      <div className="relative aspect-square overflow-hidden rounded-none bg-clay-soft/40">
         {product.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

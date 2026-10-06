@@ -35,7 +35,7 @@ export function NutritionFacts({ nutrition }: { nutrition: Nutrition }) {
           {featured.map((r, i) => (
             <div
               key={r.label}
-              className={`rounded-[12px] border px-4 py-5 md:px-5 md:py-6 ${
+              className={`rounded-none border px-4 py-5 md:px-5 md:py-6 ${
                 i === 0 ? "border-transparent bg-ink text-cream-warm" : "border-line bg-paper"
               }`}
             >
@@ -132,7 +132,7 @@ export function IngredientList({
       {/* 전자상거래법 상품정보 고시. 항목은 모두 남기되 줄마다 선을 긋지 않고
           항목명/값 두 열로 놓아 표가 아니라 읽는 글처럼 보이게 한다. */}
       {labelRows.length > 0 && (
-        <dl className="mt-6 grid grid-cols-[7rem_1fr] gap-x-6 gap-y-3 rounded-[12px] bg-paper px-6 py-6 md:grid-cols-[8rem_1fr]">
+        <dl className="mt-6 grid grid-cols-[7rem_1fr] gap-x-6 gap-y-3 rounded-none bg-paper px-6 py-6 md:grid-cols-[8rem_1fr]">
           {labelRows.map((r) => (
             <div key={r.k} className="contents">
               <dt className="font-kr text-small text-ink-faint">{r.k}</dt>

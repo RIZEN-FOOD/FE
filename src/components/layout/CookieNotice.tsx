@@ -53,7 +53,7 @@ export function CookieNotice() {
       aria-label="쿠키 사용 안내"
       className="fixed inset-x-0 bottom-0 z-[60] animate-[rz-cookie-in_var(--dur-slow)_var(--ease-out)_both] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:inset-x-auto md:bottom-6 md:left-6 md:max-w-[420px] md:px-0 md:pb-0"
     >
-      <div className="flex items-center gap-4 rounded-[12px] bg-ink px-5 py-4 text-cream-warm shadow-[0_10px_28px_rgba(34,30,28,0.28)]">
+      <div className="flex items-center gap-4 rounded-none bg-ink px-5 py-4 text-cream-warm shadow-[0_10px_28px_rgba(34,30,28,0.28)]">
         <p className="min-w-0 flex-1 font-kr text-caption leading-relaxed text-cream-warm/85">
           로그인 유지와 장바구니에 꼭 필요한 쿠키만 사용합니다.{" "}
           <Link

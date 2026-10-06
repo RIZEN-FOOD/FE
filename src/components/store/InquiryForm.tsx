@@ -66,7 +66,7 @@ export function InquiryForm() {
   if (done) {
     return (
       <Container className="py-20">
-        <div className="mx-auto max-w-md rounded-[12px] border border-line bg-paper px-6 py-14 text-center">
+        <div className="mx-auto max-w-md rounded-none border border-line bg-paper px-6 py-14 text-center">
           <p className="font-kr text-lg font-bold text-ink">문의가 접수되었습니다</p>
           <p className="mt-2 font-kr text-sm text-ink-soft">
             빠르게 확인하고 남겨주신 이메일로 답변드리겠습니다.
@@ -139,7 +139,7 @@ export function InquiryForm() {
           </label>
 
           {/* 개인정보 수집 동의 — 법적 의무 */}
-          <label className="flex items-start gap-2 rounded-[6px] bg-cream-warm px-4 py-3 font-kr text-caption text-ink-soft">
+          <label className="flex items-start gap-2 rounded-none bg-cream-warm px-4 py-3 font-kr text-caption text-ink-soft">
             <input
               type="checkbox"
               checked={agreeConsent}
@@ -154,7 +154,7 @@ export function InquiryForm() {
           </label>
 
           {error && (
-            <p role="alert" className="rounded-[6px] bg-danger/10 px-3.5 py-2.5 font-kr text-caption text-danger">
+            <p role="alert" className="rounded-none bg-danger/10 px-3.5 py-2.5 font-kr text-caption text-danger">
               {error}
             </p>
           )}

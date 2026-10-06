@@ -28,7 +28,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {/* 자사몰 — 주 채널이라 강조 */}
-          <div className="flex flex-col rounded-[12px] border border-ink bg-ink p-7">
+          <div className="flex flex-col rounded-none border border-ink bg-ink p-7">
             <p className="font-en text-[12px] font-extrabold uppercase tracking-[0.2em] text-clay-soft">
               Official
             </p>
@@ -54,7 +54,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
           </div>
 
           {/* 외부 채널 — 상품별 구매 링크는 상세 페이지에 있다 */}
-          <div className="flex flex-col rounded-[12px] border border-line bg-paper p-7">
+          <div className="flex flex-col rounded-none border border-line bg-paper p-7">
             <p className="font-en text-[12px] font-extrabold uppercase tracking-[0.2em] text-clay-deep">
               Marketplace
             </p>
@@ -71,7 +71,7 @@ export function BuyChannels({ primary }: { primary: ProductListItem | null }) {
           </div>
 
           {/* B2B */}
-          <div className="flex flex-col rounded-[12px] border border-line bg-paper p-7">
+          <div className="flex flex-col rounded-none border border-line bg-paper p-7">
             <p className="font-en text-[12px] font-extrabold uppercase tracking-[0.2em] text-clay-deep">
               B2B
             </p>

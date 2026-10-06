@@ -54,7 +54,7 @@ export function CartContent() {
       </ul>
 
       {/* 결제 요약 */}
-      <aside className="rounded-[12px] border border-line bg-paper p-6 lg:sticky lg:top-24">
+      <aside className="rounded-none border border-line bg-paper p-6 lg:sticky lg:top-24">
         <h2 className="font-kr text-lg font-bold text-ink">결제 금액</h2>
 
         <dl className="mt-5 flex flex-col gap-3 font-kr text-sm">
@@ -71,7 +71,7 @@ export function CartContent() {
         </dl>
 
         {cart.freeShippingThreshold != null && cart.freeShippingRemaining > 0 && (
-          <p className="mt-3 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-clay-deep">
+          <p className="mt-3 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-clay-deep">
             {won(cart.freeShippingRemaining)}원 더 담으면 무료배송입니다.
           </p>
         )}
@@ -134,7 +134,7 @@ function CartRow({ item }: { item: CartItemView }) {
     <li className={`flex gap-4 py-5 ${item.available ? "" : "opacity-70"}`}>
       {/* 썸네일 */}
       <Link href={`/products/${item.slug}`} className="shrink-0">
-        <div className="h-20 w-20 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
+        <div className="h-20 w-20 overflow-hidden rounded-none border border-line bg-cream-warm">
           {item.thumbnailUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={item.thumbnailUrl} alt={item.name} className="h-full w-full object-cover" />

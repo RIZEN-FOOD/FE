@@ -63,7 +63,7 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
   }
 
   return (
-    <section className="mt-8 rounded-[12px] border border-line bg-paper p-5">
+    <section className="mt-8 rounded-none border border-line bg-paper p-5">
       <div className="flex items-center justify-between">
         <h2 className="font-kr text-sm font-bold text-ink">취소 · 반품 · 교환</h2>
         {available.length > 0 && !open && (
@@ -85,7 +85,7 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
 
       {/* 신청 폼 */}
       {open && (
-        <div className="mt-4 flex flex-col gap-3 rounded-[6px] bg-cream-warm/50 p-4">
+        <div className="mt-4 flex flex-col gap-3 rounded-none bg-cream-warm/50 p-4">
           <label className="block">
             <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">종류</span>
             <select
@@ -167,7 +167,7 @@ export function ClaimSection({ orderNo, status }: { orderNo: string; status: Ord
       {claims.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {claims.map((c) => (
-            <li key={c.id} className="rounded-[6px] border border-line px-4 py-3">
+            <li key={c.id} className="rounded-none border border-line px-4 py-3">
               <div className="flex items-center justify-between">
                 <span className="font-kr text-sm font-medium text-ink">
                   {CLAIM_TYPE_LABEL[c.type]}

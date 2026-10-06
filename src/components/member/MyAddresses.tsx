@@ -144,7 +144,7 @@ export function MyAddresses() {
 
       {/* 입력 폼 */}
       {form && (
-        <div className="mt-4 rounded-[12px] border border-line bg-paper p-5">
+        <div className="mt-4 rounded-none border border-line bg-paper p-5">
           <h3 className="font-kr text-sm font-bold text-ink">
             {form.id == null ? "새 배송지" : "배송지 수정"}
           </h3>
@@ -202,7 +202,7 @@ export function MyAddresses() {
 
       {/* 목록 */}
       {items.length === 0 && !form ? (
-        <div className="mt-4 rounded-[12px] border border-dashed border-line px-6 py-16 text-center">
+        <div className="mt-4 rounded-none border border-dashed border-line px-6 py-16 text-center">
           <p className="font-kr text-sm text-ink-soft">저장된 배송지가 없습니다.</p>
           <button type="button" onClick={openNew}
             className="mt-3 font-kr text-sm font-medium text-clay-deep underline underline-offset-4">
@@ -212,7 +212,7 @@ export function MyAddresses() {
       ) : (
         <ul className="mt-4 flex flex-col gap-3">
           {items.map((a) => (
-            <li key={a.id} className="rounded-[12px] border border-line bg-paper p-5">
+            <li key={a.id} className="rounded-none border border-line bg-paper p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">

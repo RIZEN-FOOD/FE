@@ -112,7 +112,7 @@ function MyOrders() {
   return (
     <ul className="flex flex-col gap-4">
       {data.items.map((o) => (
-        <li key={o.orderNo} className="rounded-[12px] border border-line bg-paper p-5">
+        <li key={o.orderNo} className="rounded-none border border-line bg-paper p-5">
           <div className="flex items-center justify-between gap-2">
             <span className="rounded-full bg-cream-warm px-2.5 py-0.5 font-kr text-caption font-medium text-clay-deep">
               {ORDER_STATUS_LABEL[o.status] ?? o.status}
@@ -121,7 +121,7 @@ function MyOrders() {
           </div>
 
           <div className="mt-3 flex items-center gap-3">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-none border border-line bg-cream-warm">
               {o.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={o.thumbnailUrl} alt="" className="h-full w-full object-cover" />
@@ -184,9 +184,9 @@ function MyWishlist() {
   return (
     <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
       {items.map((w) => (
-        <li key={w.productId} className="rounded-[12px] border border-line bg-paper">
+        <li key={w.productId} className="rounded-none border border-line bg-paper">
           <Link href={`/products/${w.slug}`} className="block">
-            <div className="relative aspect-square overflow-hidden rounded-t-[12px] bg-clay-soft/40">
+            <div className="relative aspect-square overflow-hidden rounded-t-none bg-clay-soft/40">
               {w.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={w.thumbnailUrl} alt={w.name} className="h-full w-full object-cover" />
@@ -264,7 +264,7 @@ function MyReviews() {
   return (
     <ul className="flex flex-col gap-4">
       {data.items.map((r) => (
-        <li key={r.id} className="rounded-[12px] border border-line bg-paper p-5">
+        <li key={r.id} className="rounded-none border border-line bg-paper p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <Link
@@ -295,7 +295,7 @@ function MyReviews() {
             <div className="mt-3 flex gap-2">
               {r.imageUrls.map((url, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={url} alt="" className="h-16 w-16 rounded-[6px] object-cover" />
+                <img key={i} src={url} alt="" className="h-16 w-16 rounded-none object-cover" />
               ))}
             </div>
           )}
@@ -331,7 +331,7 @@ function MyInquiries() {
   return (
     <ul className="flex flex-col gap-4">
       {data.items.map((q) => (
-        <li key={q.id} className="rounded-[12px] border border-line bg-paper p-5">
+        <li key={q.id} className="rounded-none border border-line bg-paper p-5">
           <div className="flex items-center gap-2">
             <span
               className={cn(
@@ -349,7 +349,7 @@ function MyInquiries() {
           </p>
 
           {q.answer && (
-            <div className="mt-4 rounded-[6px] bg-cream-warm px-4 py-3">
+            <div className="mt-4 rounded-none bg-cream-warm px-4 py-3">
               <p className="font-kr text-caption font-semibold text-clay-deep">답변</p>
               <p className="mt-1 whitespace-pre-line font-kr text-sm leading-relaxed text-ink-soft">
                 {q.answer}
@@ -388,7 +388,7 @@ function MyAccount({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="max-w-md">
-      <dl className="rounded-[12px] border border-line bg-paper px-5 py-1">
+      <dl className="rounded-none border border-line bg-paper px-5 py-1">
         {[
           { k: "이름", v: me.name },
           { k: "이메일", v: me.email },
@@ -432,7 +432,7 @@ function EmptyState({
   actionHref: string;
 }) {
   return (
-    <div className="rounded-[12px] border border-dashed border-line px-6 py-16 text-center">
+    <div className="rounded-none border border-dashed border-line px-6 py-16 text-center">
       <p className="font-kr text-sm text-ink-soft">{message}</p>
       <Link
         href={actionHref}

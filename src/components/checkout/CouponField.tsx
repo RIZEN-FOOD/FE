@@ -79,7 +79,7 @@ export function CouponField({
 
   if (applied) {
     return (
-      <div className="mt-5 rounded-[6px] border border-clay-deep/40 bg-cream-warm px-3 py-3">
+      <div className="mt-5 rounded-none border border-clay-deep/40 bg-cream-warm px-3 py-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="font-kr text-sm font-medium text-ink">

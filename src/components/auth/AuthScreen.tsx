@@ -172,20 +172,20 @@ export function AuthScreen({
 
       {/* ── 우측 폼 패널 ── */}
       <div className="relative z-10 flex min-h-svh items-center justify-center px-6 pb-16 pt-28 md:pt-24">
-        <div className="w-full max-w-[382px] rounded-[12px] bg-paper/95 p-8 shadow-[0_24px_70px_rgba(34,30,28,0.2)] backdrop-blur md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+        <div className="w-full max-w-[382px] rounded-none bg-paper/95 p-8 shadow-[0_24px_70px_rgba(34,30,28,0.2)] backdrop-blur md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
           {/* 컴포넌트 상단 브랜드 로고 */}
           <div className="mb-7 flex justify-center md:justify-start">
             <BrandLogo className="h-8" />
           </div>
 
           {/* 토글 */}
-          <div className="mb-8 flex gap-1 rounded-[12px] bg-cream-warm p-1 md:bg-clay-soft/25">
+          <div className="mb-8 flex gap-1 rounded-none bg-cream-warm p-1 md:bg-clay-soft/25">
             {(["login", "signup"] as Mode[]).map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => switchMode(m)}
-                className={`flex-1 rounded-[12px] py-2.5 font-kr text-sm font-semibold transition ${
+                className={`flex-1 rounded-none py-2.5 font-kr text-sm font-semibold transition ${
                   mode === m ? "bg-ink text-cream-warm shadow-sm" : "text-ink-faint"
                 }`}
               >
@@ -303,7 +303,7 @@ export function AuthScreen({
             )}
 
             {error && (
-              <p role="alert" className="rounded-[12px] bg-danger/10 px-3.5 py-2.5 font-kr text-caption font-medium text-danger">
+              <p role="alert" className="rounded-none bg-danger/10 px-3.5 py-2.5 font-kr text-caption font-medium text-danger">
                 {error}
               </p>
             )}
@@ -382,7 +382,7 @@ function Field({
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[50px] w-full rounded-[12px] border border-transparent bg-cream-warm px-4 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep focus:bg-paper"
+        className="h-[50px] w-full rounded-none border border-transparent bg-cream-warm px-4 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep focus:bg-paper"
       />
     </label>
   );

@@ -546,7 +546,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
           <ul className="mt-4 flex flex-col divide-y divide-line border-y border-line">
             {orderable.map((it) => (
               <li key={it.id} className="flex items-center gap-3 py-3">
-                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-none border border-line bg-cream-warm">
                   {it.thumbnailUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={it.thumbnailUrl} alt={it.name} className="h-full w-full object-cover" />
@@ -565,7 +565,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
       </div>
 
       {/* 결제 요약 */}
-      <aside className="rounded-[12px] border border-line bg-paper p-6 lg:sticky lg:top-24">
+      <aside className="rounded-none border border-line bg-paper p-6 lg:sticky lg:top-24">
         <h2 className="font-kr text-lg font-bold text-ink">결제 금액</h2>
         <dl className="mt-5 flex flex-col gap-3 font-kr text-sm">
           <div className="flex justify-between">
@@ -611,7 +611,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
           <fieldset className="mt-5">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
             {availableMethods.length === 0 && (
-              <p className="mt-2 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
+              <p className="mt-2 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
                 지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
               </p>
             )}
@@ -642,7 +642,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
           <fieldset className="mt-5">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
             {niceMethods.length === 0 && (
-              <p className="mt-2 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
+              <p className="mt-2 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
                 지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
               </p>
             )}
@@ -670,7 +670,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
             </div>
           </fieldset>
         ) : (
-          <p className="mt-4 rounded-[6px] bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
+          <p className="mt-4 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
             지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 결제사 키를 넣으면 열립니다.
           </p>
         )}
@@ -739,7 +739,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
         </div>
 
         {error && (
-          <p role="alert" className="mt-4 rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+          <p role="alert" className="mt-4 rounded-none bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
             {error}
           </p>
         )}

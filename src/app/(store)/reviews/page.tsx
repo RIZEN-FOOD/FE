@@ -43,7 +43,7 @@ export default async function ReviewsPage({
       <Container className="py-14">
 
       {items.length === 0 ? (
-        <div className="mt-12 rounded-[12px] border border-dashed border-line px-6 py-20 text-center">
+        <div className="mt-12 rounded-none border border-dashed border-line px-6 py-20 text-center">
           <p className="font-kr text-sm text-ink-soft">첫 후기를 기다리고 있습니다.</p>
           <p className="mt-1 font-kr text-caption text-ink-faint">
             로그인 후 상품 페이지에서 후기를 남길 수 있습니다.

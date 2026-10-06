@@ -54,7 +54,7 @@ export function HowToCook() {
             불 앞에 서 있을 필요 없이 용기 하나로 준비합니다. 한 스푼에 물 100ml, 그리고 전자레인지 30초씩.
           </p>
           {/* 완성된 한 그릇. 사진이 상자 대신 이 섹션의 무게를 잡는다. */}
-          <div className="relative mt-8 aspect-[4/5] max-w-md overflow-hidden rounded-[12px] bg-clay-soft/40">
+          <div className="relative mt-8 aspect-[4/5] max-w-md overflow-hidden rounded-none bg-clay-soft/40">
             <Image
               src="/assets/hero/hero-a.jpg"
               alt="크림오브라이스로 차린 한 그릇과 바나나·견과"

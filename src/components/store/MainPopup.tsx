@@ -151,7 +151,7 @@ export function PopupCard({
 
   return (
     <div className="mx-auto w-full max-w-[400px]">
-      <div className="overflow-hidden rounded-[12px] bg-paper shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+      <div className="overflow-hidden rounded-none bg-paper shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
         <div className="bg-ink">{img && linked(img, "block")}</div>
         <div className="flex flex-col gap-2 px-6 py-5">
           {showLinkButton && (href || preview) &&

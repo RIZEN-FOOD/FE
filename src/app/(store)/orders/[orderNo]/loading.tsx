@@ -11,7 +11,7 @@ export default function OrderDetailLoading() {
         <div>
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} className="flex items-center gap-4 border-t border-line py-4">
-              <Skeleton className="h-14 w-14 rounded-[6px]" />
+              <Skeleton className="h-14 w-14 rounded-none" />
               <SkeletonText lines={2} className="max-w-xs flex-1" />
               <Skeleton className="h-4 w-16" />
             </div>

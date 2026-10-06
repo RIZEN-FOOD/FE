@@ -32,7 +32,7 @@ export function DeliveryInfo({ delivery }: { delivery: DeliveryView | null }) {
   }
 
   return (
-    <div className="mt-8 rounded-[12px] border border-line bg-paper p-5">
+    <div className="mt-8 rounded-none border border-line bg-paper p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-kr text-sm font-bold text-ink">배송 정보</h2>
         {delivered ? (

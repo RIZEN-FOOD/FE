@@ -82,7 +82,7 @@ export function GuestOrderLookup() {
         </label>
 
         {error && (
-          <p role="alert" className="rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+          <p role="alert" className="rounded-none bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
             {error}
           </p>
         )}

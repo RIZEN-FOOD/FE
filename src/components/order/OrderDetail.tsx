@@ -50,7 +50,7 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
   return (
     <div className="mx-auto max-w-2xl">
       {justDone && (
-        <div className="mb-8 rounded-[6px] border border-line bg-paper px-6 py-8 text-center">
+        <div className="mb-8 rounded-none border border-line bg-paper px-6 py-8 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FAF7F1"
               strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -78,7 +78,7 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
       <ul className="mt-6 flex flex-col divide-y divide-line border-y border-line">
         {order.items.map((it, i) => (
           <li key={i} className="flex items-center gap-3 py-4">
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] border border-line bg-cream-warm">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-none border border-line bg-cream-warm">
               {it.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={it.thumbnailUrl} alt={it.name} className="h-full w-full object-cover" />
@@ -115,7 +115,7 @@ export function OrderDetail({ orderNo }: { orderNo: string }) {
       </dl>
 
       {/* 배송지 */}
-      <div className="mt-8 rounded-[12px] border border-line bg-paper p-5">
+      <div className="mt-8 rounded-none border border-line bg-paper p-5">
         <h2 className="font-kr text-sm font-bold text-ink">배송지</h2>
         <div className="mt-3 flex flex-col gap-1 font-kr text-sm text-ink-soft">
           <p>{order.receiverName} · {order.receiverPhoneMasked}</p>

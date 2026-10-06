@@ -66,7 +66,7 @@ export default async function ProductsPage({
       </div>
 
       {items.length === 0 ? (
-        <div className="mt-16 rounded-[12px] border border-dashed border-line px-6 py-16 text-center">
+        <div className="mt-16 rounded-none border border-dashed border-line px-6 py-16 text-center">
           <p className="font-kr text-sm text-ink-soft">등록된 상품이 아직 없습니다.</p>
         </div>
       ) : (

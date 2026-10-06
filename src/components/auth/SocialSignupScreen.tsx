@@ -72,7 +72,7 @@ export function SocialSignupScreen() {
     <>
       <SiteHeader forceSolid />
       <main className="flex min-h-svh items-center justify-center bg-cream px-6 pb-16 pt-28">
-        <div className="w-full max-w-[400px] rounded-[12px] bg-paper p-8 shadow-[0_24px_70px_rgba(34,30,28,0.12)]">
+        <div className="w-full max-w-[400px] rounded-none bg-paper p-8 shadow-[0_24px_70px_rgba(34,30,28,0.12)]">
           <div className="mb-6 flex justify-center">
             <BrandLogo className="h-8" />
           </div>
@@ -99,7 +99,7 @@ export function SocialSignupScreen() {
                 처음 오셨네요. 아래 내용을 확인하고 동의하면 바로 시작합니다.
               </p>
 
-              <dl className="mt-6 flex flex-col gap-2 rounded-[12px] bg-cream-warm px-4 py-3.5 font-kr text-sm">
+              <dl className="mt-6 flex flex-col gap-2 rounded-none bg-cream-warm px-4 py-3.5 font-kr text-sm">
                 <div className="flex gap-3">
                   <dt className="w-12 shrink-0 text-ink-faint">이름</dt>
                   <dd className="text-ink">{pending.name ?? "회원"}</dd>
@@ -140,7 +140,7 @@ export function SocialSignupScreen() {
               </div>
 
               {error && (
-                <p role="alert" className="mt-4 rounded-[12px] bg-danger/10 px-3.5 py-2.5 font-kr text-caption font-medium text-danger">
+                <p role="alert" className="mt-4 rounded-none bg-danger/10 px-3.5 py-2.5 font-kr text-caption font-medium text-danger">
                   {error}
                 </p>
               )}

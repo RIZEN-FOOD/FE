@@ -73,7 +73,7 @@ export function ReviewCard({
         <div className="mt-4 flex gap-2">
           {review.imageUrls.slice(0, 3).map((url, i) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={i} src={url} alt="" className="h-16 w-16 rounded-[12px] object-cover" />
+            <img key={i} src={url} alt="" className="h-16 w-16 rounded-none object-cover" />
           ))}
         </div>
       )}

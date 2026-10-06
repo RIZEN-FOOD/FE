@@ -101,7 +101,7 @@ export function AddToCart({
 
   if (product.soldOut) {
     return (
-      <div className="rounded-[6px] bg-line py-3 text-center font-kr text-sm font-medium text-ink-soft">
+      <div className="rounded-none bg-line py-3 text-center font-kr text-sm font-medium text-ink-soft">
         품절되었습니다
       </div>
     );
@@ -226,7 +226,7 @@ export function AddToCart({
       )}
 
       {error && (
-        <p role="alert" className="mb-3 rounded-[6px] bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+        <p role="alert" className="mb-3 rounded-none bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
           {error}
         </p>
       )}

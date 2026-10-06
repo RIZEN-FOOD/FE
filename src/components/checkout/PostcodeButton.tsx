@@ -136,7 +136,7 @@ export function PostcodeButton({
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div className="flex h-[min(560px,calc(100dvh-2rem))] w-full max-w-[500px] flex-col overflow-hidden rounded-[12px] bg-paper shadow-xl">
+          <div className="flex h-[min(560px,calc(100dvh-2rem))] w-full max-w-[500px] flex-col overflow-hidden rounded-none bg-paper shadow-xl">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <span className="font-kr text-sm font-bold text-ink">주소 검색</span>
               <button

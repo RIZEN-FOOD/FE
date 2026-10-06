@@ -31,7 +31,7 @@ export function Card({ children, className, as: Tag = "div", interactive = false
   return (
     <Tag
       className={cn(
-        "rounded-[12px] border px-7 py-8 transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-out)]",
+        "rounded-none border px-7 py-8 transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-out)]",
         tones[tone],
         interactive &&
           "hover:-translate-y-1 hover:border-clay-soft hover:shadow-[0_24px_48px_-20px_rgba(90,60,40,0.25)]",
