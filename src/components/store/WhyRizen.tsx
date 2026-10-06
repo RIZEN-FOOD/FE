@@ -9,8 +9,7 @@ import { Container, Reveal } from "@/components/ui";
  *   - '무첨가'·'자연 그대로' → 쓰지 않는다 (원재료 표기 사실로 말한다)
  *   - 운동 관련은 "운동 전후 탄수화물 보충" 까지만 허용
  *
- * 레이아웃: 좌측 리드 + 우측 편집형 목록(큰 세리프 숫자 + 하이라인).
- * 똑같은 카드 반복 대신 잡지처럼 읽히게 한다.
+ * 레이아웃: 좌측 리드 + 우측 2×2 칸(큰 세리프 숫자 + 제목 + 설명). 2026-10-06 세로 목록에서 바꿈.
  */
 const reasons: { no: string; title: string; body: string }[] = [
   {
@@ -58,23 +57,26 @@ export function WhyRizen() {
           </p>
         </Reveal>
 
-        {/* 우 · 편집형 목록. 한 항목씩 80ms 간격으로 — 번호 순서대로 읽히게. */}
-        <ul className="flex flex-col">
+        {/* 우 · 2×2 정사각형 칸 (2026-10-06). 세로로 길게 늘어놓으면 모바일에서 네 칸을 보려고 한참 내려야 했다.
+            네 칸 모두 가로세로가 같은 정사각형이다(aspect-square). 번호는 위, 제목·설명은 아래에 붙인다.
+            글이 길어 칸을 넘치면 잘리지 않고 그 칸만 살짝 길어진다 — aspect-ratio 는 내용보다 작아지지 않는다.
+            칸 사이는 1px 선(배경색이 비쳐 보이는 방식)으로 나눈다. 한 칸씩 80ms 간격으로 — 번호 순서대로 읽히게. */}
+        <ul className="grid grid-cols-2 gap-px border border-line bg-line">
           {reasons.map((r, i) => (
             <Reveal
               key={r.no}
               as="li"
               delay={i * 80}
-              className="grid grid-cols-[auto_1fr] gap-x-6 border-t border-line py-8 first:border-t-0 first:pt-0 md:gap-x-10 md:py-10"
+              className="flex aspect-square flex-col justify-between bg-paper p-3 sm:p-6 md:p-8"
             >
-              <span className="font-display text-4xl font-normal italic leading-none text-clay/70 md:text-5xl">
+              <span className="font-display text-2xl font-normal italic leading-none text-clay/70 sm:text-3xl md:text-5xl">
                 {r.no}
               </span>
               <div>
-                <h3 className="font-display text-sub font-semibold text-ink">
+                <h3 className="font-display text-sm font-semibold leading-snug text-ink sm:text-base md:text-sub">
                   {r.title}
                 </h3>
-                <p className="mt-2.5 max-w-md font-kr text-base leading-relaxed text-ink-soft">
+                <p className="mt-1 font-kr text-xs leading-[1.5] text-ink-soft sm:mt-1.5 sm:text-sm md:mt-2.5 md:text-base md:leading-relaxed">
                   {r.body}
                 </p>
               </div>
