@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui";
 import { WishlistButton } from "@/components/store/WishlistButton";
+import { NaverPayButton } from "@/components/store/NaverPayButton";
 import { ApiError } from "@/lib/api/client";
 import { useCart } from "@/store/cart";
 import type { ProductDetail, ProductOption } from "@/types/product";
@@ -50,6 +51,8 @@ export function AddToCart({
 
   const won = (n: number) => n.toLocaleString("ko-KR");
   const lineAmount = (selectedOption?.price ?? product.effectivePrice) * quantity;
+  /** 네이버페이 버튼이 누르는 순간의 수량을 읽는다. 품절 분기(아래 early return)보다 위에 둬야 한다(훅 순서). */
+  const currentQuantity = useCallback(() => quantity, [quantity]);
   const cartAmount = cart?.itemsAmount ?? 0;
   /** 무료배송 판정 기준 — 이미 담긴 것 + 지금 고른 것 */
   const basis = cartAmount + lineAmount;
@@ -239,6 +242,10 @@ export function AddToCart({
           <WishlistButton productId={product.id} variant="inline" />
         </div>
       </div>
+
+      {/* 네이버페이 주문형 (2026-10-06). 서버 설정이 꺼져 있으면 아무것도 그리지 않는다.
+          옵션 상품은 아직 네이버페이로 받지 않는다 — 품절이면 위에서 이미 이 화면까지 오지 않는다. */}
+      <NaverPayButton productId={product.id} eligible={product.options.length === 0} getQuantity={currentQuantity} />
 
       {added && !error && (
         <p className="mt-3 text-center font-kr text-sm text-ink-soft">

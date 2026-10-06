@@ -68,16 +68,20 @@ const YOUTUBE_ORIGINS = [
   "https://www.youtube.com",
 ];
 
+// 네이버페이 주문형 구매 버튼 SDK v2 (2026-10-06). 운영 SDK·버튼 이미지가 pstatic.net 에서 온다.
+// 테스트 SDK(test-pay.naver.com)와 주문서(order.pay.naver.com)는 위 PAY_ORIGINS 의 *.naver.com 으로 이미 열려 있다.
+const NAVERPAY_ORIGINS = ["https://npay-order.pstatic.net", "https://*.pstatic.net"];
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...YOUTUBE_ORIGINS].join(" ")}`,
+  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...YOUTUBE_ORIGINS, ...NAVERPAY_ORIGINS].join(" ")}`,
   "style-src 'self' 'unsafe-inline'",
   // 업로드 사진은 개발·운영 모두 같은 출처(/uploads)에서 온다.
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   // 개발 서버는 웹소켓으로 화면을 새로 고친다(HMR).
-  `connect-src 'self' ${isDev ? "ws: wss: " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS].join(" ")}`,
-  `frame-src 'self' ${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...YOUTUBE_ORIGINS].join(" ")}`,
+  `connect-src 'self' ${isDev ? "ws: wss: " : ""}${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...NAVERPAY_ORIGINS].join(" ")}`,
+  `frame-src 'self' ${[...POSTCODE_ORIGINS, ...PAY_ORIGINS, ...YOUTUBE_ORIGINS, ...NAVERPAY_ORIGINS].join(" ")}`,
   // 우리 화면을 남의 사이트에 끼워 넣지 못하게 한다(클릭재킹).
   "frame-ancestors 'self'",
   "base-uri 'self'",
