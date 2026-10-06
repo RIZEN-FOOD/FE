@@ -29,7 +29,7 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
   },
   {
     title: "고객센터",
-    keys: ["company.tel", "company.email", "company.hours"],
+    keys: ["company.tel", "company.email", "company.hours", "sns.kakao_channel"],
   },
   {
     title: "SNS 링크",
@@ -99,6 +99,8 @@ const HINTS: Record<string, string> = {
   "sns.instagram": "전체 주소로 넣어주세요. 예: https://instagram.com/…",
   "sns.youtube": "전체 주소로 넣어주세요. 예: https://youtube.com/@…",
   "sns.blog": "전체 주소로 넣어주세요. 예: https://blog.naver.com/…",
+  "sns.kakao_channel":
+    "사이트 오른쪽 아래 문의 메뉴에 '카카오톡 문의'로 나옵니다. 전체 주소로 넣어주세요. 예: https://pf.kakao.com/… 비우면 메뉴에서 빠집니다.",
   "privacy.processor_fulfillment": "상품을 보관하고 내보내는 업체입니다. 예: 와이에스컴퍼니",
   "privacy.processor_delivery": "상품을 배송하는 택배사입니다. 예: 롯데택배",
   "privacy.processor_payment": "결제를 대행하는 회사입니다. 계약 전이면 비워 두세요.",

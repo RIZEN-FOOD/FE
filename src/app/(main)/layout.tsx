@@ -1,6 +1,8 @@
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { QuickMenu } from "@/components/store/QuickMenu";
+import { serverApi } from "@/lib/server/api";
+import { safeUrl } from "@/lib/safeUrl";
 
 /**
  * 메인(히어로) 템플릿.
@@ -10,7 +12,9 @@ import { QuickMenu } from "@/components/store/QuickMenu";
  *
  * ★ header/footer 같은 필수 요소는 이 템플릿에만 두고, 페이지는 내용만 그린다.
  */
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  // 퀵메뉴의 카카오톡 채널 주소. 푸터와 같은 설정 조회라 Next 가 한 번만 부른다.
+  const settings = (await serverApi.getJson<Record<string, string>>("/api/settings")) ?? {};
   return (
     <>
       <SiteHeader />
@@ -18,7 +22,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <StoreFooter />
-      <QuickMenu revealAfterHero />
+      <QuickMenu revealAfterHero kakaoChannelUrl={safeUrl(settings["sns.kakao_channel"])} />
     </>
   );
 }

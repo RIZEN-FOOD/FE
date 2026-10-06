@@ -7,7 +7,10 @@ import { useEffect, useState } from "react";
 /**
  * 문의 퀵메뉴. 화면 우하단에 떠 있는 플로팅 버튼.
  *
- * 누르면 위로 메뉴가 펼쳐진다 — 문의하기, 자주 묻는 질문, 맨 위로.
+ * 누르면 위로 메뉴가 펼쳐진다 — 카카오톡 문의, 문의하기, 맨 위로.
+ *
+ * ★ 카카오톡 채널 주소는 관리자 › 사이트 설정(sns.kakao_channel)에서 온다(2026-10-06).
+ *   비었거나 주소 형식이 아니면 그 줄을 빼고, 바깥 사이트라 새 탭으로 연다.
  *
  * ★ revealAfterHero: 메인처럼 첫 화면이 히어로일 때, 히어로를 지나야 나타난다.
  *   (히어로 위에 버튼이 겹치지 않게)
@@ -17,7 +20,14 @@ import { useEffect, useState } from "react";
 
 /** 이 화면들에서는 띄우지 않는다. 주문을 끝내는 흐름이라 방해가 된다. */
 const HIDDEN_PATHS = ["/checkout", "/cart"];
-export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boolean }) {
+export function QuickMenu({
+  revealAfterHero = false,
+  kakaoChannelUrl,
+}: {
+  revealAfterHero?: boolean;
+  /** 카카오톡 채널 주소. 레이아웃이 사이트 설정에서 읽어 safeUrl 로 거른 값을 넘긴다. */
+  kakaoChannelUrl?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState(!revealAfterHero);
   const pathname = usePathname();
@@ -42,7 +52,8 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
     return () => io.disconnect();
   }, [revealAfterHero]);
 
-  const items: { label: string; href?: string; onClick?: () => void }[] = [
+  const items: { label: string; href?: string; external?: boolean; onClick?: () => void }[] = [
+    ...(kakaoChannelUrl ? [{ label: "카카오톡 문의", href: kakaoChannelUrl, external: true }] : []),
     { label: "문의하기", href: "/inquiry" },
     {
       label: "맨 위로",
@@ -65,7 +76,17 @@ export function QuickMenu({ revealAfterHero = false }: { revealAfterHero?: boole
         }`}
       >
         {items.map((item) =>
-          item.href ? (
+          item.href && item.external ? (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-10 items-center rounded-[6px] border border-line bg-paper px-4 py-2 font-kr text-sm text-ink shadow-[0_6px_20px_rgba(90,60,40,0.14)] transition hover:bg-clay-soft/40"
+            >
+              {item.label}
+            </a>
+          ) : item.href ? (
             <Link
               key={item.label}
               href={item.href}
