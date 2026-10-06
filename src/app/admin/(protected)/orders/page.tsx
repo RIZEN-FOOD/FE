@@ -16,7 +16,9 @@ import { ADMIN_ORDER_STATUSES, type AdminOrderPage, type AdminOrderSummary } fro
  *
  * 출고 대행사(3PL)와 주고받는 흐름
  *   1) '출고용 엑셀 받기' — 보낼 주문 목록을 .xlsx 로 내려받아 대행사에 넘긴다.
- *      '전체'를 고른 상태면 출고 대기(결제 완료·상품 준비중)만, 상태를 고르면 그 상태만 담는다.
+ *      '전체'(또는 '결제 완료')면 아직 넘기지 않은 결제 완료 주문만 담고, 담긴 주문은 '상품 준비중'으로 바뀐다.
+ *      그래서 송장을 올리기 전에 한 번 더 받아도 같은 주문이 두 번 넘어가지 않는다 (2026-10-06).
+ *      다시 받아야 하면 '상품 준비중'을 골라 받는다 — 이때는 상태가 바뀌지 않는다.
  *   2) 대행사가 맨 뒤 두 칸(택배사·송장번호)을 채워 보낸다.
  *   3) '송장 엑셀 등록' — 그 파일을 그대로 올리면 한 번에 반영된다.
  *      한 건씩 넣고 싶으면 주문 상세에서 그대로 입력해도 된다.
@@ -27,6 +29,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -45,9 +48,11 @@ export default function AdminOrdersPage() {
   async function downloadExport() {
     setExporting(true);
     setExportError(null);
+    setExportNotice(null);
     try {
       const q = status ? `?status=${status}` : "";
-      const res = await fetch(`/api/admin/orders/export${q}`, { credentials: "include" });
+      // POST — 담긴 결제 완료 주문이 '상품 준비중'으로 바뀌는 요청이다.
+      const res = await fetch(`/api/admin/orders/export${q}`, { method: "POST", credentials: "include" });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { message?: string };
         throw new Error(body.message ?? "엑셀 파일을 만들지 못했습니다. 다시 로그인해 주세요.");
@@ -65,6 +70,12 @@ export default function AdminOrdersPage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+
+      const prepared = Number(res.headers.get("X-Prepared-Count") ?? "0");
+      if (prepared > 0) {
+        setExportNotice(`${prepared}건을 '상품 준비중'으로 바꿨습니다.`);
+        load(); // 목록의 상태도 바로 바뀌게
+      }
     } catch (e) {
       setExportError(e instanceof Error ? e.message : "엑셀 파일을 만들지 못했습니다.");
     } finally {
@@ -92,9 +103,12 @@ export default function AdminOrdersPage() {
             >
               {exporting ? "만드는 중…" : "출고용 엑셀 받기"}
             </button>
-            <p className="font-kr text-xs text-ink-faint">
-              {statusLabel ? `'${statusLabel}' 주문만 담습니다.` : "결제 완료·상품 준비중 주문을 담습니다."}
+            <p className="max-w-[300px] text-right font-kr text-xs text-ink-faint">
+              {!status || status === "PAID"
+                ? "아직 넘기지 않은 결제 완료 주문을 담고, '상품 준비중'으로 바꿉니다. 다시 받으려면 '상품 준비중'을 골라 받으세요."
+                : `'${statusLabel}' 주문만 담습니다. 상태는 바뀌지 않습니다.`}
             </p>
+            {exportNotice && <p className="font-kr text-xs text-ink">{exportNotice}</p>}
             {exportError && <p className="font-kr text-xs text-clay-deep">{exportError}</p>}
           </div>
 
