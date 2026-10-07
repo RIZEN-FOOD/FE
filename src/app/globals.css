@@ -182,3 +182,15 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+
+/* 아이폰·아이패드(사파리)는 글자가 16px 보다 작은 입력칸을 누르면 화면을 확대해 버린다.
+   배송지·로그인 칸을 누를 때마다 확대돼 화면이 어긋났다 (2026-10-07).
+   iOS 에서만 입력칸 글자를 16px 로 맞춘다 — PC·안드로이드 디자인은 그대로다.
+   @layer 밖에 두어 입력칸의 text-sm 같은 유틸리티보다 우선한다. */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
