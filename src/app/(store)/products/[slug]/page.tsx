@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
 import { ProductGallery } from "@/components/store/ProductGallery";
 import { PurchasePanel } from "@/components/store/PurchasePanel";
+import { StickyBuyBox } from "@/components/store/StickyBuyBox";
+import { MobileBuyBar } from "@/components/store/MobileBuyBar";
 import { ProductDetailSections } from "@/components/store/ProductDetailSections";
 import { NutritionFacts, IngredientList } from "@/components/store/NutritionTable";
 import { serverApi } from "@/lib/server/api";
@@ -101,6 +103,11 @@ export default async function ProductDetailPage({
       {/* 에디터로 쓰던 '상세 설명' 칸은 뺐다 (2026-09-28). 상세는 아래 사진형 블록이 전담한다.
           descriptionHtml 값은 API 에 남아 있지만 화면에는 그리지 않는다. */}
 
+      {/* 아래: 상세 사진 + (PC) 따라오는 구매 상자 (2026-10-07).
+          1024px 이상에서 오른쪽 칸에 구매 상자를 두고, 상세를 내려 보는 동안 화면에 붙어 따라온다.
+          그보다 좁으면 한 줄로 쌓이고 구매 상자는 그리지 않는다(위쪽 구매 패널을 쓴다). */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-12">
+        <div className="min-w-0">
       {/* 사진형 상세페이지 — 관리자가 쌓은 사진·영상·글이 틈 없이 이어진다 */}
       <ProductDetailSections sections={product.detailSections ?? []} />
 
@@ -129,6 +136,15 @@ export default async function ProductDetailPage({
           </div>
         </details>
       )}
+        </div>
+
+        <aside aria-label="구매하기" className="hidden lg:sticky lg:top-24 lg:mt-16 lg:block">
+          <StickyBuyBox product={product} shipping={shipping} />
+        </aside>
+      </div>
+
+      {/* 휴대폰: 하단에 [찜] [장바구니] [구매하기] 고정 (2026-10-07). PC 에서는 그리지 않는다. */}
+      <MobileBuyBar product={product} shipping={shipping} />
     </Container>
   );
 }
