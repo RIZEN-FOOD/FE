@@ -29,7 +29,7 @@ export default async function CheckoutPage({
   const direct = parseDirect(sp);
 
   return (
-    <Container className="py-12 md:py-16">
+    <Container className="py-10 pb-32 md:py-14 lg:pb-16">
       <h1 className="font-kr text-title font-bold text-ink">주문서</h1>
       <CheckoutForm direct={direct} />
     </Container>

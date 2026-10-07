@@ -417,157 +417,192 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
     );
   }
 
+  // 결제 버튼을 누를 수 있는가. 아래 결제 요약과 휴대폰 하단 막대가 같은 조건을 쓴다.
+  const payDisabled =
+    busy ||
+    !payConfig ||
+    (payConfig.provider === "portone" && availableMethods.length === 0) ||
+    (payConfig.provider === "nicepay" && niceMethods.length === 0);
+  const payLabel = busy ? "처리 중…" : `${won(payAmount)}원 결제하기`;
+  const totalQty = orderable.reduce((n, it) => n + it.quantity, 0);
+  const itemsTitle =
+    orderable.length > 1 ? `${orderable[0].name} 외 ${orderable.length - 1}건` : orderable[0].name;
+  /** 우편번호와 주소를 한 칸에 보여준다. 검색으로만 채워지는 값이라 읽기 전용이다. */
+  const addressLine = form.zipcode ? `[${form.zipcode}] ${form.addr1}` : "";
+  const addressError = fieldErrors.zipcode ?? fieldErrors.addr1;
+
+  /* 2026-10-07 주문서 정리.
+     전에는 칸 11개가 세로로 떠 있어 휴대폰에서 스크롤이 길고, 어디까지가 한 묶음인지 보이지 않았다.
+       - 카드 3장(주문 상품 → 주문자 → 배송지)으로 묶고 간격을 좁혔다
+       - 이름·연락처는 휴대폰에서도 나란히, 우편번호+주소는 한 칸으로 합쳤다(칸 2개 줄어듦)
+       - 주문 상품은 한 줄 요약이고 여러 개면 펼쳐 본다
+       - 휴대폰은 하단에 금액+결제 버튼이 고정돼 어디서든 결제로 간다(PC 는 오른쪽 요약 칸)
+     금액·검증·결제 흐름은 그대로다. */
+  const card = "border border-line bg-paper p-5 md:p-6";
+  const cardTitle = "font-kr text-base font-bold text-ink";
+
   return (
-    <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
-      {/* 배송 정보 입력 */}
-      <div className="flex flex-col gap-8">
-        <section>
-          <h2 className="font-kr text-lg font-bold text-ink">주문자 정보</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+    <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px] lg:items-start lg:gap-8">
+      <div className="flex flex-col gap-4">
+        {/* 주문 상품 — 한 줄 요약. 여러 개면 펼친다. */}
+        <section className={card}>
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 shrink-0 overflow-hidden border border-line bg-cream-warm">
+              {orderable[0].thumbnailUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={orderable[0].thumbnailUrl} alt="" className="h-full w-full object-cover" />
+              ) : null}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-kr text-sm font-bold text-ink">{itemsTitle}</p>
+              <p className="mt-0.5 font-kr text-caption text-ink-soft">
+                {orderable.length === 1 && orderable[0].optionName ? `${orderable[0].optionName} · ` : ""}
+                수량 {totalQty}개
+              </p>
+            </div>
+            <p className="shrink-0 font-numeric text-sm font-bold text-ink">{won(cart.itemsAmount)}원</p>
+          </div>
+          {orderable.length > 1 && (
+            <details className="group mt-3 border-t border-line pt-3">
+              <summary className="cursor-pointer list-none font-kr text-caption text-ink-soft underline-offset-4 hover:underline [&::-webkit-details-marker]:hidden">
+                <span className="group-open:hidden">상품 {orderable.length}개 모두 보기</span>
+                <span className="hidden group-open:inline">접기</span>
+              </summary>
+              <ul className="mt-2 flex flex-col gap-2">
+                {orderable.map((it) => (
+                  <li key={it.id} className="flex items-baseline justify-between gap-3 font-kr text-sm">
+                    <span className="min-w-0 truncate text-ink">
+                      {it.name}
+                      {it.optionName && <span className="text-ink-soft"> · {it.optionName}</span>}
+                      <span className="font-numeric text-ink-faint"> × {it.quantity}</span>
+                    </span>
+                    <span className="shrink-0 font-numeric text-ink">{won(it.lineAmount)}원</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </section>
+
+        {/* 주문자 */}
+        <section className={card}>
+          <h2 className={cardTitle}>주문자</h2>
+          <div className="mt-4 grid grid-cols-2 gap-3">
             <Field label="이름" value={form.ordererName} onChange={set("ordererName")}
-              error={fieldErrors.ordererName} required />
+              error={fieldErrors.ordererName} required autoComplete="name" />
             <Field label="연락처" value={form.ordererPhone} onChange={setPhone("ordererPhone")}
-              placeholder="010-1234-5678" error={fieldErrors.ordererPhone} required
+              placeholder="010-0000-0000" error={fieldErrors.ordererPhone} required
               type="tel" inputMode="numeric" autoComplete="tel" maxLength={13} />
-            <div className="sm:col-span-2">
+            <div className="col-span-2">
               <Field label="이메일 (선택)" type="email" value={form.ordererEmail ?? ""}
                 onChange={set("ordererEmail")} error={fieldErrors.ordererEmail}
-                placeholder="주문 내역을 받을 이메일" />
+                placeholder="주문 내역을 받을 이메일" autoComplete="email" />
             </div>
           </div>
         </section>
 
-        <section>
-          <div className="flex items-center justify-between">
-            <h2 className="font-kr text-lg font-bold text-ink">배송지</h2>
+        {/* 배송지 */}
+        <section className={card}>
+          <div className="flex items-center justify-between gap-4">
+            <h2 className={cardTitle}>배송지</h2>
             <label className="flex items-center gap-2 font-kr text-sm text-ink-soft">
               <input type="checkbox" checked={sameAsOrderer}
-                onChange={(e) => setSameAsOrderer(e.target.checked)} />
-              주문자와 동일
+                onChange={(e) => setSameAsOrderer(e.target.checked)} className="h-4 w-4 accent-ink" />
+              주문자와 같아요
             </label>
           </div>
+
           {/* 저장해 둔 배송지 — 누르면 아래 칸이 채워진다. 매번 주소를 다시 검색하지 않게. */}
           {addresses.length > 0 && (
-            <div className="mt-4">
-              <span className="block font-kr text-caption font-medium text-ink-soft">저장된 배송지</span>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {addresses.map((a) => (
-                  <button
-                    key={a.id}
-                    type="button"
-                    onClick={() => applyAddress(a)}
-                    className="rounded-full border border-line px-3.5 py-2 text-left font-kr text-caption text-ink-soft transition hover:border-ink hover:text-ink"
-                  >
-                    <b className="text-ink">{a.label?.trim() || a.receiverName}</b>
-                    {a.isDefault && <span className="ml-1 text-clay-deep">기본</span>}
-                    <span className="ml-2 text-ink-faint">
-                      [{a.zipcode}] {a.addr1}
-                    </span>
-                  </button>
-                ))}
-              </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {addresses.map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => applyAddress(a)}
+                  className="max-w-full border border-line px-3 py-1.5 text-left font-kr text-caption text-ink-soft transition hover:border-ink hover:text-ink"
+                >
+                  <b className="text-ink">{a.label?.trim() || a.receiverName}</b>
+                  {a.isDefault && <span className="ml-1 text-clay-deep">기본</span>}
+                  <span className="ml-2 text-ink-faint">{a.addr1}</span>
+                </button>
+              ))}
             </div>
           )}
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-2 gap-3">
             {!sameAsOrderer && (
               <>
                 <Field label="받는 분" value={form.receiverName} onChange={set("receiverName")}
                   error={fieldErrors.receiverName} required />
                 <Field label="받는 분 연락처" value={form.receiverPhone} onChange={setPhone("receiverPhone")}
-                  placeholder="010-1234-5678" error={fieldErrors.receiverPhone} required
+                  placeholder="010-0000-0000" error={fieldErrors.receiverPhone} required
                   type="tel" inputMode="numeric" autoComplete="tel" maxLength={13} />
               </>
             )}
-            {/* 우편번호·주소는 검색으로 채운다. 손으로 고치지 않게 읽기전용. */}
-            <div className="sm:col-span-2">
-              <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">
-                우편번호 <span className="text-clay-deep">*</span>
+
+            {/* 우편번호 + 주소 — 한 칸. 검색으로만 채운다(손으로 고치지 않게 읽기 전용). */}
+            <div className="col-span-2">
+              <span className="mb-1.5 block font-kr text-caption font-medium text-ink-soft">
+                주소 <span className="text-clay-deep">*</span>
               </span>
               <div className="flex gap-2">
                 <input
-                  value={form.zipcode}
+                  value={addressLine}
                   readOnly
-                  placeholder="주소 검색을 눌러주세요"
-                  className={`h-[50px] w-40 rounded-[6px] border bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint ${
-                    fieldErrors.zipcode ? "border-clay-deep" : "border-line"
+                  placeholder="주소 검색을 눌러 주세요"
+                  className={`h-12 min-w-0 flex-1 rounded-[6px] border bg-cream-warm/50 px-3 font-kr text-sm text-ink outline-none placeholder:text-ink-faint ${
+                    addressError ? "border-clay-deep" : "border-line"
                   }`}
                 />
                 <PostcodeButton
                   onComplete={({ zonecode, address }) =>
                     setForm((f) => ({ ...f, zipcode: zonecode, addr1: address }))
                   }
-                  className="h-[50px] shrink-0 rounded-[6px] bg-ink px-5 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
-                />
+                  className="h-12 shrink-0 rounded-[6px] bg-ink px-4 font-kr text-sm font-medium text-cream-warm transition hover:bg-slate-deep disabled:opacity-50"
+                >
+                  {form.zipcode ? "다시 검색" : "주소 검색"}
+                </PostcodeButton>
               </div>
-              {fieldErrors.zipcode && (
-                <span className="mt-1 block font-kr text-caption text-clay-deep">{fieldErrors.zipcode}</span>
+              {addressError && (
+                <span className="mt-1 block font-kr text-caption text-clay-deep">{addressError}</span>
               )}
             </div>
-            <div className="sm:col-span-2">
-              <Field label="주소" value={form.addr1} onChange={set("addr1")}
-                error={fieldErrors.addr1} placeholder="주소 검색으로 자동 입력됩니다" readOnly required />
+            <div className="col-span-2">
+              <Field label="상세 주소" value={form.addr2 ?? ""} onChange={set("addr2")}
+                placeholder="동·호수 등 (선택)" />
             </div>
-            <div className="sm:col-span-2">
-              <Field label="상세 주소 (선택)" value={form.addr2 ?? ""} onChange={set("addr2")}
-                placeholder="동·호수 등 나머지 주소" />
-            </div>
-            <div className="sm:col-span-2">
-              <Field label="배송 메모 (선택)" value={form.deliveryMemo ?? ""}
-                onChange={set("deliveryMemo")} placeholder="부재 시 경비실에 맡겨주세요" />
+            <div className="col-span-2">
+              <Field label="배송 메모" value={form.deliveryMemo ?? ""}
+                onChange={set("deliveryMemo")} placeholder="예: 부재 시 문 앞에 놓아 주세요 (선택)" />
             </div>
           </div>
 
           {/* 주소록 저장 (2026-09-29). 전에는 주문서에서 입력한 주소를 저장할 길이 없어,
               처음 주문한 회원은 주소록이 있는 줄도 몰랐다(저장된 게 없으면 목록 칸도 숨는다). */}
           {isMember && (
-            <label className="mt-4 flex items-start gap-2.5 font-kr text-sm text-ink">
+            <label className="mt-4 flex items-center gap-2.5 font-kr text-sm text-ink">
               <input
                 type="checkbox"
                 checked={saveAddress}
                 onChange={(e) => setSaveAddress(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 accent-ink"
+                className="h-4 w-4 shrink-0 accent-ink"
               />
               <span>
                 이 배송지 저장
-                <span className="mt-0.5 block text-caption text-ink-faint">
-                  {addresses.length === 0
-                    ? "기본 배송지로 저장해 다음 주문부터 바로 불러옵니다."
-                    : "다음 주문 때 눌러서 불러올 수 있습니다."}{" "}
-                  마이페이지 배송지에서 고칠 수 있습니다.
+                <span className="ml-2 text-caption text-ink-faint">
+                  {addresses.length === 0 ? "다음 주문부터 바로 불러옵니다" : "마이페이지에서 고칠 수 있습니다"}
                 </span>
               </span>
             </label>
           )}
         </section>
-
-        <section>
-          <h2 className="font-kr text-lg font-bold text-ink">주문 상품</h2>
-          <ul className="mt-4 flex flex-col divide-y divide-line border-y border-line">
-            {orderable.map((it) => (
-              <li key={it.id} className="flex items-center gap-3 py-3">
-                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-none border border-line bg-cream-warm">
-                  {it.thumbnailUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.thumbnailUrl} alt={it.name} className="h-full w-full object-cover" />
-                  ) : null}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-kr text-sm text-ink">{it.name}</p>
-                  {it.optionName && <p className="font-kr text-caption text-ink-soft">{it.optionName}</p>}
-                  <p className="font-numeric text-caption text-ink-faint">수량 {it.quantity}</p>
-                </div>
-                <p className="font-numeric text-sm font-medium text-ink">{won(it.lineAmount)}원</p>
-              </li>
-            ))}
-          </ul>
-        </section>
       </div>
 
       {/* 결제 요약 */}
-      <aside className="rounded-none border border-line bg-paper p-6 lg:sticky lg:top-24">
-        <h2 className="font-kr text-lg font-bold text-ink">결제 금액</h2>
-        <dl className="mt-5 flex flex-col gap-3 font-kr text-sm">
+      <aside className={`${card} lg:sticky lg:top-24`}>
+        <h2 className={cardTitle}>결제 금액</h2>
+        <dl className="mt-4 flex flex-col gap-2.5 font-kr text-sm">
           <div className="flex justify-between">
             <dt className="text-ink-soft">상품 금액</dt>
             <dd className="font-numeric text-ink">{won(cart.itemsAmount)}원</dd>
@@ -599,7 +634,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
           onClear={() => setCoupon(null)}
         />
 
-        <div className="mt-5 flex items-baseline justify-between border-t border-line pt-5">
+        <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
           <span className="font-kr text-sm font-medium text-ink">최종 결제금액</span>
           <span className="font-numeric text-2xl font-bold text-ink">
             {won(payAmount)}
@@ -608,10 +643,10 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
         </div>
 
         {payConfig?.provider === "portone" ? (
-          <fieldset className="mt-5">
+          <fieldset className="mt-4">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
             {availableMethods.length === 0 && (
-              <p className="mt-2 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
+              <p className="mt-2 bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
                 지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
               </p>
             )}
@@ -619,7 +654,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
               {availableMethods.map((m) => (
                 <label
                   key={m.key}
-                  className={`flex cursor-pointer items-center justify-center rounded-full border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
+                  className={`flex cursor-pointer items-center justify-center rounded-[6px] border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
                     payMethod === m.key
                       ? "border-ink bg-ink text-cream-warm"
                       : "border-line text-ink hover:border-ink/40"
@@ -639,10 +674,10 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
             </div>
           </fieldset>
         ) : payConfig?.provider === "nicepay" ? (
-          <fieldset className="mt-5">
+          <fieldset className="mt-4">
             <legend className="font-kr text-sm font-medium text-ink">결제 수단</legend>
             {niceMethods.length === 0 && (
-              <p className="mt-2 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
+              <p className="mt-2 bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
                 지금 쓸 수 있는 결제수단이 없습니다. 잠시 후 다시 시도해 주세요.
               </p>
             )}
@@ -650,7 +685,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
               {niceMethods.map((m) => (
                 <label
                   key={m.key}
-                  className={`flex cursor-pointer items-center justify-center rounded-full border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
+                  className={`flex cursor-pointer items-center justify-center rounded-[6px] border px-3 py-2.5 font-kr text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-clay-deep ${
                     niceMethod === m.key
                       ? "border-ink bg-ink text-cream-warm"
                       : "border-line text-ink-soft hover:border-ink hover:text-ink"
@@ -670,7 +705,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
             </div>
           </fieldset>
         ) : (
-          <p className="mt-4 rounded-none bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
+          <p className="mt-4 bg-cream-warm px-3 py-2 font-kr text-caption text-ink-soft">
             지금은 테스트 결제로 주문 흐름을 확인합니다. 실제 결제는 결제사 키를 넣으면 열립니다.
           </p>
         )}
@@ -678,7 +713,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
         {/* 구매 동의 (2026-09-29). 결제 전에 주문 내용·금액 확인을 받는다(전자상거래법).
             비회원은 개인정보 수집·이용 동의를 따로 받는다 — 회원은 가입 때 이미 동의했다.
             항목·목적·보유기간은 개인정보처리방침과 같은 내용이어야 한다. 한쪽을 고치면 둘 다 고친다. */}
-        <div className="mt-5 flex flex-col gap-3 border-t border-line pt-5">
+        <div className="mt-4 flex flex-col gap-2.5 border-t border-line pt-4">
           <label className="flex items-start gap-2.5 font-kr text-sm text-ink">
             <input
               ref={purchaseRef}
@@ -706,7 +741,7 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
                   <b className="font-semibold">(필수)</b> 비회원 주문을 위한 개인정보 수집·이용에 동의합니다.
                 </span>
               </label>
-              <details className="group mt-2 pl-[26px]">
+              <details className="group mt-1.5 pl-[26px]">
                 <summary className="cursor-pointer list-none font-kr text-caption text-ink-soft underline-offset-4 hover:underline [&::-webkit-details-marker]:hidden">
                   <span className="group-open:hidden">내용 보기</span>
                   <span className="hidden group-open:inline">내용 접기</span>
@@ -739,39 +774,58 @@ export function CheckoutForm({ direct = null }: { direct?: DirectItem | null }) 
         </div>
 
         {error && (
-          <p role="alert" className="mt-4 rounded-none bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
+          <p role="alert" className="mt-4 bg-danger/10 px-3 py-2 font-kr text-sm text-danger">
             {error}
           </p>
         )}
 
-        <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={
-            busy ||
-            !payConfig ||
-            (payConfig.provider === "portone" && availableMethods.length === 0) ||
-            (payConfig.provider === "nicepay" && niceMethods.length === 0)
-          }>
-          {busy ? (
-            "처리 중…"
-          ) : discount > 0 && beforeCoupon > payAmount ? (
-            /* 할인코드가 붙으면 원래 금액을 취소선으로 남겨 얼마가 깎였는지 버튼에서 바로 보인다.
-               취소선만으로는 화면을 못 보는 분에게 전달되지 않아 sr-only 로 한 번 더 읽어준다. */
-            <>
-              <s className="font-numeric text-small font-medium text-cream-warm/55">{won(beforeCoupon)}원</s>
-              <span className="sr-only">에서 할인된</span>
-              <span className="font-numeric">{won(payAmount)}원</span>
-              <span>결제하기</span>
-            </>
-          ) : (
-            `${won(payAmount)}원 결제하기`
-          )}
-        </Button>
+        {/* PC 결제 버튼. 휴대폰은 아래 하단 고정 막대가 대신한다. */}
+        <div className="hidden lg:block">
+          <Button onClick={submit} variant="dark" className="mt-5 w-full" disabled={payDisabled}>
+            {busy ? (
+              "처리 중…"
+            ) : discount > 0 && beforeCoupon > payAmount ? (
+              /* 할인코드가 붙으면 원래 금액을 취소선으로 남겨 얼마가 깎였는지 버튼에서 바로 보인다.
+                 취소선만으로는 화면을 못 보는 분에게 전달되지 않아 sr-only 로 한 번 더 읽어준다. */
+              <>
+                <s className="font-numeric text-small font-medium text-cream-warm/55">{won(beforeCoupon)}원</s>
+                <span className="sr-only">에서 할인된</span>
+                <span className="font-numeric">{won(payAmount)}원</span>
+                <span>결제하기</span>
+              </>
+            ) : (
+              payLabel
+            )}
+          </Button>
+        </div>
         <Link
           href={direct && cart.items[0]?.slug ? `/products/${cart.items[0].slug}` : "/cart"}
-          className="mt-3 block text-center font-kr text-sm text-ink-soft underline-offset-4 hover:underline"
+          className="mt-4 block text-center font-kr text-sm text-ink-soft underline-offset-4 hover:underline lg:mt-3"
         >
           {direct ? "상품으로 돌아가기" : "장바구니로 돌아가기"}
         </Link>
       </aside>
+
+      {/* 휴대폰·태블릿: 하단 고정 결제 막대. 동의를 안 했으면 submit 이 그 체크칸으로 초점을 옮겨 보여준다. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
+        <div className="mx-auto flex max-w-wrap items-center gap-3">
+          <div className="min-w-0">
+            <p className="font-kr text-caption text-ink-soft">결제 금액</p>
+            <p className="font-numeric text-lg font-bold leading-tight text-ink">
+              {won(payAmount)}
+              <span className="ml-0.5 font-kr text-sm font-medium">원</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={payDisabled}
+            className="h-12 flex-1 rounded-[6px] bg-ink font-kr text-sm font-bold text-cream-warm transition active:scale-[0.98] disabled:opacity-50"
+          >
+            {busy ? "처리 중…" : "결제하기"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -790,12 +844,12 @@ function Field({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="mb-1 block font-kr text-caption font-medium text-ink-soft">{label}</span>
+      <span className="mb-1.5 block font-kr text-caption font-medium text-ink-soft">{label}</span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`h-[50px] w-full rounded-[6px] border bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep ${
+        className={`h-12 w-full rounded-[6px] border bg-paper px-3 font-kr text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-clay-deep ${
           error ? "border-clay-deep" : "border-line"
         }`}
       />
