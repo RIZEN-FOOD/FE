@@ -64,17 +64,22 @@ export function PurchasePanel({
       {typeof shipping?.baseFee === "number" && (
         <dl className="mt-6 flex gap-4 border-t border-line pt-5 font-kr text-small">
           <dt className="shrink-0 text-ink-soft">배송비</dt>
-          <dd className="text-ink">
-            {won(shipping.baseFee)}원
-            {typeof shipping.freeThreshold === "number" && (
-              <> · {won(shipping.freeThreshold)}원 이상 무료</>
-            )}
-            {typeof shipping.islandExtraFee === "number" && shipping.islandExtraFee > 0 && (
-              <span className="mt-0.5 block text-caption text-ink-faint">
-                제주·도서산간 {won(shipping.islandExtraFee)}원 추가
-              </span>
-            )}
-          </dd>
+          {/* 무료배송 상품(V39)은 정책 금액 대신 '무료배송'만 적는다 — 이 상품만 사면 배송비가 붙지 않는다. */}
+          {product.freeShipping ? (
+            <dd className="text-ink">무료배송</dd>
+          ) : (
+            <dd className="text-ink">
+              {won(shipping.baseFee)}원
+              {typeof shipping.freeThreshold === "number" && (
+                <> · {won(shipping.freeThreshold)}원 이상 무료</>
+              )}
+              {typeof shipping.islandExtraFee === "number" && shipping.islandExtraFee > 0 && (
+                <span className="mt-0.5 block text-caption text-ink-faint">
+                  제주·도서산간 {won(shipping.islandExtraFee)}원 추가
+                </span>
+              )}
+            </dd>
+          )}
         </dl>
       )}
 

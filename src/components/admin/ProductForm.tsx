@@ -36,6 +36,7 @@ type FormState = {
   soldOut: boolean;
   featured: boolean;
   visible: boolean;
+  freeShipping: boolean;
   mainImage: ImageSlot | null;
   detailImages: ImageSlot[];
   heroColor: string;
@@ -87,6 +88,7 @@ const EMPTY: FormState = {
   soldOut: false,
   featured: false,
   visible: false,
+  freeShipping: false,
   mainImage: null,
   detailImages: [],
   heroColor: "",
@@ -122,6 +124,7 @@ function fromDetail(d: ProductDetail): FormState {
     soldOut: d.soldOutManual,
     featured: d.featured,
     visible: d.visible,
+    freeShipping: d.freeShipping,
     mainImage: main
       ? { key: main.baseKey, url: main.url, altText: main.altText ?? "" }
       : d.thumbnailKey
@@ -236,6 +239,7 @@ export function ProductForm({
       soldOut: form.soldOut,
       featured: form.featured,
       visible: form.visible,
+      freeShipping: form.freeShipping,
       images,
       ingredients: form.ingredients
         .filter((i) => i.name.trim())
@@ -547,6 +551,14 @@ export function ProductForm({
             </label>
             <p className="mt-1 font-kr text-xs text-ink-faint">
               켜면 재고와 상관없이 화면에 &lsquo;품절&rsquo;로 나오고 구매가 막힙니다. 재고가 0이어도 자동으로 품절 처리됩니다.
+            </p>
+            {/* 배송비 받지 않음 (V39, 2026-10-07). 켠 상품만 담긴 주문은 배송비가 0원. */}
+            <label className="mt-4 flex items-center gap-2">
+              <input type="checkbox" checked={form.freeShipping} onChange={(e) => set("freeShipping", e.target.checked)} className="h-4 w-4 accent-ink" />
+              <span className="font-kr text-sm text-ink">배송비 받지 않음 (무료배송)</span>
+            </label>
+            <p className="mt-1 font-kr text-xs text-ink-faint">
+              켜면 이 상품만 주문할 때 배송비가 붙지 않습니다(제주·도서산간 포함). 다른 상품과 함께 담으면 평소 배송비가 붙습니다.
             </p>
           </Section>
 

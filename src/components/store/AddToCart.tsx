@@ -56,8 +56,9 @@ export function AddToCart({
   const cartAmount = cart?.itemsAmount ?? 0;
   /** 무료배송 판정 기준 — 이미 담긴 것 + 지금 고른 것 */
   const basis = cartAmount + lineAmount;
+  // 무료배송 상품(V39)은 '얼마 더 담으면 무료배송' 막대를 그리지 않는다.
   const threshold =
-    typeof shipping?.freeThreshold === "number" && shipping.freeThreshold > 0
+    !product.freeShipping && typeof shipping?.freeThreshold === "number" && shipping.freeThreshold > 0
       ? shipping.freeThreshold
       : null;
   const remaining = threshold != null ? Math.max(0, threshold - basis) : 0;

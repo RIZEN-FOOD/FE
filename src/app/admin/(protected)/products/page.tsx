@@ -217,6 +217,11 @@ export default function AdminProductsPage() {
               >
                 {p.visible ? "노출 중" : "숨김"}
               </button>
+              {p.freeShipping && (
+                <span className="rounded-full border border-clay-deep px-2.5 py-1 font-kr text-xs font-medium text-clay-deep" title="배송비 받지 않음 — 이 상품만 주문하면 배송비 0원">
+                  무료배송
+                </span>
+              )}
 
               {/* 수정 · 삭제 */}
               <Link
