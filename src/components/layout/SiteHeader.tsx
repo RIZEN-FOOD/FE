@@ -18,9 +18,12 @@ import { CartBadge } from "@/components/store/CartBadge";
  * 모바일도 데스크톱과 같게 움직인다 — 히어로 위에서는 투명, 지나면 크림이다
  * (2026-09-17 에 모바일만 항상 크림으로 뒀다가 2026-09-22 되돌렸다).
  * 로고와 아이콘 색은 배경에 맞춰 같이 뒤집는다.
+ *
+ * 2026-10-07. 모바일 메뉴가 열려 있는 동안은 히어로 위여도 크림 배경이다 — 헤더와 메뉴판이 한 덩어리로 보이게.
  */
 export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
   const [solid, setSolid] = useState(forceSolid);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     // 히어로가 없는 화면(예: 로그인)에서는 항상 크림 배경으로 고정한다.
@@ -45,12 +48,13 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
     return () => io.disconnect();
   }, [forceSolid]);
 
-  const light = !solid; // 히어로 위 = 밝은 텍스트
+  const isSolid = solid || menuOpen; // 메뉴가 열려 있으면 히어로 위여도 크림 배경
+  const light = !isSolid; // 히어로 위 = 밝은 텍스트
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        solid
+        isSolid
           ? "border-b border-line bg-cream-warm/95 backdrop-blur"
           : "bg-transparent"
       }`}
@@ -96,7 +100,7 @@ export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
           {/* CartBadge 는 제 색(text-ink)을 직접 들고 있어 부모 색이 먹지 않는다.
               히어로 위에서는 데스크톱과 같은 방식으로 덮어쓴다. */}
           <CartBadge className={light ? "!text-cream-warm hover:!text-cream-warm/70" : ""} />
-          <MobileMenu />
+          <MobileMenu onOpenChange={setMenuOpen} />
         </div>
       </div>
     </header>

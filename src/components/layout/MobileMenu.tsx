@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { storeNav } from "./storeNav";
 import { MemberNavLink } from "./MemberNavLink";
@@ -21,6 +22,13 @@ import { MemberNavLink } from "./MemberNavLink";
  *   - 높이는 grid-rows 0fr → 1fr 로 늘린다. max-height 에 숫자를 박지 않아
  *     항목이 늘어도 애니메이션이 어긋나지 않는다
  *
+ * 2026-10-07. 열려 있는 동안
+ *   - 헤더에 알린다(onOpenChange). 메인처럼 투명 헤더 위에서는 헤더가 크림색으로 바뀌어 메뉴판과 한 덩어리가 된다
+ *     (전에는 헤더만 투명하게 남아 사진·흰 로고가 메뉴판 위로 비쳤다)
+ *   - 메뉴판 아래 화면을 살짝 어둡게 덮어 메뉴 범위가 보이게 한다. 덮개는 열려 있을 때만 그린다 —
+ *     닫힐 때 바로 사라지므로 2026-09-17 의 «투명한 덮개가 남아 화면이 안 눌리는» 버그가 생기지 않는다.
+ *     누르면 닫힌다. ★ body 에 포탈로 그린다 — 헤더는 backdrop-blur 라 그 안의 fixed 요소는 헤더 크기에 갇힌다.
+ *
  * 고객센터만 아코디언이다. 문의·공지·정책 세 갈래는 원래 푸터에만 있어
  * 모바일에서 찾기 어려웠다. 나머지는 접을 것이 없으므로 평면으로 둔다.
  * (주문 조회는 비회원일 때 MemberNavLink 가 이미 내놓으므로 여기 넣지 않는다.)
@@ -35,11 +43,22 @@ const SUPPORT_LINKS: { href: string; label: string }[] = [
 
 const ITEM = "block rounded-[6px] px-4 py-3 font-kr text-base font-medium text-ink transition hover:bg-cream";
 
-export function MobileMenu() {
+export function MobileMenu({ onOpenChange }: { onOpenChange?: (open: boolean) => void } = {}) {
   const [open, setOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  /** 덮개가 시작할 높이 = 헤더 아래 끝. 열 때 잰다(헤더 높이를 코드에 적지 않는다). */
+  const [dimTop, setDimTop] = useState(0);
   const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  // 열림·닫힘을 헤더에 알리고, 열릴 때 헤더 아래 끝을 잰다.
+  useEffect(() => {
+    onOpenChange?.(open);
+    if (open) {
+      const header = rootRef.current?.closest("header");
+      setDimTop(header ? header.getBoundingClientRect().bottom : 0);
+    }
+  }, [open, onOpenChange]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -91,6 +110,18 @@ export function MobileMenu() {
           {open ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
         </svg>
       </button>
+
+      {/* 메뉴판 아래 화면을 덮는 반투명 덮개. 열려 있을 때만, body 에 그린다(헤더보다 아래 층). */}
+      {open &&
+        createPortal(
+          <div
+            aria-hidden="true"
+            onClick={close}
+            style={{ top: dimTop }}
+            className="fixed inset-x-0 bottom-0 z-30 bg-ink/30"
+          />,
+          document.body,
+        )}
 
       {/* 헤더 바로 아래로 펼쳐지는 판.
           ★ 여닫히는 값(max-height·opacity)만 인라인 style 로 둔다. 상태에 따라
