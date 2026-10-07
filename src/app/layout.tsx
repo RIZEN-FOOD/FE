@@ -52,6 +52,8 @@ export const metadata: Metadata = {
     images: [{ url: "/assets/brand/og-default.jpg", width: 1200, height: 630, alt: "라이즌푸드 크림오브라이스" }],
   },
   twitter: { card: "summary_large_image", images: ["/assets/brand/og-default.jpg"] },
+  // 네이버 서치어드바이저 사이트 소유 확인 (2026-10-07). 공개값이다. 지우면 소유 확인이 풀린다.
+  verification: { other: { "naver-site-verification": "36c2069b2a6247d5c6f5c93cb19b1f0157c35aee" } },
 };
 
 export default function RootLayout({
