@@ -62,6 +62,7 @@ const GROUPS: { title: string; note?: string; keys: string[] }[] = [
     note: "주문 정보를 맡기는 업체 이름입니다. 개인정보처리방침에 공개할 의무가 있습니다(개인정보보호법 제26조). 업체가 바뀌면 여기만 고치면 됩니다.",
     keys: [
       "privacy.processor_fulfillment", "privacy.processor_delivery", "privacy.processor_payment",
+      "privacy.processor_message",
     ],
   },
   {
@@ -104,6 +105,7 @@ const HINTS: Record<string, string> = {
   "privacy.processor_fulfillment": "상품을 보관하고 내보내는 업체입니다. 예: 와이에스컴퍼니",
   "privacy.processor_delivery": "상품을 배송하는 택배사입니다. 예: 롯데택배",
   "privacy.processor_payment": "결제를 대행하는 회사입니다. 계약 전이면 비워 두세요.",
+  "privacy.processor_message": "주문·배송 알림톡을 보내는 업체입니다. 예: 솔라피",
   "shipping.tracking_url":
     "손님이 누르면 열리는 택배사 조회 주소입니다. 송장번호가 들어갈 자리에 {{송장번호}} 라고 적어 주세요. 비우면 조회 버튼이 나오지 않습니다.",
   "shipping.auto_complete_days":

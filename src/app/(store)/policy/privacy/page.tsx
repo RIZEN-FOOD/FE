@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/policy/privacy" },
 };
 
-const EFFECTIVE = "2026년 9월 2일";
+const EFFECTIVE = "2026년 10월 7일"; // 위탁 표에 알림 발송(솔라피) 추가
 
 /**
  * 개인정보처리방침. 개인정보보호법상 게시 의무 문서.
@@ -32,6 +32,7 @@ export default async function PrivacyPolicyPage() {
     { name: val("privacy.processor_fulfillment"), work: "상품 보관·출고" },
     { name: val("privacy.processor_delivery"), work: "상품 배송" },
     { name: val("privacy.processor_payment"), work: "결제 처리(PG)" },
+    { name: val("privacy.processor_message"), work: "주문·배송 알림 발송(카카오 알림톡)" },
   ];
 
   return (
