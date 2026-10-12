@@ -37,6 +37,7 @@ type FormState = {
   featured: boolean;
   visible: boolean;
   freeShipping: boolean;
+  taxFree: boolean;
   mainImage: ImageSlot | null;
   detailImages: ImageSlot[];
   heroColor: string;
@@ -89,6 +90,7 @@ const EMPTY: FormState = {
   featured: false,
   visible: false,
   freeShipping: false,
+  taxFree: false,
   mainImage: null,
   detailImages: [],
   heroColor: "",
@@ -125,6 +127,7 @@ function fromDetail(d: ProductDetail): FormState {
     featured: d.featured,
     visible: d.visible,
     freeShipping: d.freeShipping,
+    taxFree: d.taxFree,
     mainImage: main
       ? { key: main.baseKey, url: main.url, altText: main.altText ?? "" }
       : d.thumbnailKey
@@ -240,6 +243,7 @@ export function ProductForm({
       featured: form.featured,
       visible: form.visible,
       freeShipping: form.freeShipping,
+      taxFree: form.taxFree,
       images,
       ingredients: form.ingredients
         .filter((i) => i.name.trim())
@@ -559,6 +563,15 @@ export function ProductForm({
             </label>
             <p className="mt-1 font-kr text-xs text-ink-faint">
               켜면 이 상품만 주문할 때 배송비가 붙지 않습니다(제주·도서산간 포함). 다른 상품과 함께 담으면 평소 배송비가 붙습니다.
+            </p>
+            {/* 과세·면세 (V40, 2026-10-12). 주문할 때 주문 기록에 같이 남는다. */}
+            <label className="mt-4 flex items-center gap-2">
+              <input type="checkbox" checked={form.taxFree} onChange={(e) => set("taxFree", e.target.checked)} className="h-4 w-4 accent-ink" />
+              <span className="font-kr text-sm text-ink">면세 상품 (부가세 없음)</span>
+            </label>
+            <p className="mt-1 font-kr text-xs text-ink-faint">
+              면세 상품이면 켜세요. [매출] 메뉴에서 면세 매출로 따로 잡힙니다. 면세 여부는 세무사님께 확인한 뒤 정해 주세요.
+              바꿔도 이미 들어온 주문의 기록은 바뀌지 않습니다.
             </p>
           </Section>
 

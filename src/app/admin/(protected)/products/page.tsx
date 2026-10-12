@@ -222,6 +222,11 @@ export default function AdminProductsPage() {
                   무료배송
                 </span>
               )}
+              {p.taxFree && (
+                <span className="rounded-full border border-line px-2.5 py-1 font-kr text-xs font-medium text-ink-soft" title="면세 상품 — [매출]에서 면세 매출로 잡힘">
+                  면세
+                </span>
+              )}
 
               {/* 수정 · 삭제 */}
               <Link

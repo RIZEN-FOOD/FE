@@ -104,6 +104,8 @@ export type ProductDetail = {
   visible: boolean;
   /** 배송비 받지 않음(무료배송) (V39) */
   freeShipping: boolean;
+  /** 면세 상품 (V40) */
+  taxFree: boolean;
   images: ProductImage[];
   options: ProductOption[];
   nutrition: Nutrition | null;
@@ -127,6 +129,8 @@ export type AdminProductListItem = {
   visible: boolean;
   /** 배송비 받지 않음(무료배송) (V39) */
   freeShipping: boolean;
+  /** 면세 상품 (V40) */
+  taxFree: boolean;
   sortOrder: number;
   thumbnailUrl: string | null;
 };
@@ -161,6 +165,8 @@ export type ProductSaveRequest = {
   visible: boolean;
   /** 배송비 받지 않음(무료배송) (V39) — 이 상품만 주문하면 배송비가 0원 */
   freeShipping: boolean;
+  /** 면세 상품 (V40) — 관리자 [매출]에서 면세 매출로 잡힌다 */
+  taxFree: boolean;
   images?: { imageKey: string; altText?: string | null; type: string; sortOrder: number }[];
   ingredients?: { name: string; percentage?: number | null; origin?: string | null; allergen?: string | null; sortOrder: number }[];
   nutrition?: Nutrition & { servingSizeG: number } | null;
