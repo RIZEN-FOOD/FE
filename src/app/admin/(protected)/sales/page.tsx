@@ -9,30 +9,32 @@ import { cn } from "@/lib/cn";
 import { ADMIN_ORDER_STATUSES } from "@/types/adminOrder";
 
 type SalesLine = {
-  kind: "PAID" | "REFUND";
-  at: string | null;
+  paidAt: string | null;
   orderNo: string;
   orderStatus: string;
+  taxFreeGoods: number;
+  taxableGoods: number;
+  shippingFee: number;
+  /** 배송비가 면세인가 (면세 상품만 산 주문) */
+  shippingTaxFree: boolean;
   taxFree: number;
-  taxableGoods: number | null;
-  shippingFee: number | null;
   taxable: number;
   total: number;
 };
 type SalesTotals = {
-  paidCount: number;
-  taxFreeSales: number;
-  taxableGoodsSales: number;
-  shippingFee: number;
+  orderCount: number;
+  /** 결제됐지만 취소·환불돼 매출에서 뺀 주문 수 */
+  excludedCount: number;
+  taxFreeGoods: number;
+  taxFreeShipping: number;
+  taxableGoods: number;
+  taxableShipping: number;
   discount: number;
-  refundCount: number;
-  taxFreeRefund: number;
-  taxableRefund: number;
-  taxFreeNet: number;
-  taxableNet: number;
+  taxFree: number;
+  taxable: number;
   taxableSupply: number;
   taxableVat: number;
-  totalNet: number;
+  total: number;
 };
 type SalesReport = { from: string; to: string; totals: SalesTotals; lines: SalesLine[]; truncated: boolean };
 
@@ -61,11 +63,12 @@ const won = (n: number) => n.toLocaleString("ko-KR");
 const statusLabel = (s: string) => ADMIN_ORDER_STATUSES.find((x) => x.value === s)?.label ?? s;
 
 /**
- * 매출 — 과세·면세 구분 (2026-10-12).
+ * 매출 — 과세·면세 구분 (2026-10-12, 규칙 보완 2026-10-13).
  *
  * 부가세 신고 때 면세 매출(예: 플레인)과 과세 매출을 나눠 적어야 해서 만들었다.
- * 결제는 결제일에 매출로 잡고, 취소·반품 환불은 환불한 날에 뺀다.
- * 엑셀은 세무사님께 그대로 보낼 수 있게 결제·환불 한 건씩 한 줄로 담는다.
+ *   결제일 기준. 취소·환불된 주문은 매출에서 뺀다.
+ *   배송비는 면세 상품만 산 주문이면 면세, 과세 상품이 섞이면 과세.
+ * 엑셀은 세무사님께 그대로 보낼 수 있게 주문 한 건씩 한 줄로 담는다.
  */
 export default function AdminSalesPage() {
   const initial = presets()[0];
@@ -128,7 +131,7 @@ export default function AdminSalesPage() {
         <div>
           <h1 className="font-kr text-2xl font-bold text-ink">매출 (과세·면세)</h1>
           <p className="mt-1 font-kr text-sm text-ink-soft">
-            부가세 신고용으로 과세·면세 매출을 나눠 봅니다. 결제는 결제일, 환불은 환불한 날 기준입니다.
+            부가세 신고용으로 과세·면세 매출을 나눠 봅니다. 결제일 기준이며, 취소·환불된 주문은 빠집니다.
           </p>
         </div>
         <button
@@ -179,20 +182,19 @@ export default function AdminSalesPage() {
           {/* 합계 */}
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <div className="border border-line bg-white p-5">
-              <p className="font-kr text-xs font-medium text-ink-faint">면세 순매출</p>
-              <p className="mt-1 font-numeric text-2xl font-bold text-ink">{won(t.taxFreeNet)}원</p>
+              <p className="font-kr text-xs font-medium text-ink-faint">면세 매출</p>
+              <p className="mt-1 font-numeric text-2xl font-bold text-ink">{won(t.taxFree)}원</p>
               <dl className="mt-3 space-y-1 font-kr text-xs text-ink-soft">
-                <Row label="면세 상품 매출" value={t.taxFreeSales} />
-                <Row label="환불" value={-t.taxFreeRefund} />
+                <Row label="면세 상품" value={t.taxFreeGoods} />
+                <Row label="배송비 (면세 상품만 산 주문)" value={t.taxFreeShipping} />
               </dl>
             </div>
             <div className="border border-line bg-white p-5">
-              <p className="font-kr text-xs font-medium text-ink-faint">과세 순매출 (부가세 포함)</p>
-              <p className="mt-1 font-numeric text-2xl font-bold text-ink">{won(t.taxableNet)}원</p>
+              <p className="font-kr text-xs font-medium text-ink-faint">과세 매출 (부가세 포함)</p>
+              <p className="mt-1 font-numeric text-2xl font-bold text-ink">{won(t.taxable)}원</p>
               <dl className="mt-3 space-y-1 font-kr text-xs text-ink-soft">
-                <Row label="과세 상품 매출" value={t.taxableGoodsSales} />
-                <Row label="배송비 (과세)" value={t.shippingFee} />
-                <Row label="환불" value={-t.taxableRefund} />
+                <Row label="과세 상품" value={t.taxableGoods} />
+                <Row label="배송비 (과세 상품이 섞인 주문)" value={t.taxableShipping} />
                 <div className="border-t border-line pt-1" />
                 <Row label="공급가액" value={t.taxableSupply} />
                 <Row label="부가세" value={t.taxableVat} />
@@ -200,50 +202,47 @@ export default function AdminSalesPage() {
             </div>
           </div>
           <p className="mt-3 font-kr text-xs text-ink-faint">
-            합계 {won(t.totalNet)}원 · 결제 {t.paidCount}건 · 환불 {t.refundCount}건
+            합계 {won(t.total)}원 · 주문 {t.orderCount}건
+            {t.excludedCount > 0 && ` · 취소·환불 ${t.excludedCount}건은 매출에서 뺐습니다`}
             {t.discount > 0 && ` · 할인코드 ${won(t.discount)}원은 상품 금액 비율로 과세·면세에 나눠 뺐습니다`}
           </p>
 
           {/* 내역 */}
           {data.lines.length === 0 ? (
-            <p className="mt-10 font-kr text-sm text-ink-faint">이 기간에는 결제·환불이 없습니다.</p>
+            <p className="mt-10 font-kr text-sm text-ink-faint">이 기간에는 매출이 없습니다.</p>
           ) : (
             <div className="mt-8 overflow-x-auto">
-              <table className="w-full min-w-[760px] border-collapse text-sm">
+              <table className="w-full min-w-[820px] border-collapse text-sm">
                 <thead>
                   <tr className="border-b border-line text-left font-kr text-xs text-ink-faint">
-                    <th className="py-2.5 pr-3 font-medium">일시</th>
-                    <th className="py-2.5 pr-3 font-medium">구분</th>
+                    <th className="py-2.5 pr-3 font-medium">결제일시</th>
                     <th className="py-2.5 pr-3 font-medium">주문번호</th>
-                    <th className="py-2.5 pr-3 text-right font-medium">면세</th>
+                    <th className="py-2.5 pr-3 font-medium">상태</th>
+                    <th className="py-2.5 pr-3 text-right font-medium">면세 상품</th>
                     <th className="py-2.5 pr-3 text-right font-medium">과세 상품</th>
                     <th className="py-2.5 pr-3 text-right font-medium">배송비</th>
                     <th className="py-2.5 pr-3 text-right font-medium">합계</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.lines.map((l, i) => (
-                    <tr key={`${l.orderNo}-${l.kind}-${i}`} className="border-b border-line/60">
-                      <td className="py-2.5 pr-3 font-kr text-xs text-ink-soft">{formatDateTime(l.at)}</td>
-                      <td className="py-2.5 pr-3 font-kr text-xs">
-                        {l.kind === "PAID" ? (
-                          <span className="text-ink">결제</span>
-                        ) : (
-                          <span className="text-clay-deep">환불</span>
-                        )}
-                        <span className="ml-1.5 text-ink-faint">{statusLabel(l.orderStatus)}</span>
-                      </td>
+                  {data.lines.map((l) => (
+                    <tr key={l.orderNo} className="border-b border-line/60">
+                      <td className="py-2.5 pr-3 font-kr text-xs text-ink-soft">{formatDateTime(l.paidAt)}</td>
                       <td className="py-2.5 pr-3">
                         <Link href={`/admin/orders/${l.orderNo}`} className="font-numeric text-xs text-berry underline-offset-2 hover:underline">
                           {l.orderNo}
                         </Link>
                       </td>
-                      <td className="py-2.5 pr-3 text-right font-numeric text-xs">{won(l.taxFree)}</td>
+                      <td className="py-2.5 pr-3 font-kr text-xs text-ink-soft">{statusLabel(l.orderStatus)}</td>
+                      <td className="py-2.5 pr-3 text-right font-numeric text-xs">{won(l.taxFreeGoods)}</td>
+                      <td className="py-2.5 pr-3 text-right font-numeric text-xs">{won(l.taxableGoods)}</td>
                       <td className="py-2.5 pr-3 text-right font-numeric text-xs">
-                        {l.taxableGoods != null ? won(l.taxableGoods) : won(l.taxable)}
-                      </td>
-                      <td className="py-2.5 pr-3 text-right font-numeric text-xs">
-                        {l.shippingFee != null ? won(l.shippingFee) : "—"}
+                        {won(l.shippingFee)}
+                        {l.shippingFee > 0 && (
+                          <span className={cn("ml-1.5 font-kr", l.shippingTaxFree ? "text-ink-faint" : "text-clay-deep")}>
+                            {l.shippingTaxFree ? "면세" : "과세"}
+                          </span>
+                        )}
                       </td>
                       <td className="py-2.5 pr-3 text-right font-numeric text-xs font-medium">{won(l.total)}</td>
                     </tr>
@@ -253,7 +252,6 @@ export default function AdminSalesPage() {
               {data.truncated && (
                 <p className="mt-3 font-kr text-xs text-ink-faint">내역이 많아 앞부분만 보여 줍니다. 전체는 엑셀로 받아 주세요.</p>
               )}
-              <p className="mt-3 font-kr text-xs text-ink-faint">환불 줄의 과세 금액은 상품·배송비를 나누지 않고 &lsquo;과세 상품&rsquo; 칸에 합쳐 보여 줍니다.</p>
             </div>
           )}
         </>
@@ -264,7 +262,7 @@ export default function AdminSalesPage() {
 
 function Row({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-4">
       <dt>{label}</dt>
       <dd className="font-numeric">{value.toLocaleString("ko-KR")}원</dd>
     </div>
