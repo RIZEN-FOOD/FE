@@ -285,4 +285,35 @@ export type HeroSlide = {
   linkable: boolean;
   /** 배너 아래 영양성분 그래프용. 입력이 없으면 null. */
   nutrition: HeroNutritionData | null;
+  /** 표시 순서. 이미지 한 장 슬라이드와 섞어 정렬할 때 쓴다 (V41) */
+  heroSort?: number;
+};
+
+/** 메인 히어로 — 이미지 한 장 슬라이드 (V41, 2026-10-13). 사진이 히어로 전체를 덮는다. */
+export type HeroImageSlide = {
+  id: number;
+  imagePcUrl: string;
+  /** 비어 있으면 휴대폰에서도 PC 사진을 쓴다 */
+  imageMobileUrl: string | null;
+  altText: string;
+  /** 문구·주소가 둘 다 있을 때만 값이 있다 */
+  buttonLabel: string | null;
+  linkUrl: string | null;
+  openNewTab: boolean;
+  sortOrder: number;
+};
+
+/** 관리자 — 이미지 한 장 슬라이드 */
+export type HeroImageSlideAdmin = {
+  id: number;
+  imagePcKey: string;
+  imagePcUrl: string | null;
+  imageMobileKey: string | null;
+  imageMobileUrl: string | null;
+  altText: string;
+  buttonLabel: string | null;
+  linkUrl: string | null;
+  openNewTab: boolean;
+  sortOrder: number;
+  enabled: boolean;
 };

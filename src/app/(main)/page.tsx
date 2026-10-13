@@ -12,7 +12,7 @@ import { MainPopup } from "@/components/store/MainPopup";
 import { hasPublicAsset } from "@/lib/publicAssets";
 
 import { serverApi } from "@/lib/server/api";
-import type { ProductDetail, ProductListItem, HeroSlide } from "@/types/product";
+import type { ProductDetail, ProductListItem, HeroSlide, HeroImageSlide } from "@/types/product";
 import type { NoticePublicDetail } from "@/types/content";
 import type { ReviewPage } from "@/types/member";
 import type { PopupPublic } from "@/types/popup";
@@ -33,7 +33,7 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
  * 데이터가 없는 섹션은 각 컴포넌트가 알아서 그리지 않는다.
  */
 export default async function Home() {
-  const [featured, heroData, noticeData, reviewData, settings, popups] = await Promise.all([
+  const [featured, heroData, noticeData, reviewData, settings, popups, heroImageData] = await Promise.all([
     serverApi.getJson<ProductListItem[]>("/api/products/featured"),
     // 메인 히어로 배너 — 사진·색·문구·가격·순서·노출 모두 관리자(상품 히어로 필드)에서 온다.
     serverApi.getJson<HeroSlide[]>("/api/products/hero"),
@@ -43,10 +43,13 @@ export default async function Home() {
     serverApi.getJson<Record<string, string>>("/api/settings"),
     // 관리자가 등록한 팝업 (노출 중인 것만, 순서대로)
     serverApi.getJson<PopupPublic[]>("/api/popups"),
+    // 히어로 이미지 한 장 슬라이드 (V41) — 누끼 슬라이드와 표시 순서로 섞여 돈다.
+    serverApi.getJson<HeroImageSlide[]>("/api/banners/hero"),
   ]);
 
   // 노출(hero_enabled) 슬라이드가 표시 순서대로 이미 정렬돼 온다.
   const heroSlides: HeroSlide[] = heroData ?? [];
+  const heroImageSlides: HeroImageSlide[] = heroImageData ?? [];
 
   // 히어로 사진(폴백용). 관리자가 site_setting 의 main.hero_images 로 바꾼다.
   const heroPhotos: HeroPhoto[] = (settings?.["main.hero_images"] ?? "")
@@ -77,8 +80,8 @@ export default async function Home() {
 
   return (
     <>
-      {heroSlides && heroSlides.length > 0 ? (
-        <HeroCarousel slides={heroSlides} />
+      {heroSlides.length > 0 || heroImageSlides.length > 0 ? (
+        <HeroCarousel slides={heroSlides} imageSlides={heroImageSlides} />
       ) : (
         <HeroSplit
           photos={heroPhotos}

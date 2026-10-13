@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { HeroSlide } from "@/types/product";
+import type { HeroImageSlide, HeroSlide } from "@/types/product";
 import { HeroNutrition } from "./HeroNutrition";
 
 /**
@@ -14,7 +14,11 @@ import { HeroNutrition } from "./HeroNutrition";
  * 배경색은 그 제품 색으로 천천히(그라데이션) 크로스페이드된다. 자동으로 넘어가고,
  * 화살표·도트·스와이프로도 넘길 수 있다. 상호작용/호버 중에는 자동 전환을 멈춘다.
  *
- * ★ 제품·색·이미지·장식은 전부 DB(/api/products/hero)에서 온다. 하드코딩하지 않는다.
+ * ★ 이미지 한 장 슬라이드(V41, 2026-10-13)가 섞여 돈다. 그 슬라이드에서는 사진이 히어로 화면
+ *   전체(가로·세로 꽉)를 덮고, 누끼 화면은 그 아래로 옅어진다. 버튼은 아래 가운데.
+ *   두 종류는 표시 순서(heroSort · sortOrder)로 한 줄에 섞인다.
+ *
+ * ★ 제품·색·이미지·장식은 전부 DB(/api/products/hero, /api/banners/hero)에서 온다. 하드코딩하지 않는다.
  * ★ 문구는 제품 이름·한줄설명(DB)만 쓴다. 효능·효과 표현을 넣지 않는다.
  */
 const DEFAULT_COLOR = "#C98A63";
@@ -31,6 +35,11 @@ const ACCENT_POS = [
   // 2: 왼쪽 아래 (쌀가마니) — 제품 왼쪽 아래에 걸친다
   "-left-[14%] -bottom-[6%] w-[46%] md:-left-[30%] md:bottom-[0%] md:w-[54%] rz-accent-a",
 ];
+
+/** 캐러셀 한 칸 — 누끼(상품) 또는 이미지 한 장. */
+type Item =
+  | { kind: "product"; slide: HeroSlide; sort: number }
+  | { kind: "image"; slide: HeroImageSlide; sort: number };
 
 function isLight(hex: string): boolean {
   const m = /^#?([0-9a-f]{6})/i.exec(hex);
@@ -59,8 +68,30 @@ function heroGradient(hex: string): string {
 const BACKDROP_FADE =
   "linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)";
 
-export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
-  const count = slides.length;
+export function HeroCarousel({
+  slides,
+  imageSlides = [],
+}: {
+  slides: HeroSlide[];
+  imageSlides?: HeroImageSlide[];
+}) {
+  // 누끼·이미지를 표시 순서로 섞는다. 같은 순서면 누끼가 먼저 (정렬은 안정적이다).
+  const items = useMemo<Item[]>(
+    () =>
+      [
+        ...slides.map((s, i) => ({ kind: "product" as const, slide: s, sort: s.heroSort ?? i })),
+        ...imageSlides.map((s) => ({ kind: "image" as const, slide: s, sort: s.sortOrder })),
+      ].sort((a, b) => a.sort - b.sort),
+    [slides, imageSlides],
+  );
+  /** 누끼 슬라이드만 (스테이지·맛 내비용)과 그 각각이 items 에서 몇 번째인지. */
+  const products = useMemo(() => items.flatMap((it) => (it.kind === "product" ? [it.slide] : [])), [items]);
+  const productAt = useMemo(
+    () => items.flatMap((it, i) => (it.kind === "product" ? [i] : [])),
+    [items],
+  );
+
+  const count = items.length;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const dragging = useRef(false);
@@ -112,29 +143,47 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   if (count === 0) return null;
 
-  const current = slides[active];
-  const bg = current.heroColor || DEFAULT_COLOR;
+  const currentItem = items[Math.min(active, count - 1)];
+  const imageActive = currentItem.kind === "image";
+
+  // 누끼 화면에 보여줄 제품. 이미지 슬라이드 차례면 바로 앞 누끼 제품을 그대로 둔 채 옅게 만든다
+  // (이미지가 위에서 크로스페이드되므로 빈 배경이 비치지 않는다).
+  let pActive = -1;
+  for (let k = 0; k < count && products.length > 0; k++) {
+    const i = (active - k + count) % count;
+    const at = productAt.indexOf(i);
+    if (at >= 0) { pActive = at; break; }
+  }
+  const current = pActive >= 0 ? products[pActive] : null;
+  const pCount = products.length;
+
+  const bg = current?.heroColor || DEFAULT_COLOR;
   const light = isLight(bg);
   const ink = light ? "#221E1C" : "#FAF7F1";
   const subInk = light ? "rgba(34,30,28,0.72)" : "rgba(250,247,241,0.82)";
+  // 화살표 색 — 사진 위에서는 흰색(그림자)으로
+  const arrowInk = imageActive ? "#FAF7F1" : ink;
 
-  // active 기준 상대 위치(-…0…+, 순환)를 구한다.
-  function offsetOf(i: number): number {
-    let d = ((i - active) % count + count) % count;
-    if (d > count / 2) d -= count;
+  // 누끼 스테이지 기준 상대 위치(-…0…+, 순환)를 구한다.
+  function offsetOf(pi: number): number {
+    let d = ((pi - pActive) % pCount + pCount) % pCount;
+    if (d > pCount / 2) d -= pCount;
     return d;
   }
 
   // 제품을 가로로 나열한다. 중앙이 활성, 다음/이전은 양옆에 살짝 걸친다.
   // 넘어가면 좌우로 슬라이드된다.
-  function stageStyle(i: number): React.CSSProperties {
-    const d = offsetOf(i);
+  function stageStyle(pi: number): React.CSSProperties {
+    const d = offsetOf(pi);
     if (d === 0) return { transform: "translate(0,0) scale(1)", opacity: 1, zIndex: 20 };
     if (d === 1) return { transform: "translate(42%, 4%) scale(0.4)", opacity: 0.4, zIndex: 6 };
     if (d === -1) return { transform: "translate(-42%, 4%) scale(0.4)", opacity: 0.4, zIndex: 6 };
     // 더 먼 것들은 바깥에서 대기(숨김)
     return { transform: `translate(${d > 0 ? 70 : -70}%, 4%) scale(0.34)`, opacity: 0, zIndex: 4 };
   }
+
+  // 페이지의 유일한 h1 — 이미지 슬라이드 차례에는 그쪽(화면에 안 보이는 설명)이 h1 을 맡는다.
+  const TitleTag = imageActive ? "p" : "h1";
 
   return (
     <section
@@ -153,14 +202,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       }}
     >
       {/* 배경 색 그라데이션 — 활성 제품 색이 천천히 배어 나오듯 크로스페이드 */}
-      {slides.map((s, i) => (
+      {products.map((s, pi) => (
         <div
           key={s.id}
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
           style={{
             background: heroGradient(s.heroColor || DEFAULT_COLOR),
-            opacity: i === active ? 1 : 0,
+            opacity: pi === pActive ? 1 : 0,
             transition: "opacity 1100ms ease",
           }}
         />
@@ -184,10 +233,16 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 }`,
         }}
       />
-      {/* 콘텐츠: 문구(좌) · 제품 스테이지(중앙) · 가격(우) — 레이아웃 고정 */}
-      <div className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_minmax(248px,auto)] md:px-12 md:py-0">
+      {/* 콘텐츠: 문구(좌) · 제품 스테이지(중앙) · 가격(우) — 레이아웃 고정
+          이미지 슬라이드 차례에는 옅어지고 눌리지 않는다(사진이 위를 덮는다). */}
+      {current && (
+      <div
+        className="relative z-10 mx-auto grid min-h-svh w-full max-w-wrap items-center gap-6 px-6 py-24 md:grid-cols-[1fr_minmax(0,42%)_minmax(248px,auto)] md:px-12 md:py-0"
+        aria-hidden={imageActive || undefined}
+        style={{ opacity: imageActive ? 0 : 1, transition: "opacity 900ms ease", pointerEvents: imageActive ? "none" : undefined }}
+      >
         {/* 문구 (내용만 크로스페이드) */}
-        <div key={`t-${active}`} className="relative z-10 order-2 mt-8 text-center md:order-1 md:mt-0 md:text-left" style={{ animation: "rz-textin 600ms ease both" }}>
+        <div key={`t-${current.id}`} className="relative z-10 order-2 mt-8 text-center md:order-1 md:mt-0 md:text-left" style={{ animation: "rz-textin 600ms ease both" }}>
           <p className="font-en text-[12px] font-semibold uppercase tracking-[0.24em]" style={{ color: subInk }}>
             Cream of Rice
           </p>
@@ -197,12 +252,12 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               PC 에서 문구 칸이 330px 안팎인데 「크림오브라이스」(7자)를 기본 크기로 놓으면 칸을 넘쳐
               body 의 overflow-wrap:anywhere 때문에 「크림오브라 / 이스」처럼 글자 중간에서 꺾였다.
               5자까지는 기본 크기, 6~7자는 한 단계, 8자 이상은 두 단계 줄이고, 단어 중간 꺾임은 막는다. */}
-          <h1
+          <TitleTag
             className={`mt-3 font-display font-semibold leading-[1.15] [word-break:keep-all] [overflow-wrap:normal] ${heroTitleSize(current.nameKo)}`}
             style={{ color: ink }}
           >
             {current.nameKo}
-          </h1>
+          </TitleTag>
           {current.subtitle && (
             <p className="mx-auto mt-4 max-w-xs font-kr text-base leading-[1.7] [word-break:keep-all] md:mx-0" style={{ color: subInk }}>
               {current.subtitle}
@@ -219,9 +274,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
           {/* 모바일: 부제 아래 가운데에 맛별 문양 내비 (데스크톱은 CTA 아래에 따로 렌더) */}
           <FlavorNav
-            slides={slides}
-            active={active}
-            onSelect={setActive}
+            slides={products}
+            active={imageActive ? -1 : pActive}
+            onSelect={(pi) => setActive(productAt[pi])}
             ink={ink}
             bg={bg}
             subInk={subInk}
@@ -240,7 +295,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                key={`${active}-${ai}`}
+                key={`${current.id}-${ai}`}
                 src={url}
                 alt=""
                 aria-hidden="true"
@@ -254,7 +309,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           {current.heroBackdropUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              key={`bd-${active}`}
+              key={`bd-${current.id}`}
               src={current.heroBackdropUrl}
               alt=""
               aria-hidden="true"
@@ -267,9 +322,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               }}
             />
           )}
-          {slides.map((s, i) => {
-            const d = offsetOf(i);
-            const isPreview = d !== 0 && count > 1;
+          {products.map((s, pi) => {
+            const d = offsetOf(pi);
+            const isPreview = d !== 0 && pCount > 1;
             const img = s.heroImageUrl;
             return (
               <button
@@ -277,10 +332,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 type="button"
                 aria-label={isPreview ? `${s.nameKo} 보기` : s.nameKo}
                 tabIndex={isPreview ? 0 : -1}
-                onClick={() => isPreview && setActive(i)}
+                onClick={() => isPreview && setActive(productAt[pi])}
                 className="absolute inset-0 flex items-center justify-center focus:outline-none"
                 style={{
-                  ...stageStyle(i),
+                  ...stageStyle(pi),
                   transformOrigin: "center center",
                   transition: "transform 850ms cubic-bezier(0.22,1,0.36,1), opacity 800ms ease",
                   cursor: isPreview ? "pointer" : "default",
@@ -294,7 +349,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                     alt={s.nameKo}
                     draggable={false}
                     className="max-h-full w-auto select-none object-contain drop-shadow-[0_34px_54px_rgba(0,0,0,0.32)]"
-                    fetchPriority={i === 0 ? "high" : undefined}
+                    fetchPriority={pi === 0 && !imageActive ? "high" : undefined}
                   />
                 ) : null}
               </button>
@@ -303,7 +358,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         </div>
 
         {/* 가격 + CTA (내용만 크로스페이드) */}
-        <div key={`p-${active}`} className="relative z-10 order-3 flex flex-col items-center gap-4 md:items-end" style={{ animation: "rz-textin 600ms ease both" }}>
+        <div key={`p-${current.id}`} className="relative z-10 order-3 flex flex-col items-center gap-4 md:items-end" style={{ animation: "rz-textin 600ms ease both" }}>
           <div className="text-center md:text-right">
             {current.soldOut ? (
               // 품절: 재고 0 또는 관리자가 품절 처리한 경우
@@ -372,9 +427,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
           {/* 데스크톱: CTA 아래 우측에 맛별 문양 내비 */}
           <FlavorNav
-            slides={slides}
-            active={active}
-            onSelect={setActive}
+            slides={products}
+            active={imageActive ? -1 : pActive}
+            onSelect={(pi) => setActive(productAt[pi])}
             ink={ink}
             bg={bg}
             subInk={subInk}
@@ -383,22 +438,113 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           />
         </div>
       </div>
+      )}
+
+      {/* 이미지 한 장 슬라이드 (V41) — 히어로 화면 전체를 덮는다.
+          object-cover 라 화면 비율이 달라도 빈틈 없이 채우고 넘치는 부분만 잘린다.
+          휴대폰(767px 이하)은 세로 사진을 따로 쓰고, 없으면 PC 사진을 가운데 기준으로 잘라 쓴다. */}
+      {items.map((it, i) => {
+        if (it.kind !== "image") return null;
+        const s = it.slide;
+        const on = i === active;
+        return (
+          <div
+            key={`img-${s.id}`}
+            className="absolute inset-0 z-[35]"
+            aria-hidden={!on || undefined}
+            style={{ opacity: on ? 1 : 0, transition: "opacity 900ms ease", pointerEvents: on ? "auto" : "none" }}
+          >
+            <picture>
+              {s.imageMobileUrl && <source media="(max-width: 767px)" srcSet={s.imageMobileUrl} />}
+              <img
+                src={s.imagePcUrl}
+                alt={s.altText}
+                draggable={false}
+                className="absolute inset-0 h-full w-full select-none object-cover"
+                fetchPriority={i === 0 ? "high" : undefined}
+              />
+            </picture>
+            {/* 위: 투명 헤더 글씨가 보이게, 아래: 버튼이 사진 위에서도 보이게 살짝 어둡게 */}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/35 to-transparent" />
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/45 to-transparent" />
+            {on && <h1 className="sr-only">{s.altText}</h1>}
+            {s.buttonLabel && s.linkUrl && (
+              <div className="absolute inset-x-0 bottom-[14svh] flex justify-center px-6 md:bottom-[12svh]">
+                <HeroImageLink
+                  href={s.linkUrl}
+                  newTab={s.openNewTab}
+                  tabIndex={on ? 0 : -1}
+                  className="inline-flex min-h-12 items-center whitespace-nowrap rounded-[6px] bg-[#FAF7F1] px-7 py-3 font-kr text-base font-bold text-[#221E1C] shadow-[0_10px_24px_rgba(0,0,0,0.3)] transition hover:-translate-y-0.5 hover:opacity-95"
+                >
+                  {s.buttonLabel}
+                </HeroImageLink>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* 이미지 슬라이드 차례 — 맛 내비가 가려지므로 몇 번째인지 점으로 보여준다 */}
+      {imageActive && count > 1 && (
+        <div className="absolute inset-x-0 bottom-6 z-40 flex justify-center gap-2">
+          {items.map((it, i) => (
+            <button
+              key={`dot-${it.kind}-${it.slide.id}`}
+              type="button"
+              aria-label={`${i + 1}번째 배너 보기`}
+              aria-current={i === active}
+              onClick={() => setActive(i)}
+              className={`h-1.5 rounded-full transition-all ${i === active ? "w-6 bg-[#FAF7F1]" : "w-1.5 bg-[#FAF7F1]/55 hover:bg-[#FAF7F1]/80"}`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* 화살표 */}
       {count > 1 && (
         <>
-          <button type="button" aria-label="이전 상품" onClick={() => setActive(prevIdx)}
-            className="absolute left-4 top-1/2 z-30 hidden -translate-y-1/2 rounded-full p-2 transition hover:bg-black/10 md:block" style={{ color: ink }}>
+          <button type="button" aria-label="이전 배너" onClick={() => setActive(prevIdx)}
+            className={`absolute left-4 top-1/2 z-40 hidden -translate-y-1/2 rounded-full p-2 transition hover:bg-black/10 md:block ${imageActive ? "drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]" : ""}`} style={{ color: arrowInk }}>
             <Arrow dir="left" />
           </button>
-          <button type="button" aria-label="다음 상품" onClick={() => setActive(nextIdx)}
-            className="absolute right-4 top-1/2 z-30 hidden -translate-y-1/2 rounded-full p-2 transition hover:bg-black/10 md:block" style={{ color: ink }}>
+          <button type="button" aria-label="다음 배너" onClick={() => setActive(nextIdx)}
+            className={`absolute right-4 top-1/2 z-40 hidden -translate-y-1/2 rounded-full p-2 transition hover:bg-black/10 md:block ${imageActive ? "drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]" : ""}`} style={{ color: arrowInk }}>
             <Arrow dir="right" />
           </button>
         </>
       )}
 
     </section>
+  );
+}
+
+/** 이미지 슬라이드 버튼 — 사이트 안 주소는 Link, 바깥 주소는 a. 새 창이면 opener 를 끊는다. */
+function HeroImageLink({
+  href,
+  newTab,
+  tabIndex,
+  className,
+  children,
+}: {
+  href: string;
+  newTab: boolean;
+  tabIndex: number;
+  className: string;
+  children: React.ReactNode;
+}) {
+  const target = newTab ? "_blank" : undefined;
+  const rel = newTab ? "noopener noreferrer" : undefined;
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return (
+      <Link href={href} target={target} rel={rel} tabIndex={tabIndex} className={className}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} target={target} rel={rel} tabIndex={tabIndex} className={className}>
+      {children}
+    </a>
   );
 }
 
