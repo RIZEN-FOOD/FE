@@ -108,7 +108,7 @@ function VideoBlock({ section }: { section: DetailSection }) {
           >
             {/* 표지는 유튜브 이미지일 수 있어 next/image 최적화를 쓰지 않는다 */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={poster} alt="" className="h-full w-full object-cover" />
+            <img src={poster} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             <span className="absolute inset-0 grid place-items-center bg-ink/25 transition group-hover:bg-ink/35">
               <span className="grid h-16 w-16 place-items-center rounded-full bg-paper/90 shadow-[0_8px_20px_rgba(34,30,28,0.3)]">
                 <svg width="22" height="24" viewBox="0 0 22 24" aria-hidden="true">

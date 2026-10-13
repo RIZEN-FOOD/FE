@@ -78,6 +78,8 @@ export async function StoreFooter() {
           src={footerImage}
           alt=""
           aria-hidden="true"
+          loading="lazy"
+          decoding="async"
           draggable={false}
           className="pointer-events-none absolute -top-20 right-[6%] hidden w-[190px] select-none drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)] md:block lg:-top-24 lg:w-[230px]"
         />
@@ -88,6 +90,8 @@ export async function StoreFooter() {
             <img
               src="/assets/brand/logo-white.png"
               alt="RiZen"
+              loading="lazy"
+              decoding="async"
               className="h-7 w-auto select-none opacity-95"
               draggable={false}
             />

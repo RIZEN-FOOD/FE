@@ -20,6 +20,8 @@ export type ProductListItem = {
 
 export type ProductImage = {
   url: string;
+  /** 작은 자리(갤러리 썸네일)용 400px 사진. url 은 1000px (2026-10-13) */
+  thumbUrl?: string | null;
   baseKey: string;
   altText: string | null;
   type: string;

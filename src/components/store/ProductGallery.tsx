@@ -43,8 +43,9 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
               }`}
               aria-label={`이미지 ${i + 1} 보기`}
             >
+              {/* 64px 칸이라 400px 썸네일이면 충분하다 (전엔 1000px 을 받았다) */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.url} alt="" className="h-full w-full object-cover" />
+              <img src={img.thumbUrl || img.url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </button>
           ))}
         </div>
