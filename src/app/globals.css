@@ -194,3 +194,10 @@
     font-size: 16px;
   }
 }
+
+/* 휴대폰 팝업 — 아래에서 시트가 올라온다 (2026-10-14). transform 만 쓴다.
+   모션 최소화 설정이면 위 @media 가 animation-duration 을 0 으로 만들어 바로 뜬다. */
+@keyframes rz-sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
