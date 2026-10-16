@@ -15,9 +15,12 @@ type Size = "lg" | "md" | "sm";
  *   - 글자가 두 줄로 꺾이지 않는다(whitespace-nowrap). 꺾이면 라벨을 줄이거나 버튼을 넓힌다.
  *
  * href 를 주면 링크로, 안 주면 button 으로 렌더한다.
+ *
+ * ★ base 에 border-none 을 두지 않는다 (2026-10-16). border-style:none 이 line 의 테두리(border-[1.5px])를
+ *   지워서 [장바구니 담기]·[쇼핑 계속하기] 같은 line 버튼이 그냥 글자처럼 보였다. 테두리 없는 기본값은 preflight(border:0)가 맡는다.
  */
 const base =
-  "inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-[6px] border-none text-center font-kr font-bold " +
+  "inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-[6px] text-center font-kr font-bold " +
   "transition-[transform,background-color,color,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-out)] " +
   "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-deep " +
